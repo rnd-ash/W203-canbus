@@ -1,0 +1,4 @@
+/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/ashcon/code/W203-canbus/IC_CUSTOM_TEXT
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/ashcon/code/W203-canbus/IC_CUSTOM_TEXT/cmake-build-debug

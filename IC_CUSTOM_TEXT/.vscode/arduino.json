@@ -1,0 +1,6 @@
+{
+    "programmer": "AVR ISP",
+    "board": "arduino:avr:uno",
+    "sketch": "IC_CUSTOM_TEXT.ino",
+    "port" : "/dev/ttyACM0"
+}

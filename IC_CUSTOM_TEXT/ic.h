@@ -6,21 +6,25 @@
 #define W203_CANBUS_IC_H
 
 #include "can.h"
-#include "mcp2515.h"
-#define IC_SEND_PIC 0x1A4
-#define IC_RECV_PIC 0x0D0
+#include "icPacketBatch.h"
+//#include "mcp2515.h"
+#define IC_SEND_PID 0x1A4
+#define IC_RECV_PID 0x0D0
 
 class IC_DISPLAY {
 public:
-    enum RESULT{
+    enum RESULT {
         SEND_OK,
         SEND_FAIL
     };
-    IC_DISPLAY(int pin, const CAN_SPEED spd);
-    can_frame sendHeaderText(const char text[3], MCP2515 mcp);
+    //RESULT sendHeaderText(const char text[3], MCP2515 mcp);
+    //RESULT sendBodyText(int charCount, char text[9], MCP2515 mcp);
+    void createHeaderPackets(const char text[3], icPacketBatch *b);
+    void createBodyPackets(int charCount, const char text[9], icPacketBatch *b);
 private:
-    can_frame c;
-    can_frame read_ic_response();
+    //can_frame read_ic_response(MCP2515 mcp);
+    uint8_t calculateHeaderCheckSum(const char text[3]);
+    static uint8_t calculateBodyCheckSum(int charCount, const char text[9]);
 };
 
 

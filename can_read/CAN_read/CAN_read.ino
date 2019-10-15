@@ -19,7 +19,7 @@ void loop() {
   if (mcp2515.readMessage(&canMsg) == MCP2515::ERROR_OK) {
     char buffer[7];
     // REMOVE THIS IF to see everything
-    if(canMsg.can_id == 0x01A4 || canMsg.can_id == 0x01D0){
+    //if(canMsg.can_id == 0x01A4){
       sprintf(buffer,"0x%04X", canMsg.can_id);
       Serial.print(buffer);
       Serial.print(", ");
@@ -31,7 +31,7 @@ void loop() {
         Serial.print(" ");
       }
       Serial.println();
-    }
+    //}
     
   }
 }
