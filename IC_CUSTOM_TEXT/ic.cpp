@@ -50,33 +50,34 @@ void IC_DISPLAY::createHeaderPackets(const char text[3], icPacketBatch *b) {
  * Send Pac 3
  * Receive response
  */
-void IC_DISPLAY::createBodyPackets(int charCount, const char *text, icPacketBatch *b) {
-    char temp[9];
-    if (charCount > 9) {
-        charCount = 9;
-    }
-    for (int i = 0; i < charCount; i++) {
-        temp[i] = text[i];
-    }
-    if (charCount < 5) {
-        for (int k = charCount; k <= 5; k++) {
-            temp[k] = 0x20;
+void IC_DISPLAY::createBodyPackets(String text, icPacketBatch *b) {
+    String msg = "";
+    if (text.length() < 5) {
+        msg = text;
+        for (int i = 0; i < 5 - text.length(); i++) {
+            msg += " ";
         }
-        charCount = 5;
+    } else if (text.length() > 8) {
+        for (int i = 0; i < 8; i++) {
+            msg += text[i];
+        }
+    } else {
+        msg = text;
     }
+    
     int asciiTotal = 0;
-    int checkSumB = charCount + 2;
+    int checkSumB = msg.length() + 2;
     int checkSumA = 7 + checkSumB;
     // Placeholder - Need to work out how to calculate this
     
     uint8_t bodyData[11] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    for (int i = 0; i < charCount; i++) {
-        bodyData[i] = temp[i];
-        asciiTotal += temp[i];
+    for (int i = 0; i < msg.length(); i++) {
+        bodyData[i] = msg[i];
+        asciiTotal += msg[i];
     }
-    uint8_t x = calculateBodyCheckSum(charCount, temp);
-    bodyData[charCount] = 0x00;
-    bodyData[charCount+1] = int(x);
+    uint8_t x = calculateBodyCheckSum(msg);
+    bodyData[msg.length()] = 0x00;
+    bodyData[msg.length() + 1] = int(x);
 
     b->frames[0].can_id = IC_SEND_PID;
     b->frames[0].can_dlc = 0x08;
@@ -105,8 +106,8 @@ void IC_DISPLAY::createBodyPackets(int charCount, const char *text, icPacketBatc
         b->frames[2].data[i] = bodyData[i+5];
     }
 
-    b->frames[2].data[6] = 0x20;
-    b->frames[2].data[7] = 0x00;
+    b->frames[2].data[6] = 0x01;
+    b->frames[2].data[7] = 0x08;
 
     b->numberOfFrames = 3;
 }
@@ -115,11 +116,12 @@ uint8_t IC_DISPLAY::calculateHeaderCheckSum(const char *text) {
     return 0;
 }
 
-uint8_t IC_DISPLAY::calculateBodyCheckSum(int charCount, const char *text){
+uint8_t IC_DISPLAY::calculateBodyCheckSum(String text){
+    int charCount = text.length();
     // Lookup table valid checksum + ASCII Total values
-    int NINE_CHAR_TOTAL_LOOKUP[] =  {1073, 817, 561, 305};
+    int NINE_CHAR_TOTAL_LOOKUP[] =  {1073, 817, 561, 561}; //x
     int EIGHT_CHAR_TOTAL_LOOKUP[] = {1090, 834, 578, 322};
-    int SEVEN_CHAR_TOTAL_LOOKUP[] = {1136, 880, 624, 368};
+    int SEVEN_CHAR_TOTAL_LOOKUP[] = {1136, 880, 624, 368}; //x
     int SIX_CHAR_TOTAL_LOOKUP[] =   {1121, 865, 609, 353};
     int FIVE_CHAR_TOTAL_LOOKUP[] =  {1135, 879, 623, 367};
 
@@ -136,32 +138,28 @@ uint8_t IC_DISPLAY::calculateBodyCheckSum(int charCount, const char *text){
         }
     }else if(charCount == 8) {
         for(int k : EIGHT_CHAR_TOTAL_LOOKUP) {
-            if(k - strTotal >= 256) {
+            if(k - strTotal <= 256) {
                 return (k-strTotal);
             }
         }
     } else if (charCount == 7) {
         for(int k : SEVEN_CHAR_TOTAL_LOOKUP) {
-            if(k - strTotal >= 256) {
+            if(k - strTotal <= 256) {
                 return (k-strTotal);
             }
         }
     } else if (charCount == 6) {
         for(int k : SIX_CHAR_TOTAL_LOOKUP) {
-            if(k - strTotal >= 256) {
+            if(k - strTotal <= 256) {
                 return (k-strTotal);
             }
         }
     } else if (charCount == 5) {
         for(int k : FIVE_CHAR_TOTAL_LOOKUP) {
-            if(k - strTotal >= 256) {
+            if(k - strTotal <= 256) {
                 return (k-strTotal);
             }
         }
     }
     return 0;
 }
-
-
-
-

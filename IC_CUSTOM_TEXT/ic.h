@@ -20,11 +20,11 @@ public:
     //RESULT sendHeaderText(const char text[3], MCP2515 mcp);
     //RESULT sendBodyText(int charCount, char text[9], MCP2515 mcp);
     void createHeaderPackets(const char text[3], icPacketBatch *b);
-    void createBodyPackets(int charCount, const char text[9], icPacketBatch *b);
+    void createBodyPackets(String text, icPacketBatch *b);
 private:
     //can_frame read_ic_response(MCP2515 mcp);
     uint8_t calculateHeaderCheckSum(const char text[3]);
-    static uint8_t calculateBodyCheckSum(int charCount, const char text[9]);
+    static uint8_t calculateBodyCheckSum(String text);
 };
 
 

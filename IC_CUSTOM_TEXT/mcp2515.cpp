@@ -1,3 +1,4 @@
+ 
 #include "mcp2515.h"
 
 const struct MCP2515::TXBn_REGS MCP2515::TXB[MCP2515::N_TXBUFFERS] = {
@@ -62,7 +63,6 @@ MCP2515::ERROR MCP2515::reset(void)
             return result;
         }
     }
-
     MASK masks[] = {MASK0, MASK1};
     for (int i=0; i<2; i++) {
         ERROR result = setFilterMask(masks[i], true, 0);

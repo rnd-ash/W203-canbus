@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "/home/ashcon/.arduino15/packages/arduino/tools/**",
+                "/home/ashcon/Arduino/**",
                 "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.1/**"
             ],
             "forcedInclude": [

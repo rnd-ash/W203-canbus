@@ -14,7 +14,7 @@ typedef unsigned long __u32;
 #define CAN_RTR_FLAG 0x40000000UL /* remote transmission request */
 #define CAN_ERR_FLAG 0x20000000UL /* error message frame */
 
-/* valid bits in CAN ID for frame formats */
+/* valiad bits in CAN ID for frame formats */
 #define CAN_SFF_MASK 0x000007FFUL /* standard frame format (SFF) */
 #define CAN_EFF_MASK 0x1FFFFFFFUL /* extended frame format (EFF) */
 #define CAN_ERR_MASK 0x1FFFFFFFUL /* omit EFF, RTR, ERR flags */
