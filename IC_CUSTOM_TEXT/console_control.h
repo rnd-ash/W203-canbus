@@ -13,5 +13,7 @@ public:
     void unlockDoors(MCP2515* m);
     void retractHeadRest(MCP2515* m);
     void toggleESP(MCP2515* m);
+private:
+    bool sendFrame(can_frame *frame, MCP2515 *m);
 };
 #endif

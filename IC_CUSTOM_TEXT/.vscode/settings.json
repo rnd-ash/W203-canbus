@@ -1,0 +1,8 @@
+{
+    "C_Cpp.default.intelliSenseMode": "gcc-x64",
+    "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    "C_Cpp.loggingLevel": "Debug",
+    "files.associations": {
+        "*.tcc": "cpp"
+    }
+}

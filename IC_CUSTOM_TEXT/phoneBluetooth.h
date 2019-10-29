@@ -9,14 +9,12 @@
 #include <SoftwareSerial.h>
 class phoneBluetooth {
 public:
-    phoneBluetooth(int rxPin, int txPin, int ledPinRx, int ledPinTx);
+    phoneBluetooth(int rxPin, int txPin);
     void writeMessage(String msg);
     String readMessage();
 private:
     String lastMsg;
     int lastID;
-    int ledPinRx;
-    int ledPinTx;
     SoftwareSerial *bluetooth;
 };
 

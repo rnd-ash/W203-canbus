@@ -29,9 +29,9 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = BluetoothAdapter.getDefaultAdapter()
         val dev = adapter.bondedDevices.first { it.name == "HC-06" }
-        ic = CarCommunicator(dev, adapter)
+        ic = CarCommunicator(dev, adapter, this.applicationContext)
         ic.openConnection()
-        textView = findViewById<TextView>(R.id.info)
+        textView = findViewById(R.id.info)
 
         val manager = this.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val playPauseBtn = findViewById<Button>(R.id.play)
@@ -109,6 +109,22 @@ class MainActivity : AppCompatActivity() {
             manager.dispatchMediaKeyEvent(event)
         }
 
+        Thread() {
+            while(true) {
+                if (ic.btManager.readText.isNotEmpty()) {
+                    if (ic.btManager.readText == "N") {
+                        val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
+                        manager.dispatchMediaKeyEvent(event)
+                    } else if (ic.btManager.readText == "P") {
+                        val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+                        manager.dispatchMediaKeyEvent(event)
+                    }
+                    ic.btManager.readText = ""
+                }
+                Thread.sleep(500L)
+            }
+        }.start()
+
         val iF = IntentFilter()
         iF.addAction("com.android.music.metachanged")
         iF.addAction("com.spotify.music.playbackstatechanged")
@@ -128,10 +144,7 @@ class MainActivity : AppCompatActivity() {
             val trackName = intent.getStringExtra("track")
             val albumName = intent.getStringExtra("album")
             val artistName = intent.getStringExtra("artist")
-            if (!isPlaying) {
-                wasPlaying = false
-                ic.sendBodyText("PAUSED")
-            } else if (trackName != lastTrack || wasPlaying != isPlaying) {
+            if (trackName != lastTrack) {
                 lastTrack = trackName
                 var msg = trackName
                 if (artistCheck.isChecked) {
@@ -148,16 +161,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        ic.closeConnection()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        ic.closeConnection()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        ic.openConnection()
+        ic.destroy()
     }
 }

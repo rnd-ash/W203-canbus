@@ -9,9 +9,31 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.util.Log
 import java.lang.Exception
+import java.nio.charset.Charset
 
 class BluetoothComm(private var device: BluetoothDevice, private var secure: Boolean,
                     private var adapter: BluetoothAdapter) {
+
+    var readText : String = ""
+    private val btThread = Thread() {
+        Log.i("BT", "Read thread started!")
+        while(true) {
+            var tmpTxt = ""
+            while (bluetoothSocket.getInputStream().available() > 0) {
+                tmpTxt += bluetoothSocket.getInputStream().read().toChar()
+            }
+            if (tmpTxt.isNotEmpty()) {
+                readText = tmpTxt
+                Log.d("BT", "Read message: $readText")
+            }
+            try {
+                Thread.sleep(1000L)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+                break
+            }
+        }
+    }
 
     private lateinit var bluetoothSocket : BluetoothSocketWrapper
     private var uuid : UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
@@ -26,16 +48,10 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
     }
 
     fun disconnect() {
+        btThread.interrupt()
         bluetoothSocket.getInputStream().close()
         bluetoothSocket.getOutputStream().close()
         bluetoothSocket.close()
-    }
-
-    fun getData() : Array<String> {
-        if (bluetoothSocket.getInputStream().available() > 0) {
-            return bluetoothSocket.getInputStream().bufferedReader(Charsets.US_ASCII).readLines().toTypedArray()
-        }
-        return arrayOf("")
     }
 
     @Throws(IOException::class)
@@ -66,6 +82,7 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
         if(!success) {
             throw IOException("Cannot connect to device: ${device.address}")
         }
+        btThread.start()
         return bluetoothSocket
     }
 

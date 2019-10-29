@@ -17,20 +17,20 @@ void setup() {
 
 void loop() {
   if (mcp2515.readMessage(&canMsg) == MCP2515::ERROR_OK) {
+    if (canMsg.can_id == 0x1CA) {
     char buffer[7];
-    // REMOVE THIS IF to see everything
-    if(canMsg.can_id == 0x01A4 || canMsg.can_id == 0x01D0){
-      sprintf(buffer,"0x%04X", canMsg.can_id);
+    Serial.print("FRAME:ID=");
+    Serial.print(canMsg.can_id);
+    Serial.print(":LEN=");
+    Serial.print(canMsg.can_dlc);
+    char tmp[3];
+    for (int i = 0; i<canMsg.can_dlc; i++)  {  // print the data
+      char buffer[5];
+      Serial.print(":");
+      sprintf(buffer,"%02X", canMsg.data[i]);
       Serial.print(buffer);
-      Serial.print(", ");
-      char tmp[2];
-      for (int i = 0; i<canMsg.can_dlc; i++)  {  // print the data
-        char buffer[5];
-        sprintf(buffer,"%02X", canMsg.data[i]);
-        Serial.print(buffer);
-        Serial.print(" ");
-      }
-      Serial.println();
     }
+    Serial.println();
+  }
   }
 }
