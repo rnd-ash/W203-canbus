@@ -16,6 +16,7 @@ private:
     String lastMsg;
     int lastID;
     SoftwareSerial *bluetooth;
+    String lastSeralizedMessage;
 };
 
 

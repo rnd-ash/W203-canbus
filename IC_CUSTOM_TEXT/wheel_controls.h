@@ -5,18 +5,11 @@
 #ifndef W203_CANBUS_WHEELCONTROL_H
 #define W203_CANBUS_WHEELCONTROL_H
 
-#include "mcp2515.h"
-#include "can.h"
+#include "canbuscomm.h"
+#include "ic.h"
+
 class wheelControls {
 public:
-    struct keyPress {
-        byte volUp;
-        byte volDown;
-        byte PhoneUp;
-        byte phoneDown;
-        byte pageUp;
-        byte pageDown;
-    };
     enum key {
         None = 0x00,
         ArrowUp = 0x01, 
@@ -26,10 +19,12 @@ public:
         VolUp = 0x10, 
         VolDown = 0x20
     };
-    wheelControls();
-    key getPressed(MCP2515 *m);
+    wheelControls(CanbusComm *c);
+    key getPressed();
 private:
+    void setCurrentPage();
     can_frame readFrame;
     can_frame lastFrame;
+    CanbusComm *c;
 };
 #endif

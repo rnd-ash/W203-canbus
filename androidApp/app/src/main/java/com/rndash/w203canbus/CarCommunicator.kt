@@ -3,12 +3,40 @@ package com.rndash.w203canbus
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Context
+import android.os.Looper
+import android.view.KeyEvent
 import android.widget.Toast
 import java.io.IOException
 import java.lang.Exception
 
-class CarCommunicator(device: BluetoothDevice, adapter: BluetoothAdapter, private val context: Context) {
-    val btManager = BluetoothComm(device, false, adapter)
+class CarCommunicator(private val device: BluetoothDevice, private val adapter: BluetoothAdapter, private val context: Context) {
+    companion object {
+        fun nextSong() {
+            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
+            MainActivity.manager.dispatchMediaKeyEvent(event)
+        }
+
+        fun previousSong() {
+            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+            MainActivity.manager.dispatchMediaKeyEvent(event)
+        }
+    }
+
+    val t = Thread(){
+        Looper.prepare()
+        while(true) {
+            if (!isConnected) {
+                btManager = BluetoothComm(device, false, adapter)
+                openConnection()
+            } else {
+                Thread.sleep(5000L)
+            }
+        }
+    }
+
+
+
+    var btManager = BluetoothComm(device, false, adapter)
     private var isConnected = false
 
     fun sendBodyText(msg: String) = safeCommunication { btManager.sendString("B:$msg") }
@@ -16,6 +44,7 @@ class CarCommunicator(device: BluetoothDevice, adapter: BluetoothAdapter, privat
     fun sendHeaderText(msg: String) = safeCommunication{ btManager.sendString("H:$msg") }
 
     fun setScrollSpeed(intervalMS: Int) = safeCommunication { btManager.sendString("S:$intervalMS") }
+    fun setInidcatorSpeed(intervalMS: Int) = safeCommunication { btManager.sendString("A:$intervalMS") }
 
     private inline fun safeCommunication(x: () -> Unit) {
         if (isConnected) {
@@ -32,7 +61,10 @@ class CarCommunicator(device: BluetoothDevice, adapter: BluetoothAdapter, privat
     fun lockDoors() = safeCommunication { btManager.sendString("C:2") }
     fun unlockDoors() = safeCommunication { btManager.sendString("C:3") }
     fun retractHeadRest() = safeCommunication { btManager.sendString("C:4") }
-
+    fun enableRightIndicator() = safeCommunication { btManager.sendString("C:5") }
+    fun enableLeftIndicator() = safeCommunication { btManager.sendString("C:6") }
+    fun enableHazards() = safeCommunication { btManager.sendString("C:7") }
+    fun disableSignalLights() = safeCommunication { btManager.sendString("C:8") }
 
     fun openConnection() {
         try {
@@ -41,6 +73,9 @@ class CarCommunicator(device: BluetoothDevice, adapter: BluetoothAdapter, privat
             Toast.makeText(context, "Connected!", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(context, "Cannot connect to BT!", Toast.LENGTH_SHORT).show()
+        }
+        if (!t.isAlive) {
+            t.start()
         }
     }
 

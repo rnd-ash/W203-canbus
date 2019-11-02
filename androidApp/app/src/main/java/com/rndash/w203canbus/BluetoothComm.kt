@@ -14,41 +14,74 @@ import java.nio.charset.Charset
 class BluetoothComm(private var device: BluetoothDevice, private var secure: Boolean,
                     private var adapter: BluetoothAdapter) {
 
-    var readText : String = ""
-    private val btThread = Thread() {
-        Log.i("BT", "Read thread started!")
+    private var isReading = false
+    private var queue = ArrayList<String>()
+    private var busy = false
+    val readSerialBT = Thread() {
+        Log.i("BT", "Reader thread started!")
+        var buffer = ""
         while(true) {
-            var tmpTxt = ""
-            while (bluetoothSocket.getInputStream().available() > 0) {
-                tmpTxt += bluetoothSocket.getInputStream().read().toChar()
+            if(!busy) {
+                when (readString()) {
+                    "N" -> CarCommunicator.nextSong()
+                    "P" -> CarCommunicator.previousSong()
+                }
             }
-            if (tmpTxt.isNotEmpty()) {
-                readText = tmpTxt
-                Log.d("BT", "Read message: $readText")
-            }
-            try {
-                Thread.sleep(1000L)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-                break
-            }
+            Thread.sleep(50)
         }
     }
 
     private lateinit var bluetoothSocket : BluetoothSocketWrapper
     private var uuid : UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
+    private var buffer = ""
+    private fun readString() : String {
+        while (bluetoothSocket.getInputStream().available() > 0) {
+            val char = bluetoothSocket.getInputStream().read().toChar()
+            if (char == '\r') {
+                Log.d("BT", "Read message $buffer")
+                val tmp = buffer
+                buffer = ""
+                return tmp
+            } else {
+                buffer += char
+            }
+        }
+        return buffer
+    }
+
     fun sendString(msg: String) {
-        val id = (0..9).random()
-        val sendMsg = "$id<$msg>"
-        Log.i("BT", "Sending message '$msg'")
-        bluetoothSocket.getOutputStream().write(sendMsg.toByteArray(Charsets.US_ASCII))
-        bluetoothSocket.getOutputStream().flush()
-        Log.i("BT", "Done sending message")
+        while(busy) {
+            Thread.sleep(1)
+        }
+        var attempts = 1
+        loop@ while (attempts < 10) {
+            val id = (1..9).random()
+            val sendMsg = "|$id:$msg\r"
+            Log.d("BT", "Sending message attempt $attempts: '$msg'")
+            bluetoothSocket.getOutputStream().write(sendMsg.toByteArray(Charsets.US_ASCII))
+            bluetoothSocket.getOutputStream().flush()
+            busy = true
+            var read = ""
+            val timeout = 2000L
+            val startTime = System.currentTimeMillis()
+            while (read.isEmpty()) {
+                if (System.currentTimeMillis() - startTime >= timeout) {
+                    throw IOException("BT cannot connect!")
+                }
+                Thread.sleep(5)
+                read = readString()
+            }
+            when(read) {
+                "OK" -> break@loop
+            }
+            attempts++
+        }
+        busy = false
     }
 
     fun disconnect() {
-        btThread.interrupt()
+        readSerialBT.interrupt()
         bluetoothSocket.getInputStream().close()
         bluetoothSocket.getOutputStream().close()
         bluetoothSocket.close()
@@ -81,8 +114,9 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
         }
         if(!success) {
             throw IOException("Cannot connect to device: ${device.address}")
+        } else {
+            readSerialBT.start()
         }
-        btThread.start()
         return bluetoothSocket
     }
 

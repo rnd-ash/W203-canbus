@@ -5,28 +5,15 @@
 
 #include "wheel_controls.h"
 
-static wheelControls::keyPress press;
-
-wheelControls::wheelControls() {
-    press.pageDown = 0x00;
-    press.pageUp = 0x00;
-    press.phoneDown = 0x00;
-    press.PhoneUp = 0x00;
-    press.volDown = 0x00;
-    press.volUp = 0x00;
+wheelControls::wheelControls(CanbusComm *c) {
+    this->c = c;
 }
 
-wheelControls::key wheelControls::getPressed(MCP2515 *m) {
-    bool detect = false;
-    for (int i = 0; i < 4000; i++) {
-        if (m->readMessage(&readFrame) == MCP2515::ERROR_OK) {
-            if (readFrame.can_id == 0x1CA) {
-                detect = true;
-                break;
-            }
-        }
-    }
+wheelControls::key wheelControls::getPressed() {
+    can_frame r = this->c->readFrameWithID(0x1CA, 10);
+    bool detect = r.can_id == 0x01CA;
     if (detect) {
+        readFrame = r;
         if (readFrame.data[1] == lastFrame.data[1]) {
             return None;
         }
@@ -35,6 +22,10 @@ wheelControls::key wheelControls::getPressed(MCP2515 *m) {
         if (readFrame.data[1] == 0x00) {
             return None;
         }
+        setCurrentPage();
+        // First byte of this packet indicates which page the user is in on the IC cluster
+        // 0x03 -> Audio page
+        // 0x05 -> Telephone page
         if (readFrame.data[0] != 0x03) {
             Serial.println("User is not in audio page!");
             return None;
@@ -66,4 +57,19 @@ wheelControls::key wheelControls::getPressed(MCP2515 *m) {
         }
     }
     return None;
+}
+
+void wheelControls::setCurrentPage() {
+    switch (readFrame.data[0])
+    {
+    case 0x03:
+        IC_DISPLAY::currentPage = IC_DISPLAY::clusterPage::Audio;
+        break;
+    case 0x05:
+        IC_DISPLAY::currentPage = IC_DISPLAY::clusterPage::Telephone;
+        break;
+    default:
+        IC_DISPLAY::currentPage = IC_DISPLAY::clusterPage::Unknown;
+        break;
+    }
 }

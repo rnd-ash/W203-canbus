@@ -5,26 +5,36 @@
 #ifndef W203_CANBUS_IC_H
 #define W203_CANBUS_IC_H
 
-#include "can.h"
-#include "icPacketBatch.h"
-//#include "mcp2515.h"
+#include "canbuscomm.h"
+
 #define IC_SEND_PID 0x1A4
-#define IC_RECV_PID 0x0D0
+#define MAX_STR_LENGTH 9
 
 class IC_DISPLAY {
 public:
-    enum RESULT {
-        SEND_OK,
-        SEND_FAIL
+    enum clusterPage {
+        Unknown = 0x00,
+        Audio = 0x03,
+        Telephone = 0x05
     };
-    //RESULT sendHeaderText(const char text[3], MCP2515 mcp);
-    //RESULT sendBodyText(int charCount, char text[9], MCP2515 mcp);
-    void createHeaderPackets(const char text[3], icPacketBatch *b);
-    void createBodyPackets(String text, icPacketBatch *b);
+    unsigned long lastTime;
+    int refreshIntervalMS;
+    static clusterPage currentPage;
+    IC_DISPLAY(CanbusComm *c);
+    String textToDisplay;
+    void setBodyText(String text);
+    void update();
 private:
-    //can_frame read_ic_response(MCP2515 mcp);
+    void sendBody(String text);
+    void sendHeader(const char text[3]);
+    String shiftString();
+    bool needsRotation;
+    String currText;
+    bool sendFirst;
     uint8_t calculateHeaderCheckSum(const char text[3]);
-    static uint8_t calculateBodyCheckSum(String text);
+    uint8_t calculateBodyCheckSum(String text);
+    CanbusComm *c;
+    can_frame curr_frame;
 };
 
 

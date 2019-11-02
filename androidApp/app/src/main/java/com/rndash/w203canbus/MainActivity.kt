@@ -13,8 +13,13 @@ import android.util.Log
 import android.view.KeyEvent
 import android.widget.*
 import androidx.annotation.RequiresApi
+import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        lateinit var manager : AudioManager
+    }
+
     lateinit var textView: TextView
     lateinit var ic : CarCommunicator
     lateinit var artistCheck : CheckBox
@@ -33,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         ic.openConnection()
         textView = findViewById(R.id.info)
 
-        val manager = this.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        manager = this.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val playPauseBtn = findViewById<Button>(R.id.play)
         val nextTrackBtn = findViewById<Button>(R.id.next)
         val prevTrackBtn = findViewById<Button>(R.id.previous)
@@ -45,12 +50,22 @@ class MainActivity : AppCompatActivity() {
         val unlockDoors = findViewById<Button>(R.id.doorUnlock)
         val espButton = findViewById<Button>(R.id.esp)
         val headRests = findViewById<Button>(R.id.headrests)
+        val hazards = findViewById<Button>(R.id.hazards)
+        val rightindicator = findViewById<Button>(R.id.rind)
+        val leftindicator = findViewById<Button>(R.id.lind)
+        val signalsoff = findViewById<Button>(R.id.soff)
+        val indicatorFreq = findViewById<SeekBar>(R.id.indicatorFreq)
+        val indicatorFreqText = findViewById<TextView>(R.id.indicatorFreqText)
         artistCheck = findViewById<CheckBox>(R.id.artist)
         albumCheck = findViewById<CheckBox>(R.id.album)
 
         speedBar.min = 5
         speedBar.max = 100
         speedBar.progress = 30
+
+        indicatorFreq.min = 10
+        indicatorFreq.max = 200
+        indicatorFreq.progress = 50
 
         lockDoors.setOnClickListener {
             ic.lockDoors()
@@ -68,6 +83,22 @@ class MainActivity : AppCompatActivity() {
             ic.retractHeadRest()
         }
 
+        hazards.setOnClickListener {
+            ic.enableHazards()
+        }
+
+        leftindicator.setOnClickListener {
+            ic.enableLeftIndicator()
+        }
+
+        rightindicator.setOnClickListener {
+            ic.enableRightIndicator()
+        }
+
+        signalsoff.setOnClickListener {
+            ic.disableSignalLights()
+        }
+
 
 
 
@@ -78,8 +109,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         class listener() : SeekBar.OnSeekBarChangeListener {
+            private var ms: Int = 0
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                ic.setScrollSpeed(progress*10)
+                ms = progress
                 speedText.text = "${progress*10} MS"
             }
 
@@ -87,10 +119,26 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
+                ic.setScrollSpeed(ms*10)
             }
         }
 
+        class listenerFreq() : SeekBar.OnSeekBarChangeListener {
+            private var ms: Int = 0
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                ms = progress
+                ic.setInidcatorSpeed(progress*10)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                indicatorFreqText.text = "${ms*10} MS"
+            }
+        }
+
+        indicatorFreq.setOnSeekBarChangeListener(listenerFreq())
         speedBar.setOnSeekBarChangeListener(listener())
 
         bluetoothBtn.setOnClickListener {
@@ -108,22 +156,6 @@ class MainActivity : AppCompatActivity() {
             val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
             manager.dispatchMediaKeyEvent(event)
         }
-
-        Thread() {
-            while(true) {
-                if (ic.btManager.readText.isNotEmpty()) {
-                    if (ic.btManager.readText == "N") {
-                        val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
-                        manager.dispatchMediaKeyEvent(event)
-                    } else if (ic.btManager.readText == "P") {
-                        val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
-                        manager.dispatchMediaKeyEvent(event)
-                    }
-                    ic.btManager.readText = ""
-                }
-                Thread.sleep(500L)
-            }
-        }.start()
 
         val iF = IntentFilter()
         iF.addAction("com.android.music.metachanged")

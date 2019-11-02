@@ -7,6 +7,14 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
+    <Button
+            android:text="R ind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rind"
+            app:layout_constraintStart_toEndOf="@+id/lind" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/soff" app:layout_constraintTop_toTopOf="@+id/hazards"
+            app:layout_constraintBottom_toBottomOf="@+id/hazards"/>
     <TextView
             android:id="@+id/info"
             android:layout_width="wrap_content"
@@ -130,5 +138,42 @@
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline" app:layout_constraintGuide_begin="20dp"
                                                 android:orientation="horizontal"/>
+    <Button
+            android:text="Hazards"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/hazards" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/lind"
+            app:layout_constraintTop_toBottomOf="@+id/customText" app:layout_constraintBottom_toTopOf="@+id/speed"/>
+    <Button
+            android:text="L ind."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lind"
+            app:layout_constraintStart_toEndOf="@+id/hazards" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/rind" app:layout_constraintTop_toTopOf="@+id/hazards"
+            app:layout_constraintBottom_toBottomOf="@+id/hazards"/>
+    <Button
+            android:text="Off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/soff" app:layout_constraintStart_toEndOf="@+id/rind"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/hazards" app:layout_constraintBottom_toBottomOf="@+id/hazards"/>
+    <SeekBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="222dp"
+            android:layout_height="52dp"
+            android:id="@+id/indicatorFreq"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toTopOf="@+id/lind"
+            app:layout_constraintTop_toBottomOf="@+id/customText" android:layout_marginStart="48dp"
+            app:layout_constraintVertical_bias="0.133"/>
+    <TextView
+            android:text="500 MS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/indicatorFreqText" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/indicatorFreq" app:layout_constraintTop_toTopOf="@+id/indicatorFreq"
+            app:layout_constraintBottom_toBottomOf="@+id/indicatorFreq"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

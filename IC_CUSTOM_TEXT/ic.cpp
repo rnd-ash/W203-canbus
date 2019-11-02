@@ -3,43 +3,49 @@
 //
 
 #include "ic.h"
-/*
- * Sending header text
- * Send packet 1
- * Receive response
- * Send packet 2
- * Receive response
- */
 
-void IC_DISPLAY::createHeaderPackets(const char text[3], icPacketBatch *b) {
+IC_DISPLAY::clusterPage IC_DISPLAY::currentPage = Audio;
+
+IC_DISPLAY::IC_DISPLAY(CanbusComm *c) {
+    this->sendFirst = false;
+    this->needsRotation = false;
+    this->setBodyText("NO BLUETOOTH CONNECTION!");
+    this->c = c;
+    this->refreshIntervalMS = 150;
+    this->lastTime = millis();
+}
+
+void IC_DISPLAY::sendHeader(const char text[3]) {
+    curr_frame.can_id = IC_SEND_PID;
+    curr_frame.can_dlc = 0x08;
+
     int checkSumTotal = 0;
     for (int i = 0; i < 3; i++) {
         checkSumTotal += text[i];
     }
     int checkSumBit = 407 - checkSumTotal;
-    b->frames[0].can_id = IC_SEND_PID;
-    b->frames[0].can_dlc = 0x08;
-    b->frames[0].data[0] = 0x10;
-    b->frames[0].data[1] = 0x09;
-    b->frames[0].data[2] = 0x03;
-    b->frames[0].data[3] = 0x29;
-    b->frames[0].data[4] = 0x00;
-    b->frames[0].data[5] = text[0];
-    b->frames[0].data[6] = text[1];
-    b->frames[0].data[7] = text[2];
+    
+    curr_frame.data[0] = 0x10;
+    curr_frame.data[1] = 0x09;
+    curr_frame.data[2] = 0x03;
+    curr_frame.data[3] = 0x29;
+    curr_frame.data[4] = 0x00;
+    curr_frame.data[5] = text[0];
+    curr_frame.data[6] = text[1];
+    curr_frame.data[7] = text[2];
+    c->sendFrame(&curr_frame);
+    delay(7);
 
-    b->frames[1].can_id = IC_SEND_PID;
-    b->frames[1].can_dlc = 0x08;
-    b->frames[1].data[0] = 0x21;
-    b->frames[1].data[1] = 0x20;
-    b->frames[1].data[2] = 0x00;
-    b->frames[1].data[3] = checkSumBit;
-    b->frames[1].data[4] = 0x05;
-    b->frames[1].data[5] = 0x26;
-    b->frames[1].data[6] = 0x01;
-    b->frames[1].data[7] = 0x00;
-
-    b->numberOfFrames = 2;
+    curr_frame.data[0] = 0x21;
+    curr_frame.data[1] = 0x20;
+    curr_frame.data[2] = 0x00;
+    curr_frame.data[3] = checkSumBit;
+    curr_frame.data[4] = 0x05;
+    curr_frame.data[5] = 0x26;
+    curr_frame.data[6] = 0x01;
+    curr_frame.data[7] = 0x00;
+    c->sendFrame(&curr_frame);
+    delay(2);
 }
 
 /*
@@ -50,21 +56,22 @@ void IC_DISPLAY::createHeaderPackets(const char text[3], icPacketBatch *b) {
  * Send Pac 3
  * Receive response
  */
-void IC_DISPLAY::createBodyPackets(String text, icPacketBatch *b) {
+void IC_DISPLAY::sendBody(String text) {
+    curr_frame.can_id = IC_SEND_PID;
+    curr_frame.can_dlc = 0x08;
     String msg = "";
     if (text.length() < 5) {
         msg = text;
         for (int i = 0; i < 5 - text.length(); i++) {
             msg += " ";
         }
-    } else if (text.length() > 8) {
-        for (int i = 0; i < 8; i++) {
+    } else if (text.length() > MAX_STR_LENGTH) {
+        for (int i = 0; i < MAX_STR_LENGTH; i++) {
             msg += text[i];
         }
     } else {
         msg = text;
     }
-    
     int asciiTotal = 0;
     int checkSumB = msg.length() + 2;
     int checkSumA = 7 + checkSumB;
@@ -79,37 +86,34 @@ void IC_DISPLAY::createBodyPackets(String text, icPacketBatch *b) {
     bodyData[msg.length()] = 0x00;
     bodyData[msg.length() + 1] = int(x);
 
-    b->frames[0].can_id = IC_SEND_PID;
-    b->frames[0].can_dlc = 0x08;
-    b->frames[0].data[0] = 0x10;
-    b->frames[0].data[1] = checkSumA;
-    b->frames[0].data[2] = 0x03;
-    b->frames[0].data[3] = 0x26;
-    b->frames[0].data[4] = 0x01;
-    b->frames[0].data[5] = 0x00;
-    b->frames[0].data[6] = 0x01;
-    b->frames[0].data[7] = checkSumB;
-    b->numberOfFrames = 1;
+    curr_frame.data[0] = 0x10;
+    curr_frame.data[1] = checkSumA;
+    curr_frame.data[2] = 0x03;
+    curr_frame.data[3] = 0x26;
+    curr_frame.data[4] = 0x01;
+    curr_frame.data[5] = 0x00;
+    curr_frame.data[6] = 0x01;
+    curr_frame.data[7] = checkSumB;
+    c->sendFrame(&curr_frame);
+    delay(7);
 
-    b->frames[1].can_id = IC_SEND_PID;
-    b->frames[1].can_dlc = 0x08;
-    b->frames[1].data[0] = 0x21;
-    b->frames[1].data[1] = 0x10;
+    curr_frame.data[0] = 0x21;
+    curr_frame.data[1] = 0x10;
     for (int i = 2; i <=7; i++) {
-        b->frames[1].data[i] = bodyData[i-2];
+        curr_frame.data[i] = bodyData[i-2];
     }
+    c->sendFrame(&curr_frame);
+    delay(2);
 
-    b->frames[2].can_id = IC_SEND_PID;
-    b->frames[2].can_dlc = 0x08;
-    b->frames[2].data[0] = 0x22;
+    curr_frame.data[0] = 0x22;
     for (int i = 1; i <= 5; i++) {
-        b->frames[2].data[i] = bodyData[i+5];
+        curr_frame.data[i] = bodyData[i+5];
     }
 
-    b->frames[2].data[6] = 0x01;
-    b->frames[2].data[7] = 0x08;
-
-    b->numberOfFrames = 3;
+    curr_frame.data[6] = 0x01;
+    curr_frame.data[7] = 0x08;
+    c->sendFrame(&curr_frame);
+    delay(2);
 }
 
 uint8_t IC_DISPLAY::calculateHeaderCheckSum(const char *text) {
@@ -119,9 +123,9 @@ uint8_t IC_DISPLAY::calculateHeaderCheckSum(const char *text) {
 uint8_t IC_DISPLAY::calculateBodyCheckSum(String text){
     int charCount = text.length();
     // Lookup table valid checksum + ASCII Total values
-    int NINE_CHAR_TOTAL_LOOKUP[] =  {1073, 817, 561, 561}; //x
+    int NINE_CHAR_TOTAL_LOOKUP[] =  {1073, 817, 561, 561};
     int EIGHT_CHAR_TOTAL_LOOKUP[] = {1090, 834, 578, 322};
-    int SEVEN_CHAR_TOTAL_LOOKUP[] = {1136, 880, 624, 368}; //x
+    int SEVEN_CHAR_TOTAL_LOOKUP[] = {1136, 880, 624, 368};
     int SIX_CHAR_TOTAL_LOOKUP[] =   {1121, 865, 609, 353};
     int FIVE_CHAR_TOTAL_LOOKUP[] =  {1135, 879, 623, 367};
 
@@ -162,4 +166,40 @@ uint8_t IC_DISPLAY::calculateBodyCheckSum(String text){
         }
     }
     return 0;
+}
+
+void IC_DISPLAY::update() {
+    if (millis() - lastTime >= refreshIntervalMS) {
+        lastTime = millis();
+        if(currentPage == clusterPage::Audio) {
+            if (needsRotation) {
+                sendBody(currText);
+                this->currText = shiftString();
+            } else if (!sendFirst) {
+                sendBody(currText);
+                this->sendFirst = true;
+            }
+        }
+    }
+}
+
+void IC_DISPLAY::setBodyText(String text) {
+    this->currText = text;
+    if (text.length() > MAX_STR_LENGTH) {
+        this->currText += "   ";
+        this->needsRotation = true;
+    } else {
+        this->needsRotation = false;
+    }
+    this->sendFirst = false;
+}
+
+String IC_DISPLAY::shiftString() {
+    char x = currText[0];
+    String tmp;
+    for (int i = 1; i < currText.length(); i++) {
+        tmp += currText[i];
+    }
+    tmp += x;
+    return tmp;
 }

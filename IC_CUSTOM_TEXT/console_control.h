@@ -5,15 +5,15 @@
 #ifndef W203_CANBUS_CONSOLECONTROL_H
 #define W203_CANBUS_CONSOLECONTROL_H
 
-#include "mcp2515.h"
-#include "can.h"
+#include "canbuscomm.h"
 class centerConsole {
 public:
-    void lockDoors(MCP2515* m);
-    void unlockDoors(MCP2515* m);
-    void retractHeadRest(MCP2515* m);
-    void toggleESP(MCP2515* m);
+    centerConsole(CanbusComm *c);
+    void lockDoors();
+    void unlockDoors();
+    void retractHeadRest();
+    void toggleESP();
 private:
-    bool sendFrame(can_frame *frame, MCP2515 *m);
+    CanbusComm *c;
 };
 #endif
