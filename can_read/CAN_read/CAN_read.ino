@@ -17,7 +17,6 @@ void setup() {
 
 void loop() {
   if (mcp2515.readMessage(&canMsg) == MCP2515::ERROR_OK) {
-    if (canMsg.can_id == 0x1CA) {
     char buffer[7];
     Serial.print("FRAME:ID=");
     Serial.print(canMsg.can_id);
@@ -31,6 +30,5 @@ void loop() {
       Serial.print(buffer);
     }
     Serial.println();
-  }
   }
 }

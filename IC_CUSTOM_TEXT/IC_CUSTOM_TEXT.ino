@@ -31,6 +31,7 @@ struct can_frame readFrame;
 String message;
 
 void setup() {
+  pinMode(4,  OUTPUT); // Test Button
   pinMode(14, OUTPUT); // Blue LED
   pinMode(15, OUTPUT); // Green LED
   pinMode(16, OUTPUT); // Yellow LED
@@ -139,4 +140,5 @@ void loop() {
   signals->update();
   digitalWrite(clockPin, LOW);
   clock = !clock;
+  
 }

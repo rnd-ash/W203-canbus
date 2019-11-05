@@ -40,12 +40,12 @@ void IC_DISPLAY::sendHeader(const char text[3]) {
     curr_frame.data[1] = 0x20;
     curr_frame.data[2] = 0x00;
     curr_frame.data[3] = checkSumBit;
-    curr_frame.data[4] = 0x05;
-    curr_frame.data[5] = 0x26;
-    curr_frame.data[6] = 0x01;
-    curr_frame.data[7] = 0x00;
+    curr_frame.data[4] = 0x00;
+    curr_frame.data[5] = 0x01;
+    curr_frame.data[6] = 0x12;
+    curr_frame.data[7] = 0xC0;
     c->sendFrame(&curr_frame);
-    delay(2);
+    delay(7);
 }
 
 /*
@@ -168,6 +168,8 @@ uint8_t IC_DISPLAY::calculateBodyCheckSum(String text){
     return 0;
 }
 
+
+
 void IC_DISPLAY::update() {
     if (millis() - lastTime >= refreshIntervalMS) {
         lastTime = millis();
@@ -176,6 +178,7 @@ void IC_DISPLAY::update() {
                 sendBody(currText);
                 this->currText = shiftString();
             } else if (!sendFirst) {
+                this->sendHeader("EXP");
                 sendBody(currText);
                 this->sendFirst = true;
             }

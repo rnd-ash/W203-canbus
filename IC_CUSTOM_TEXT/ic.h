@@ -8,7 +8,7 @@
 #include "canbuscomm.h"
 
 #define IC_SEND_PID 0x1A4
-#define MAX_STR_LENGTH 9
+#define MAX_STR_LENGTH 8
 
 class IC_DISPLAY {
 public:
