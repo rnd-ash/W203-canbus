@@ -6,17 +6,14 @@ baud=sys.argv[2]
 
 ser = serial.Serial(port, baud, timeout = 2)
 
-f=open("dump.csv","w")
+f=open("canbus.dmp","w")
 f.write("Time,ID(Hex),Data(Hex)\n")
 while True:
     time=str(datetime.datetime.now())
     try:
         read=ser.readline().decode().strip('\r\n')
         print(read)
-        parts=str(read).split(",")
-        id=parts[0]
-        data=parts[1]
-        print("TIME: {0}, ID: {1}, DATA: {2}".format(time,id,data))
-        f.write("{0},{1},{2}\n".format(time,id,data))
+        print("TIME: {0}, DATA: {1}".format(time,read))
+        f.write("TIME={0},{1}\n".format(time,read))
     except Exception as e:
         pass
