@@ -18,7 +18,8 @@ public:
         Telephone = 0x05
     };
     unsigned long lastTime;
-    int refreshIntervalMS;
+    void setRefreshRate(int rate);
+    int currentRefreshRate;
     static clusterPage currentPage;
     IC_DISPLAY(CanbusComm *c);
     String textToDisplay;
@@ -28,9 +29,10 @@ private:
     void sendBody(String text);
     void sendHeader(const char text[3]);
     String shiftString();
-    bool needsRotation;
     String currText;
     bool sendFirst;
+    int staticRefreshRate;
+    int scrollRefreshRate;
     uint8_t calculateHeaderCheckSum(const char text[3]);
     uint8_t calculateBodyCheckSum(String text);
     CanbusComm *c;

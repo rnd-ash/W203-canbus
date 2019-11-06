@@ -16,7 +16,6 @@
   #define DPRINTLN(...)
 #endif
 
-
 MCP2515 mcp2515(10);
 
 CanbusComm *cancomm;
@@ -31,7 +30,7 @@ struct can_frame readFrame;
 String message;
 
 void setup() {
-  pinMode(4,  OUTPUT); // Test Button
+  pinMode(4,  OUTPUT); // RF SENSOR
   pinMode(14, OUTPUT); // Blue LED
   pinMode(15, OUTPUT); // Green LED
   pinMode(16, OUTPUT); // Yellow LED
@@ -103,7 +102,7 @@ void bluetoothListenThread() {
     } else if (tmpMsg[0] == 'S') {
       tmpMsg.remove(0, 2);
       int tmp = atoi(tmpMsg.c_str());
-      d->refreshIntervalMS = tmp;
+      d->setRefreshRate(tmp);
     } else if (tmpMsg[0] == 'C') {
       processButtonRequest(tmpMsg[2]);
     } else if (tmpMsg[0] == 'A') {

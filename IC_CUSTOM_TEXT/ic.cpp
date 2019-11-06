@@ -4,14 +4,23 @@
 
 #include "ic.h"
 
+void IC_DISPLAY::setRefreshRate(int rate) {
+    this->scrollRefreshRate = rate;
+    if (currText.length() > ) {
+        this->currentRefreshRate = this->scrollRefreshRate;
+    } else {
+        this->currentRefreshRate = this->staticRefreshRate;
+    }
+}
+
 IC_DISPLAY::clusterPage IC_DISPLAY::currentPage = Audio;
 
 IC_DISPLAY::IC_DISPLAY(CanbusComm *c) {
     this->sendFirst = false;
-    this->needsRotation = false;
-    this->setBodyText("NO BLUETOOTH CONNECTION!");
     this->c = c;
-    this->refreshIntervalMS = 150;
+    this->staticRefreshRate = 2000;
+    this->scrollRefreshRate = 125;
+    this->setBodyText("NO BLUETOOTH CONNECTION!");
     this->lastTime = millis();
 }
 
@@ -171,17 +180,15 @@ uint8_t IC_DISPLAY::calculateBodyCheckSum(String text){
 
 
 void IC_DISPLAY::update() {
-    if (millis() - lastTime >= refreshIntervalMS) {
+    if (millis() - lastTime >= currentRefreshRate) {
         lastTime = millis();
         if(currentPage == clusterPage::Audio) {
-            if (needsRotation) {
-                sendBody(currText);
-                this->currText = shiftString();
-            } else if (!sendFirst) {
-                this->sendHeader("EXP");
-                sendBody(currText);
-                this->sendFirst = true;
-            }
+            sendBody(currText);
+            this->currText = shiftString();
+        } else if (!sendFirst) {
+            this->sendHeader("EXP");
+            sendBody(currText);
+            this->sendFirst = true;
         }
     }
 }
@@ -190,9 +197,9 @@ void IC_DISPLAY::setBodyText(String text) {
     this->currText = text;
     if (text.length() > MAX_STR_LENGTH) {
         this->currText += "   ";
-        this->needsRotation = true;
+        this->currentRefreshRate = scrollRefreshRate;
     } else {
-        this->needsRotation = false;
+        this->currentRefreshRate = staticRefreshRate;
     }
     this->sendFirst = false;
 }
