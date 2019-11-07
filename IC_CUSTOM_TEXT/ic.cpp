@@ -6,7 +6,7 @@
 
 void IC_DISPLAY::setRefreshRate(int rate) {
     this->scrollRefreshRate = rate;
-    if (currText.length() > ) {
+    if (currText.length() > MAX_STR_LENGTH) {
         this->currentRefreshRate = this->scrollRefreshRate;
     } else {
         this->currentRefreshRate = this->staticRefreshRate;
@@ -184,7 +184,9 @@ void IC_DISPLAY::update() {
         lastTime = millis();
         if(currentPage == clusterPage::Audio) {
             sendBody(currText);
-            this->currText = shiftString();
+            if(this->currText.length() > MAX_STR_LENGTH) {
+                this->currText = shiftString();
+            }
         } else if (!sendFirst) {
             this->sendHeader("EXP");
             sendBody(currText);
@@ -199,6 +201,7 @@ void IC_DISPLAY::setBodyText(String text) {
         this->currText += "   ";
         this->currentRefreshRate = scrollRefreshRate;
     } else {
+        this->sendBody(currText);
         this->currentRefreshRate = staticRefreshRate;
     }
     this->sendFirst = false;
