@@ -16,8 +16,6 @@
   #define DPRINTLN(...)
 #endif
 
-MCP2515 mcp2515(10);
-
 CanbusComm *cancomm;
 SignalControls *signals; 
 IC_DISPLAY* d;
@@ -30,32 +28,34 @@ struct can_frame readFrame;
 String message;
 
 void setup() {
-  pinMode(4,  OUTPUT); // RF SENSOR
-  pinMode(14, OUTPUT); // Blue LED
-  pinMode(15, OUTPUT); // Green LED
-  pinMode(16, OUTPUT); // Yellow LED
-  pinMode(17, OUTPUT); // Red LED
-  pinMode(18, OUTPUT); // White (Clock) LED
-  pinMode(19, OUTPUT); // White (Clock) LED
-  cancomm = new CanbusComm(&mcp2515);
+  // LED Pins (order)
+  // 1. Bluetooth TX (14)
+  // 2. Bluetooth RX (15)
+  // 3. CanBus  B TX (16)
+  // 4. CanBus  B RX (17)
+  // 5. CanBus  C TX (4)
+  // 6. CanBus  C RX (5)
+  // 7. Clock LED 1  (18)
+  // 8. Clock LED 2  (19)
+  int ledPins[8] =  { 14, 15, 16, 17, 4, 5, 18, 19 };
+  cancomm = new CanbusComm(10, 8);
   wc = new wheelControls(cancomm);
   d = new IC_DISPLAY(cancomm);
-  bt = new phoneBluetooth(5, 6);
+  bt = new phoneBluetooth(6, 7);
   cc = new centerConsole(cancomm);
   signals = new SignalControls(cancomm);
   Serial.begin(115200);
-  SPI.begin();
-  mcp2515.reset();
-  mcp2515.setBitrate(CAN_83K3BPS);
-  mcp2515.setNormalMode();
-  for (int i = 14; i <= 19; i++) {
-    delay(10);
-    digitalWrite(i, HIGH);
+  for (int led: ledPins) {
+    pinMode(led, OUTPUT);
+    delay(25);
+    digitalWrite(led, HIGH);
   }
-  delay(500);
-  for (int i = 14; i <= 19; i++) {
-    digitalWrite(i, LOW);
+  delay(25);
+  for (int led: ledPins) {
+    delay(25);
+    digitalWrite(led, LOW);
   }
+  delay(25);
   Serial.println("Ready!");
 }
 
@@ -137,7 +137,7 @@ void loop() {
   keyPressThread();
   d->update();
   signals->update();
+  Serial.println(cancomm->frameToString(cancomm->readFrameWithID(CAN_BUS_C, 0x00, 10)));
   digitalWrite(clockPin, LOW);
   clock = !clock;
-  
 }

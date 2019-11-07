@@ -10,7 +10,7 @@ wheelControls::wheelControls(CanbusComm *c) {
 }
 
 wheelControls::key wheelControls::getPressed() {
-    can_frame r = this->c->readFrameWithID(0x1CA, 10);
+    can_frame r = this->c->readFrameWithID(CAN_BUS_B, 0x1CA, 10);
     bool detect = r.can_id == 0x01CA;
     if (detect) {
         readFrame = r;

@@ -442,9 +442,6 @@ class MCP2515
 
     private:
 
-        void startSPI();
-        void endSPI();
-
         ERROR setMode(const CANCTRL_REQOP_MODE mode);
 
         uint8_t readRegister(const REGISTER reg);
@@ -456,6 +453,8 @@ class MCP2515
         void prepareId(uint8_t *buffer, const bool ext, const uint32_t id);
     
     public:
+        void startSPI();
+        void endSPI();
         MCP2515(const uint8_t _CS);
         ERROR reset(void);
         ERROR setConfigMode();

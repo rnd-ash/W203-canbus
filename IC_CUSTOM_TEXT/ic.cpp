@@ -42,7 +42,7 @@ void IC_DISPLAY::sendHeader(const char text[3]) {
     curr_frame.data[5] = text[0];
     curr_frame.data[6] = text[1];
     curr_frame.data[7] = text[2];
-    c->sendFrame(&curr_frame);
+    c->sendFrame(CAN_BUS_B, &curr_frame);
     delay(7);
 
     curr_frame.data[0] = 0x21;
@@ -53,7 +53,7 @@ void IC_DISPLAY::sendHeader(const char text[3]) {
     curr_frame.data[5] = 0x01;
     curr_frame.data[6] = 0x12;
     curr_frame.data[7] = 0xC0;
-    c->sendFrame(&curr_frame);
+    c->sendFrame(CAN_BUS_B, &curr_frame);
     delay(7);
 }
 
@@ -103,7 +103,7 @@ void IC_DISPLAY::sendBody(String text) {
     curr_frame.data[5] = 0x00;
     curr_frame.data[6] = 0x01;
     curr_frame.data[7] = checkSumB;
-    c->sendFrame(&curr_frame);
+    c->sendFrame(CAN_BUS_B, &curr_frame);
     delay(7);
 
     curr_frame.data[0] = 0x21;
@@ -111,7 +111,7 @@ void IC_DISPLAY::sendBody(String text) {
     for (int i = 2; i <=7; i++) {
         curr_frame.data[i] = bodyData[i-2];
     }
-    c->sendFrame(&curr_frame);
+    c->sendFrame(CAN_BUS_B, &curr_frame);
     delay(2);
 
     curr_frame.data[0] = 0x22;
@@ -121,7 +121,7 @@ void IC_DISPLAY::sendBody(String text) {
 
     curr_frame.data[6] = 0x01;
     curr_frame.data[7] = 0x08;
-    c->sendFrame(&curr_frame);
+    c->sendFrame(CAN_BUS_B, &curr_frame);
     delay(2);
 }
 

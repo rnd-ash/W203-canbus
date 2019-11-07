@@ -9,8 +9,22 @@
  * 
  * @author Ashcon Mohseninia
  */
-CanbusComm::CanbusComm(MCP2515 *mcp) {
-    this->m = mcp;
+CanbusComm::CanbusComm(int pinCanB, int pinCanC) {
+    SPI.begin();
+    // Can B MCP2515
+    this->canB = new MCP2515(pinCanB);
+    this->setCanB();
+    this->canB->setBitrate(CAN_83K3BPS);
+    this->canB->setNormalMode();
+    this->canBPin = pinCanB;
+
+    
+    // Can C MCP2515
+    this->canC = new MCP2515(pinCanC);
+    this->setCanC();
+    this->canC->setBitrate(CAN_500KBPS, MCP_8MHZ);
+    this->canC->setNormalMode();
+    this->canCPin = pinCanC;
 }
 
 /**
@@ -20,38 +34,68 @@ CanbusComm::CanbusComm(MCP2515 *mcp) {
  * 
  * @return True if frame was sent OK, False if frame was not sent
  */
-bool CanbusComm::sendFrame(can_frame *f) {
+bool CanbusComm::sendFrame(int canDevice, can_frame *f) {
+    int ledPin = 0;
+    switch (canDevice)
+    {
+    case CAN_BUS_B:
+        setCanB();
+        ledPin = CAN_B_TX_LED;
+        break;
+    case CAN_BUS_C:
+        setCanC();
+        ledPin = CAN_C_TX_LED;
+        break;
+    default:
+        return false;
+    }
     uint8_t attempts = 0;
-    digitalWrite(16, HIGH);
+    digitalWrite(ledPin, HIGH);
     while (attempts <= 50) {
-        if(this->m->sendMessage(f) == MCP2515::ERROR_OK) {
-            digitalWrite(16, LOW);
+        if(this->currentCan->sendMessage(f) == MCP2515::ERROR_OK) {
+            digitalWrite(ledPin, LOW);
             return true;
         } else {
             attempts++;
         }
     }
-    digitalWrite(16, LOW);
+    digitalWrite(ledPin, LOW);
     return false;
 }
 
-can_frame CanbusComm::readFrameWithID(int id, int maxTimeMillis) {
-    unsigned long startTime = millis();
-    while(millis() - startTime < maxTimeMillis) {
-        if (this->m->readMessage(&read_frame) == MCP2515::ERROR_OK) {
-            digitalWrite(17, HIGH);
-            if (this->read_frame.can_id == id) {
-                digitalWrite(17, LOW);
-                return read_frame;
-            }
-        } else {
-            digitalWrite(17, LOW);
-        }
-    }
+can_frame CanbusComm::readFrameWithID(int canDevice, int id, int maxTimeMillis) {
+    int ledPin = 0;
     can_frame error;
     error.can_id = 0x00;
     error.can_dlc = 0x00;
-    digitalWrite(17, LOW);
+    switch (canDevice)
+    {
+    case CAN_BUS_B:
+        setCanB();
+        ledPin = CAN_B_RX_LED;
+        break;
+    case CAN_BUS_C:
+        setCanC();
+        ledPin = CAN_C_RX_LED;
+        break;
+    default:
+        return error;
+    }
+
+    unsigned long startTime = millis();
+    while(millis() - startTime < maxTimeMillis) {
+        digitalWrite(ledPin, HIGH);
+        uint8_t res = this->currentCan->readMessage(&read_frame);
+        if (res == MCP2515::ERROR_OK || res == MCP2515::ERROR_NOMSG) {
+            if (this->read_frame.can_id == id) {
+                digitalWrite(ledPin, LOW);
+                return read_frame;
+            }
+        } else {
+            digitalWrite(ledPin, LOW);
+        }
+    }
+    digitalWrite(ledPin, LOW);
     return error;
 }
 
@@ -78,4 +122,16 @@ String CanbusComm::frameToString(can_frame frame) {
         }
     }
     return msg;
+}
+
+void CanbusComm::setCanB() {
+    currentCan = canB;
+    canC->endSPI();
+    canB->startSPI();
+}
+
+void CanbusComm::setCanC() {
+    currentCan = canC;
+    canB->endSPI();
+    canC->startSPI();
 }
