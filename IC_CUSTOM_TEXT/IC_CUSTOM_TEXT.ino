@@ -6,15 +6,7 @@
 #include "wheel_controls.h"
 #include "canbuscomm.h"
 #include "signals.h"
-
-#define DEBUG
-#ifdef DEBUG
-  #define DPRINT(...) Serial.print(__VA_ARGS__)
-  #define DPRINTLN(...) Serial.println(__VA_ARGS__)
-#else
-  #define DPRINT(...)
-  #define DPRINTLN(...)
-#endif
+#include "debug.h"
 
 CanbusComm *cancomm;
 SignalControls *signals; 
@@ -96,13 +88,16 @@ static long intervalDisplayBody = 140;
 void bluetoothListenThread() {
   String tmpMsg = bt->readMessage();
   if (tmpMsg != "") {
+    DPRINTLN("Incomming BT message: '"+tmpMsg+"'");
     if (tmpMsg[0] == 'B') {
       tmpMsg.remove(0, 2);
       d->setBodyText(tmpMsg);
     } else if (tmpMsg[0] == 'S') {
       tmpMsg.remove(0, 2);
       int tmp = atoi(tmpMsg.c_str());
-      d->setRefreshRate(tmp);
+      if(tmp != 0){
+        d->setRefreshRate(tmp);
+      }
     } else if (tmpMsg[0] == 'C') {
       processButtonRequest(tmpMsg[2]);
     } else if (tmpMsg[0] == 'A') {
@@ -137,7 +132,6 @@ void loop() {
   keyPressThread();
   d->update();
   signals->update();
-  Serial.println(cancomm->frameToString(cancomm->readFrameWithID(CAN_BUS_C, 0x00, 10)));
   digitalWrite(clockPin, LOW);
   clock = !clock;
 }

@@ -14,7 +14,7 @@
 
 class CanbusComm {
 public:
-    static String frameToString(can_frame frame);
+    static String frameToString(can_frame *f);
     CanbusComm(int pinCanB, int pinCanC);
     bool sendFrame(int canDevice, can_frame *f);
     can_frame readFrameWithID(int canDevice, int id, int maxTimeMillis);

@@ -1,4 +1,5 @@
 #include "console_control.h"
+#include "debug.h"
 
 
 centerConsole::centerConsole(CanbusComm *c) {
@@ -6,8 +7,11 @@ centerConsole::centerConsole(CanbusComm *c) {
 }
 
 
+/**
+ * Simulates a button press of the lock doors button on the center console
+ */
 void centerConsole::lockDoors() {
-    Serial.println("Locking doors");
+    DPRINTLN("Locking doors");
     can_frame f;
     f.can_id = 0x002C;
     f.can_dlc = 0x03;
@@ -19,8 +23,11 @@ void centerConsole::lockDoors() {
     }
 }
 
+/**
+ * Simulates a button press of the unlock doors button on the center console
+ */
 void centerConsole::unlockDoors() {
-    Serial.println("Unlocking doors");
+    DPRINTLN("Unlocking doors");
     can_frame f;
     f.can_id = 0x002C;
     f.can_dlc = 0x03;
@@ -32,8 +39,11 @@ void centerConsole::unlockDoors() {
     }
 }
 
+/**
+ * Simulates a button press of the lower rear headrests button on the center console
+ */
 void centerConsole::retractHeadRest() {
-    Serial.println("Lowering head rests");
+    DPRINTLN("Lowering head rests");
     can_frame f;
     f.can_id = 0x002C;
     f.can_dlc = 0x03;
@@ -45,8 +55,11 @@ void centerConsole::retractHeadRest() {
     }
 }
 
+/**
+ * Simulates a button press of the ESP button on the center console
+ */
 void centerConsole::toggleESP() {
-    Serial.println("Toggling ESP");
+    DPRINTLN("Toggling ESP");
     can_frame f;
     f.can_id = 0x002C;
     f.can_dlc = 0x03;

@@ -1,4 +1,5 @@
 #include "phoneBluetooth.h"
+#include "debug.h"
 
 phoneBluetooth::phoneBluetooth(int rxPin, int txPin) {
     this->bluetooth = new SoftwareSerial(rxPin, txPin);
@@ -15,7 +16,7 @@ phoneBluetooth::phoneBluetooth(int rxPin, int txPin) {
 
 void phoneBluetooth::writeMessage(String msg) {
     digitalWrite(15, HIGH);
-    Serial.println("Sending '"+msg+"' to BT");
+    DPRINTLN("Sending '"+msg+"' to BT");
     for(char i : msg) {
         bluetooth->write((byte) i);
     }
