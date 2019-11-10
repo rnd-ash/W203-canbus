@@ -2,7 +2,7 @@
 #include <mcp2515.h>
 
 struct can_frame canMsg;
-MCP2515 mcp2515(10);
+MCP2515 mcp2515(8);
 
 
 void setup() {
@@ -10,7 +10,7 @@ void setup() {
   SPI.begin();
   
   mcp2515.reset();
-  mcp2515.setBitrate(CAN_83K3BPS);
+  mcp2515.setBitrate(CAN_500KBPS, MCP_8MHZ);
   mcp2515.setNormalMode();
   Serial.println("PID, DATA");
 }
