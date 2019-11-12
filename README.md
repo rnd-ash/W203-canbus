@@ -1,7 +1,18 @@
-# W203 canbus project
+# Mercedes canbus project for older W203/W209/W211 cars
+A proof of concept application using an Arduino and Android phone to add extra features to these older Mercedes cars by tapping into their systems via canbus.
 
-Originally a project to render custom text on the IC Cluster, but has grown quite a bit with new features
+## Project status
+So far, the project has grown well out of proportion and has ended up being a way to modernise the W203 slightly. The arduino now requires a HC-06 bluetooth module, which then connects to the android application running on an android device. This now serves to give 'hands free music control' to the car, the steering wheel button presses in the AUX Page are now relayed to the phone in order to change tracks. The phone also then tells the Arduino via bluetooth what track is playing. The arduino will then send can frames to the IC Cluster to display the current track playing.
 
+## Controls enabled via the android application
+* Turn on / off indicators and hazard lights
+* Set custom interval for indicator clicks (faster / slower)
+* Unlock doors
+* Lock doors
+* Toggle ESP
+* Retract rear headrests
+* Display custom text on the IC display
+* Set scroll speed of text across the IC display (only if text > 8 characters)
 
 ## Repo contents:
 * IC_CUSTOM_TEXT - Contains Arduino code for project
@@ -31,18 +42,5 @@ I am using the X30/7 connector to connect to Canbus B. This is a hub (with multi
 ### Connection to Can C
 Canbus C is a little more difficult. I could not find a connector like for Bus B. Instead, I ran wires to the back of the Instrument cluster. Connected to the instrument are 2 green wires. The Solid green wire is CanH+, and the green wire with a white stripe is CanL-.
 
-## Project status
-So far, the project has grown well out of proportion and has ended up being a way to modernise the W203 slightly. The arduino now requires a HC-06 bluetooth module, which then connects to the android application running on an android device. This now serves to give 'hands free music control' to the car, the steering wheel button presses in the AUX Page are now relayed to the phone in order to change tracks. The phone also then tells the Arduino via bluetooth what track is playing. The arduino will then send can frames to the IC Cluster to display the current track playing.
-
-## Controls enabled via the android application
-* Turn on / off indicators and hazard lights
-* Set custom interval for indicator clicks (faster / slower)
-* Unlock doors
-* Lock doors
-* Toggle ESP
-* Retract rear headrests
-* Display custom text on the IC display
-* Set scroll speed of text across the IC display (only if text > 8 characters)
-
-### Limitations
+### Project Limitations
 Currently, I have only worked out how to display 1 line of maximum 8 characters on the IC Display. This means that if the track name is more than 8 characters, the Arduino will shift the string by 1 every 150MS, resulting in the text scrolling across the screen to display a longer message. However, the IC Displays response time is appaling, resulting in somtimes a slushy text animation. idealy, I would like to find out how to lower the size of the text on the display in order to display more than 8 characters at a time
