@@ -16,16 +16,13 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
 
     private var isReading = false
     private var queue = ArrayList<String>()
-    private var busy = false
     val readSerialBT = Thread() {
         Log.i("BT", "Reader thread started!")
         var buffer = ""
         while(true) {
-            if(!busy) {
-                when (readString()) {
-                    "N" -> CarCommunicator.nextSong()
-                    "P" -> CarCommunicator.previousSong()
-                }
+            when (readString()) {
+                "N" -> CarCommunicator.nextSong()
+                "P" -> CarCommunicator.previousSong()
             }
             Thread.sleep(50)
         }
@@ -51,33 +48,11 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
     }
 
     fun sendString(msg: String) {
-        while(busy) {
-            Thread.sleep(1)
-        }
-        var attempts = 1
-        loop@ while (attempts < 10) {
-            val id = (1..9).random()
-            val sendMsg = "|$id:$msg\r"
-            Log.d("BT", "Sending message attempt $attempts: '$msg'")
-            bluetoothSocket.getOutputStream().write(sendMsg.toByteArray(Charsets.US_ASCII))
-            bluetoothSocket.getOutputStream().flush()
-            busy = true
-            var read = ""
-            val timeout = 2000L
-            val startTime = System.currentTimeMillis()
-            while (read.isEmpty()) {
-                if (System.currentTimeMillis() - startTime >= timeout) {
-                    throw IOException("BT cannot connect!")
-                }
-                Thread.sleep(5)
-                read = readString()
-            }
-            when(read) {
-                "OK" -> break@loop
-            }
-            attempts++
-        }
-        busy = false
+        val sendMsg = msg.toByteArray(Charsets.US_ASCII)
+        val bytes = byteArrayOf(sendMsg.size.toByte()) + sendMsg
+        Log.d("BT", "Sending message: '$msg'")
+        bluetoothSocket.getOutputStream().write(bytes)
+        bluetoothSocket.getOutputStream().flush()
     }
 
     fun disconnect() {

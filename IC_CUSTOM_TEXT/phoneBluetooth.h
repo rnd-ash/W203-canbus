@@ -13,10 +13,7 @@ public:
     void writeMessage(String msg);
     String readMessage();
 private:
-    String lastMsg;
-    int lastID;
     SoftwareSerial *bluetooth;
-    String lastSeralizedMessage;
 };
 
 
