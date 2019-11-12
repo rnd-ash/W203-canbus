@@ -27,19 +27,18 @@ String phoneBluetooth::readMessage() {
     bool isCompleteString = false;
     if (bluetooth->available()) {
         digitalWrite(14, HIGH);
-        uint8_t buffer[128];
-        bluetooth->readBytes(buffer, 128);
-        digitalWrite(14, LOW);
-        uint8_t length = buffer[0];
-        if (length > 0) {
+        uint8_t len = bluetooth->read();
+        if (len > 0) {
+            uint8_t buffer[len];
+            bluetooth->readBytes(buffer, len);
+            digitalWrite(14, LOW);
             String ret = "";
-            for (int i = 1; i < length+1; i++) {
+            for (int i = 0; i < len; i++) {
                 ret += (char) buffer[i];
             }
             return ret;
-        } else {
-            return "";
         }
     }
+    digitalWrite(14, LOW);
     return "";
 }
