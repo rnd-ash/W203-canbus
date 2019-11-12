@@ -114,11 +114,26 @@ void keyPressThread() {
   wheelControls::key key = wc->getPressed();
   switch (key)
   {
-  case 0x01:
-    bt->writeMessage("N");
+  case wheelControls::key::ArrowUp:
+    if (!d->inDiagMode) {
+      bt->writeMessage("N");
+    } else {
+      d->diagData = "UP Press";
+    }
     break;
-  case 0x02:
-    bt->writeMessage("P");
+  case wheelControls::key::ArrowDown:
+    if (!d->inDiagMode) {
+      bt->writeMessage("P");
+    } else {
+      d->diagData = "DN Press";
+    }
+    break;
+  case wheelControls::key::TelUp:
+    d->inDiagMode = true;
+    break;
+  case wheelControls::key::TelDown:
+    d->inDiagMode = false;
+    break;
   default:
     break;
   }

@@ -40,8 +40,12 @@ CanbusComm::CanbusComm(int pinCanB, int pinCanC) {
  * 
  * @return True if frame was sent OK, False if frame was not sent
  */
-bool CanbusComm::sendFrame(int canDevice, can_frame *f) {
-    DPRINTLN("Sending can frame: "+this->frameToString(f));
+bool CanbusComm::sendFrame(byte canDevice, can_frame *f) {
+    #ifdef DEBUG
+        char x = canDevice == CAN_BUS_B ? 'B' : 'C';
+        Serial.println("Sending to bus "+String(x)+": "+this->frameToString(f));
+    #endif
+
     int ledPin = 0;
     switch (canDevice)
     {
@@ -60,16 +64,9 @@ bool CanbusComm::sendFrame(int canDevice, can_frame *f) {
     }
     uint8_t attempts = 0;
     digitalWrite(ledPin, HIGH);
-    while (attempts <= 50) {
-        if(this->currentCan->sendMessage(f) == MCP2515::ERROR_OK) {
-            digitalWrite(ledPin, LOW);
-            return true;
-        } else {
-            attempts++;
-        }
-    }
+    MCP2515::ERROR res = this->currentCan->sendMessage(f);           
     digitalWrite(ledPin, LOW);
-    return false;
+    return res == MCP2515::ERROR_OK;
 }
 
 /**
@@ -82,7 +79,7 @@ bool CanbusComm::sendFrame(int canDevice, can_frame *f) {
  * @param maxTimeMillis Max time allowed to attempt to locate frame
  * 
  */
-can_frame CanbusComm::readFrameWithID(int canDevice, int id, int maxTimeMillis) {
+can_frame CanbusComm::readFrameWithID(byte canDevice, int id, int maxTimeMillis) {
     int ledPin = 0;
     can_frame error;
     error.can_id = 0x00;
@@ -107,8 +104,8 @@ can_frame CanbusComm::readFrameWithID(int canDevice, int id, int maxTimeMillis) 
     // Check if maxTimeMillis has been reached yet
     while(millis() - startTime < maxTimeMillis) {
         digitalWrite(ledPin, HIGH);
-        uint8_t res = this->currentCan->readMessage(&read_frame);
-        if (res == MCP2515::ERROR_OK || res == MCP2515::ERROR_NOMSG) {
+        MCP2515::ERROR res = this->currentCan->readMessage(&read_frame);
+        if (res == MCP2515::ERROR_OK) {
             if (this->read_frame.can_id == id) {
                 digitalWrite(ledPin, LOW);
                 // Found the frame we are looking for!
@@ -139,15 +136,15 @@ String CanbusComm::frameToString(can_frame *f) {
     msg += buffer;
     msg += " BYTES: ";
     char tmp[2];
-    for (int k = 0; k < f->can_dlc; k++)  {
+    for (uint8_t k = 0; k < f->can_dlc; k++)  {
         char buffer[5];
         sprintf(buffer,"%02X", f->data[k]);
         msg += buffer;
         msg += " ";
     }
     msg += " CHARS: ";
-    for (int k = 0; k < f->can_dlc; k++)  {
-        int data = f->data[k];
+    for (uint8_t k = 0; k < f->can_dlc; k++)  {
+        uint8_t data = f->data[k];
         if (data >= 32 && data <= 126) {
             msg += (char) data;
         } else {

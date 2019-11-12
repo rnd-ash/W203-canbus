@@ -16,8 +16,8 @@ class CanbusComm {
 public:
     static String frameToString(can_frame *f);
     CanbusComm(int pinCanB, int pinCanC);
-    bool sendFrame(int canDevice, can_frame *f);
-    can_frame readFrameWithID(int canDevice, int id, int maxTimeMillis);
+    bool sendFrame(byte canDevice, can_frame *f);
+    can_frame readFrameWithID(byte canDevice, int id, int maxTimeMillis);
 private:
     void setCanB();
     void setCanC();
@@ -25,7 +25,7 @@ private:
     MCP2515 *canB;
     MCP2515 *canC;
     MCP2515 *currentCan;
-    int canBPin;
-    int canCPin;
+    uint8_t canBPin;
+    uint8_t canCPin;
 };
 #endif

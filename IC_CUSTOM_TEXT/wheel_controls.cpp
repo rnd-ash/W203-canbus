@@ -4,6 +4,7 @@
 
 
 #include "wheel_controls.h"
+#include "debug.h"
 
 wheelControls::wheelControls(CanbusComm *c) {
     this->c = c;
@@ -33,25 +34,25 @@ wheelControls::key wheelControls::getPressed() {
             switch (readFrame.data[1])
             {
             case 0x10:
-                Serial.println("Vol UP Pressed");
+                DPRINTLN("Vol UP Pressed");
                 return VolUp;
             case 0x20:
-                Serial.println("Vol Down pressed");
+                DPRINTLN("Vol Down pressed");
                 return VolDown;
             case 0x40:
-                Serial.println("Phone Answer pressed");
+                DPRINTLN("Phone Answer pressed");
                 return TelUp;
             case 0x80:
-                Serial.println("Phone Declined pressed");
+                DPRINTLN("Phone Declined pressed");
                 return TelDown;
             case 0x01:
-                Serial.println("Page Up pressed");
+                DPRINTLN("Page Up pressed");
                 return ArrowUp;
             case 0x02:
-                Serial.println("Page Down pressed");
+                DPRINTLN("Page Down pressed");
                 return ArrowDown;
             default:
-                Serial.println("Unidentified keypress!");
+                DPRINTLN("Unidentified keypress!");
                 return None;
             }
         }

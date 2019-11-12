@@ -19,20 +19,23 @@ public:
     };
     unsigned long lastTime;
     void setRefreshRate(int rate);
-    int currentRefreshRate;
     static clusterPage currentPage;
     IC_DISPLAY(CanbusComm *c);
     String textToDisplay;
     void setBodyText(String text);
     void update();
+    String diagData;
+    bool inDiagMode;
 private:
+    String resize(String s, int lb, int ub);
     void sendBody(String text);
-    void sendHeader(const char text[3]);
+    void sendHeader(String header);
     String shiftString();
     String currText;
     bool sendFirst;
     int staticRefreshRate;
     int scrollRefreshRate;
+    int currentRefreshRate;
     uint8_t calculateHeaderCheckSum(const char text[3]);
     uint8_t calculateBodyCheckSum(String text);
     CanbusComm *c;
