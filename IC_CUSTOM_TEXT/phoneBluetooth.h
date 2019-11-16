@@ -9,9 +9,10 @@
 #include <SoftwareSerial.h>
 class phoneBluetooth {
 public:
+    char message[256];
     phoneBluetooth(int rxPin, int txPin);
-    void writeMessage(String msg);
-    String readMessage();
+    void writeMessage(const char msg[]);
+    void readMessage();
 private:
     SoftwareSerial *bluetooth;
 };

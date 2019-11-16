@@ -14,10 +14,6 @@ IC_DISPLAY* d;
 wheelControls* wc;
 phoneBluetooth* bt;
 centerConsole* cc;
-struct can_frame readFrame;
-
-
-String message;
 
 void setup() {
   // LED Pins (order)
@@ -79,25 +75,18 @@ void processButtonRequest(char x) {
     signals->disableAll();
     break;
   default:
-    Serial.println("cannot process center console request "+x);
     break;
   }
 }
 
-static long intervalDisplayBody = 140;
 void bluetoothListenThread() {
-  String tmpMsg = bt->readMessage();
+  bt->readMessage();
+  String tmpMsg = String(bt->message);
   if (tmpMsg != "") {
     DPRINTLN("Incomming BT message: '"+tmpMsg+"'");
     if (tmpMsg[0] == 'B') {
       tmpMsg.remove(0, 2);
-      d->setBodyText(tmpMsg);
-    } else if (tmpMsg[0] == 'S') {
-      tmpMsg.remove(0, 2);
-      int tmp = atoi(tmpMsg.c_str());
-      if(tmp != 0){
-        d->setRefreshRate(tmp);
-      }
+      d->setBody(tmpMsg.c_str());
     } else if (tmpMsg[0] == 'C') {
       processButtonRequest(tmpMsg[2]);
     } else if (tmpMsg[0] == 'A') {
@@ -110,6 +99,7 @@ void bluetoothListenThread() {
   }
 }
 
+
 void keyPressThread() {
   wheelControls::key key = wc->getPressed();
   switch (key)
@@ -118,14 +108,14 @@ void keyPressThread() {
     if (!d->inDiagMode) {
       bt->writeMessage("N");
     } else {
-      d->diagData = "UP Press";
+      d->nextDiagPage();
     }
     break;
   case wheelControls::key::ArrowDown:
-    if (!d->inDiagMode) {
-      bt->writeMessage("P");
+    if(!d->inDiagMode) {
+    bt->writeMessage("P");
     } else {
-      d->diagData = "DN Press";
+      d->prevDiagPage();
     }
     break;
   case wheelControls::key::TelUp:
@@ -133,6 +123,22 @@ void keyPressThread() {
     break;
   case wheelControls::key::TelDown:
     d->inDiagMode = false;
+    break;
+  case wheelControls::key::ArrowUpLong:
+   // TODO
+    break;
+  case wheelControls::key::ArrowDownLong:
+    // TODO
+    break;
+  case wheelControls::key::TelUpLong:
+    if (!d->inDiagMode) {
+      bt->writeMessage("X");
+    }
+    break;
+  case wheelControls::key::TelDownLong:
+    if (!d->inDiagMode) {
+      bt->writeMessage("Z");
+    }
     break;
   default:
     break;

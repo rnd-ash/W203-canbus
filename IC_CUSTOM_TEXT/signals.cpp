@@ -33,9 +33,7 @@ void SignalControls::update() {
     if (millis() - lastTime > this->intervalMS) {
         lastTime = millis();
         if (f.can_dlc != 0x00) {
-            if(!c->sendFrame(CAN_BUS_B,&f)) {
-                Serial.println("Error sending signal frame: "+c->frameToString(&f));
-            }
+            c->sendFrame(CAN_BUS_B,&f);
         }
     }
 }

@@ -15,5 +15,6 @@ public:
     void toggleESP();
 private:
     CanbusComm *c;
+    can_frame f;
 };
 #endif

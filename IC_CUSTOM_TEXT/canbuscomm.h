@@ -14,14 +14,17 @@
 
 class CanbusComm {
 public:
-    static String frameToString(can_frame *f);
+    void addFilter(int id);
+    String* frameToString(can_frame *f);
     CanbusComm(int pinCanB, int pinCanC);
     bool sendFrame(byte canDevice, can_frame *f);
     can_frame readFrameWithID(byte canDevice, int id, int maxTimeMillis);
+    void pollForFrame(byte canDevice);
 private:
     void setCanB();
     void setCanC();
     can_frame read_frame;
+    String frameString;
     MCP2515 *canB;
     MCP2515 *canC;
     MCP2515 *currentCan;

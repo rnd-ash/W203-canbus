@@ -11,20 +11,22 @@ phoneBluetooth::phoneBluetooth(int rxPin, int txPin) {
     }
 }
 
-void phoneBluetooth::writeMessage(String msg) {
+void phoneBluetooth::writeMessage(const char msg[]) {
     digitalWrite(15, HIGH);
-    DPRINTLN("Sending '"+msg+"' to BT");
-    for(char i : msg) {
-        bluetooth->write((byte) i);
+    DPRINTLN("Sending '"+String(msg)+"' to BT");
+    for(uint8_t i = 0; i < strlen(msg); i++) {
+        bluetooth->write(msg[i]);
     }
     bluetooth->write('\r');
     bluetooth->flush();
     digitalWrite(15, LOW);
 }
 
-String phoneBluetooth::readMessage() {
-    String msg = "";
+void phoneBluetooth::readMessage() {
     bool isCompleteString = false;
+    for (int i = 0; i < 256; i++) {
+        this->message[i] = 0x00;
+    }
     if (bluetooth->available()) {
         digitalWrite(14, HIGH);
         uint8_t len = bluetooth->read();
@@ -32,13 +34,11 @@ String phoneBluetooth::readMessage() {
             uint8_t buffer[len];
             bluetooth->readBytes(buffer, len);
             digitalWrite(14, LOW);
-            String ret = "";
             for (int i = 0; i < len; i++) {
-                ret += (char) buffer[i];
+                this->message[i] = (char) buffer[i];
             }
-            return ret;
+            return;
         }
     }
     digitalWrite(14, LOW);
-    return "";
 }

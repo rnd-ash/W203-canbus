@@ -8,59 +8,88 @@
 
 wheelControls::wheelControls(CanbusComm *c) {
     this->c = c;
+    this->keydown = false;
+    this->lastPress = None;
+    this->lastPressTime = millis();
+    this->readFrame.can_id = 0x01CA;
+    this->readFrame.can_dlc = 0x03;
+    this->readFrame.data[0] = 0x00;
+    this->readFrame.data[1] = 0x00;
+    this->readFrame.data[2] = 0x00;
+}
+
+wheelControls::key getKey(__u8 k) {
+    switch (k)
+    {
+    case 0x01:
+        return wheelControls::key::ArrowUp;
+    case 0x02:
+        return wheelControls::key::ArrowDown;
+    case 0x40:
+        return wheelControls::key::TelUp;
+    case 0x80:
+        return wheelControls::key::TelDown;
+    default:
+        return wheelControls::key::None;
+    }
 }
 
 wheelControls::key wheelControls::getPressed() {
     can_frame r = this->c->readFrameWithID(CAN_BUS_B, 0x1CA, 10);
     bool detect = r.can_id == 0x01CA;
-    if (detect) {
-        readFrame = r;
-        if (readFrame.data[1] == lastFrame.data[1]) {
+    // Detect if user is in the audio page before processing key presses
+    if (detect && r.data[0] == 0x03) {
+        // User has began to press a button
+        if (r.data[1] != 0x00 && readFrame.data[1] == 0x00) {
+            DPRINTLN(F("Key down detected"));
+            this->keydown = true;
+            setCurrentPage();
+            readFrame = r;
+            lastPressTime = millis();
+            this->lastPress = getKey(r.data[1]);
             return None;
         }
-        lastFrame = readFrame;
-        // No key press
-        if (readFrame.data[1] == 0x00) {
-            return None;
+        // User is still holding down the key! 
+        else if (r.data[1] != 0x00 && readFrame.data[1] != 0x00) {
+            readFrame = r;
+            if ((millis() - lastPressTime) > LONG_PRESS_TIME_MS && this->keydown) {
+                this->keydown = false;
+                switch (this->lastPress)
+                {
+                case ArrowUp:
+                    DPRINTLN(F("Long arrow up pressed!"));
+                    return ArrowUpLong;
+                case ArrowDown:
+                    DPRINTLN(F("Long arrow down pressed!"));
+                    return ArrowDownLong;
+                case TelDown:
+                    DPRINTLN(F("Long tel down pressed!"));
+                    return TelDownLong;
+                case TelUp:
+                    DPRINTLN(F("Long tel up pressed!"));
+                    return TelUpLong;
+                default:
+                    DPRINTLN(F("Unknown long keypress"));
+                    return None;
+                }
+            }
         }
-        setCurrentPage();
-        // First byte of this packet indicates which page the user is in on the IC cluster
-        // 0x03 -> Audio page
-        // 0x05 -> Telephone page
-        if (readFrame.data[0] != 0x03) {
-            Serial.println("User is not in audio page!");
-            return None;
-        } else {
-            switch (readFrame.data[1])
-            {
-            case 0x10:
-                DPRINTLN("Vol UP Pressed");
-                return VolUp;
-            case 0x20:
-                DPRINTLN("Vol Down pressed");
-                return VolDown;
-            case 0x40:
-                DPRINTLN("Phone Answer pressed");
-                return TelUp;
-            case 0x80:
-                DPRINTLN("Phone Declined pressed");
-                return TelDown;
-            case 0x01:
-                DPRINTLN("Page Up pressed");
-                return ArrowUp;
-            case 0x02:
-                DPRINTLN("Page Down pressed");
-                return ArrowDown;
-            default:
-                DPRINTLN("Unidentified keypress!");
-                return None;
+        // User has let go of the key 
+        else {
+            readFrame = r;
+            if (this->keydown) {
+                DPRINTLN(F("Simple key tap detected"));
+                this->keydown = false;
+                return this->lastPress;
             }
         }
     }
+    // Default return if not in Audio page or if CanFrame not found
     return None;
 }
 
 void wheelControls::setCurrentPage() {
+    /*
     switch (readFrame.data[0])
     {
     case 0x03:
@@ -73,4 +102,5 @@ void wheelControls::setCurrentPage() {
         IC_DISPLAY::currentPage = IC_DISPLAY::clusterPage::Unknown;
         break;
     }
+    */
 }
