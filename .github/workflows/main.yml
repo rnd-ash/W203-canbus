@@ -1,0 +1,30 @@
+name: compile-Arduino
+
+on: [push]
+
+jobs:
+  compile-arduino:
+
+    strategy:
+      matrix:
+        arduino-platform: ["arduino:avr"]
+        include:
+          - arduino-platform: "arduino:avr"
+            fqbn: "arduino:avr:uno"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1.0.0
+        
+      - name: Install platform
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install ${{ matrix.arduino-platform }}
+      - name: Compile sketch
+        run: arduino-cli compile --fqbn ${{ matrix.fqbn }} ./IC_CUSTOM_TEXT
+       
