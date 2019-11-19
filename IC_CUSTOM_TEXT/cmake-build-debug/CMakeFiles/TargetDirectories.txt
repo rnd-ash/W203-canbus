@@ -1,3 +1,0 @@
-/home/ashcon/code/W203-canbus/IC_CUSTOM_TEXT/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/ashcon/code/W203-canbus/IC_CUSTOM_TEXT/cmake-build-debug/CMakeFiles/w203_canbus.dir
-/home/ashcon/code/W203-canbus/IC_CUSTOM_TEXT/cmake-build-debug/CMakeFiles/edit_cache.dir

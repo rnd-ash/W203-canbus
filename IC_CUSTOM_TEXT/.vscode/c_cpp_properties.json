@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Arduino",
             "includePath": [
                 "/home/ashcon/.arduino15/packages/arduino/tools/**",
                 "/home/ashcon/Arduino/**",
@@ -10,10 +10,13 @@
             "forcedInclude": [
                 "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.1/cores/arduino/Arduino.h"
             ],
-            "intelliSenseMode": "gcc-x64",
-            "compilerPath": "/usr/bin/gcc",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "intelliSenseMode": "clang-x64",
             "cStandard": "c11",
-            "cppStandard": "c++17",
+            "cppStandard": "c++11",
             "defines": [ "USBCON" ]
         }
     ],

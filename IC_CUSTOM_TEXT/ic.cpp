@@ -1,7 +1,8 @@
 #include "ic.h"
 #include "debug.h"
 
-IC_DISPLAY::IC_DISPLAY(CanbusComm *c) {
+
+IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
     char displayBuffer[10];
     char charBuffer[256];
     this-> c = c;
@@ -12,8 +13,9 @@ IC_DISPLAY::IC_DISPLAY(CanbusComm *c) {
     this->setBody("NO BT");
     this->isSending = false;
     this->diagPage = 0;
-    this->d = new DIAG_DISPLAY(this->c);
     this->diagBuffer.reserve(9);
+    this->currFrame = 0;
+    this->d = d;
 
     diag_frame.can_dlc = 8;
     diag_frame.can_id = 0x1c;
@@ -29,6 +31,8 @@ IC_DISPLAY::IC_DISPLAY(CanbusComm *c) {
     lastKeepAliveMillis = millis();
     diag_frame.data[1] = 0x3e;
     diag_frame.data[2] = 0x02;
+
+    isUpdating = false;
 }
 
 void IC_DISPLAY::setBody(const char* body) {
@@ -36,7 +40,6 @@ void IC_DISPLAY::setBody(const char* body) {
     for (int i = 0; i < strlen(body); i++) {
         bodyCharBuffer[i] = body[i];
     }
-
     int bufferLen = strlen(bodyCharBuffer);
     textLen = bufferLen;
     if (bufferLen > MAX_IC_BODY_CHARS) {
@@ -46,8 +49,42 @@ void IC_DISPLAY::setBody(const char* body) {
         bodyCharBuffer[bufferLen+3] = ' ';
         textLen+=4;
     }
-    sendBody();
+    setBody();
 }
+
+void IC_DISPLAY::setHeader(const char* header) {
+    /*
+    memset(headerFramePayload, 0x00, sizeof(headerFramePayload));
+    int slen = min(8, strlen(header));
+    int len = strlen(header) + 5;
+    headerFramePayload[0] = 0x10;
+    headerFramePayload[1] = len;
+    headerFramePayload[2] = 0x03;
+    headerFramePayload[3] = 0x29;
+    headerFramePayload[4] = 0x00;
+    headerFramePayload[8] = 0x21;
+    for (int i = 0; i < min(3, slen); i++) headerFramePayload[5+i] = header[i];
+    for (int i = 0; i < min(8, slen); i++) headerFramePayload[9+i] = header[i+3];
+    uint8_t hash = 0xd3;
+    for (int i = 5; i < 8; i++) hash -= headerFramePayload[i];
+    for (int i = 9; i < 14; i++) hash -= headerFramePayload[i];
+    for (int i = 0; i < len; i++) hash -= i;
+    headerFramePayload[len + 2] = hash;
+
+    for (uint8_t i = 0; i <= 7; i++) {
+        curr_frame.data[i] = headerFramePayload[i];
+    }
+    c->sendFrame(CAN_BUS_B, &curr_frame);
+    delay(7);
+    for (uint8_t i = 8; i <= 15; i++) {
+        curr_frame.data[i-8] = headerFramePayload[i];
+    }
+    c->sendFrame(CAN_BUS_B, &curr_frame);
+    delay(2);
+    */
+}
+
+
 void IC_DISPLAY::setDiagText() {
     switch (diagPage)
     {
@@ -58,7 +95,7 @@ void IC_DISPLAY::setDiagText() {
         diagBuffer = d->getSpeed();
         break;
     case 2:
-        diagBuffer = d->getRPM();
+        diagBuffer = d->getRpm();
         break;
     case 3:
         diagBuffer = d->getCoolantTemp();
@@ -70,29 +107,30 @@ void IC_DISPLAY::setDiagText() {
 
 
 void IC_DISPLAY::update() {
-    if (millis() - lastKeepAliveMillis >= KWP2000_KEEP_ALIVE_FREQ) {
-        lastKeepAliveMillis = millis();
-        DPRINTLN(F("Keeping KWP2000 diagnostic mode alive!"));
-        c->sendFrame(CAN_BUS_B, &diag_frame);
+    if (isUpdating) {
+        asyncSendBody();
+        return;
     }
     if (inDiagMode) {
         if (millis() - lastUpdateMillis > DIAG_MODE_UPDATE_FREQ) {
             setDiagText();
+            setBody();
             lastUpdateMillis = millis();
-            sendBody();
+            nextUpdateMillis = millis();
         }
     }
     else if (textLen > MAX_IC_BODY_CHARS) {
         if (millis() - lastUpdateMillis > SCROLLING_UPDATE_FREQ) {
             lastUpdateMillis = millis();
-            sendBody();
+            nextUpdateMillis = millis();
+            setBody();
             this->shiftText();
         }
     } else {
         if (millis() - lastUpdateMillis > STATIC_UPDATE_FREQ) {
             lastUpdateMillis = millis();
-            sendBody();
-            //sendHeader();
+            nextUpdateMillis = millis();
+            setBody();
         }
     }
 }
@@ -105,7 +143,7 @@ void IC_DISPLAY::shiftText() {
     bodyCharBuffer[textLen-1] = first;
 }
 
-void IC_DISPLAY::sendBody() {
+void IC_DISPLAY::setBody() {
     uint8_t strLen = 0;
     char displayBuffer[12];
     memset(displayBuffer, 0x00, sizeof(displayBuffer));
@@ -120,7 +158,6 @@ void IC_DISPLAY::sendBody() {
             displayBuffer[i] = bodyCharBuffer[i];
         }
     }
-    uint8_t framePayload[24] = {0x00};
     uint8_t len = strLen + 9;
     memset(framePayload, 0x00, sizeof(framePayload));
     framePayload[0] = 0x10;
@@ -143,29 +180,44 @@ void IC_DISPLAY::sendBody() {
     for (uint8_t i = 10; i < 16; i++) hash -=framePayload[i];
     for (uint8_t i = 17; i < 23; i++) hash -=framePayload[i];
     framePayload[(len > 13) ? (len + 3) : (len + 2)] = hash;
+    isUpdating = true;
+}
 
-    for (uint8_t i = 0; i <= 7; i++) {
-        curr_frame.data[i] = framePayload[i];
+uint8_t IC_DISPLAY::sendFrame() {
+    if (currFrame == 0) {
+        for (uint8_t i = 0; i <= 7; i++) {
+            curr_frame.data[i] = framePayload[i];
+        }
+        c->sendFrame(CAN_BUS_B, &curr_frame);
+        currFrame++;
+        return 7;
+    } else if (currFrame == 1) {
+        for (uint8_t i = 8; i <= 15; i++) {
+            curr_frame.data[i-8] = framePayload[i];
+        }
+        c->sendFrame(CAN_BUS_B, &curr_frame);
+        currFrame++;
+        return 2;
+    } else if (currFrame == 2) {
+        for (uint8_t i = 16; i <= 23; i++) {
+            curr_frame.data[i-16] = framePayload[i];
+        }
+        c->sendFrame(CAN_BUS_B, &curr_frame);
+        currFrame = 0;
+        isUpdating = false;
+        return 2;
     }
-    c->sendFrame(CAN_BUS_B, &curr_frame);
-    delay(7);
-    for (uint8_t i = 8; i <= 15; i++) {
-        curr_frame.data[i-8] = framePayload[i];
-    }
-    c->sendFrame(CAN_BUS_B, &curr_frame);
-    delay(2);
+}
 
-    for (uint8_t i = 16; i <= 23; i++) {
-        curr_frame.data[i-16] = framePayload[i];
-    }
-    c->sendFrame(CAN_BUS_B, &curr_frame);
-    delay(2);
 
-    DPRINTLN("SENT "+String(displayBuffer)+" TO IC");
+void IC_DISPLAY::asyncSendBody() {
+    if (millis() >= nextUpdateMillis) {
+        nextUpdateMillis = lastUpdateMillis + sendFrame();
+    }
 }
 
 void IC_DISPLAY::nextDiagPage() {
-    if (diagPage == d->screens) {
+    if(diagPage == DIAG_SCREENS) {
         diagPage = 0;
     } else {
         diagPage++;
@@ -173,9 +225,9 @@ void IC_DISPLAY::nextDiagPage() {
 }
 
 void IC_DISPLAY::prevDiagPage(){
-    if (diagPage == 0) {
-        diagPage = d->screens;
-    } else {
-        diagPage--;
-    }
+   if(diagPage == 0) {
+       diagPage = DIAG_SCREENS;
+   } else {
+       diagPage--;
+   }
 }

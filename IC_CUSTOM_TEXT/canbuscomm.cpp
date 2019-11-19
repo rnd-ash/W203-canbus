@@ -69,17 +69,7 @@ bool CanbusComm::sendFrame(byte canDevice, can_frame *f) {
     return res == MCP2515::ERROR_OK;
 }
 
-/**
- * Attempts to read a can frame from canbus.
- * 
- * If no can frame is found matching the query, a blank frame with ID if 0x00 and 0 length is returned
- * 
- * @param canDevice Bus number to read from (0 -> Can B, 1 -> Can C)
- * @param id ID of can frame to attempt to scan for
- * @param maxTimeMillis Max time allowed to attempt to locate frame
- * 
- */
-can_frame CanbusComm::readFrameWithID(byte canDevice, int id, int maxTimeMillis) {
+can_frame CanbusComm::pollForFrame(byte canDevice) {
     int ledPin = 0;
     can_frame error;
     error.can_id = 0x00;
@@ -101,49 +91,14 @@ can_frame CanbusComm::readFrameWithID(byte canDevice, int id, int maxTimeMillis)
     }
     digitalWrite(ledPin, HIGH);
     MCP2515::ERROR res = this->currentCan->readMessage(&read_frame);
-    if (res == MCP2515::ERROR_OK) {
-        if (this->read_frame.can_id == id) {
-            digitalWrite(ledPin, LOW);
-            // Found the frame we are looking for!
-            return read_frame;
-        }
-    } else {
-        digitalWrite(ledPin, LOW);
-    }
-    return error;
-}
-
-void CanbusComm::pollForFrame(byte canDevice) {
-    int ledPin = 0;
-    can_frame error;
-    error.can_id = 0x00;
-    error.can_dlc = 0x00;
-    switch (canDevice)
-    {
-    case CAN_BUS_B:
-        setCanB();
-        ledPin = CAN_B_RX_LED;
-        break;
-    case CAN_BUS_C:
-        setCanC();
-        ledPin = CAN_C_RX_LED;
-        break;
-    default:
-        // Incorrect canDevice ID. Return error
-        Serial.println(F("Invalid canDevice ID."));
-        return;
-    }
-    digitalWrite(ledPin, HIGH);
-    MCP2515::ERROR res = this->currentCan->readMessage(&read_frame);
     digitalWrite(ledPin, LOW);
     if (res == MCP2515::ERROR_OK) {
-
+        return read_frame;
+    } else {
+        return error;
     }
 }
 
-void CanbusComm::addFilter(int id) {
-
-}
 
 /**
  * Function to convert a can frame to String. String has the following format:

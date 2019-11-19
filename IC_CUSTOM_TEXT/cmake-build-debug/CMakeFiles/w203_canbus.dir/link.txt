@@ -1,2 +1,0 @@
-/usr/bin/ar qc libw203_canbus.a  CMakeFiles/w203_canbus.dir/ic.cpp.o CMakeFiles/w203_canbus.dir/icPacketBatch.cpp.o
-/usr/bin/ranlib libw203_canbus.a

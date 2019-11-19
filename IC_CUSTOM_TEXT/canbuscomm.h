@@ -14,12 +14,10 @@
 
 class CanbusComm {
 public:
-    void addFilter(int id);
     String* frameToString(can_frame *f);
     CanbusComm(int pinCanB, int pinCanC);
     bool sendFrame(byte canDevice, can_frame *f);
-    can_frame readFrameWithID(byte canDevice, int id, int maxTimeMillis);
-    void pollForFrame(byte canDevice);
+    can_frame pollForFrame(byte canDevice);
 private:
     void setCanB();
     void setCanC();

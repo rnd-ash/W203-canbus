@@ -3,6 +3,9 @@
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
     "C_Cpp.loggingLevel": "Debug",
     "files.associations": {
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "eeprom.h": "c",
+        "string_view": "cpp",
+        "chrono": "cpp"
     }
 }

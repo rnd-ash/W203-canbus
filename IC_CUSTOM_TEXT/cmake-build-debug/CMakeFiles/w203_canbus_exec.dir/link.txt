@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/w203_canbus_exec.dir/main.cpp.o CMakeFiles/w203_canbus_exec.dir/ic.cpp.o CMakeFiles/w203_canbus_exec.dir/icPacketBatch.cpp.o  -o w203_canbus_exec 

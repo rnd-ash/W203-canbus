@@ -1,19 +1,15 @@
 #include <SoftwareSerial.h>
 #include "mcp2515.h"
-#include "ic.h"
 #include "phoneBluetooth.h"
-#include "console_control.h"
-#include "wheel_controls.h"
 #include "canbuscomm.h"
-#include "signals.h"
 #include "debug.h"
+#include "Car.h"
+#include "Music.h"
+#include "EngineData.h"
+#include "ic.h"
 
-CanbusComm *cancomm;
-SignalControls *signals; 
-IC_DISPLAY* d;
-wheelControls* wc;
 phoneBluetooth* bt;
-centerConsole* cc;
+Car *car;
 
 void setup() {
   // LED Pins (order)
@@ -26,12 +22,7 @@ void setup() {
   // 7. Clock LED 1  (18)
   // 8. Clock LED 2  (19)
   int ledPins[8] =  { 14, 15, 16, 17, 4, 5, 18, 19 };
-  cancomm = new CanbusComm(10, 8);
-  wc = new wheelControls(cancomm);
-  d = new IC_DISPLAY(cancomm);
-  bt = new phoneBluetooth(6, 7);
-  cc = new centerConsole(cancomm);
-  signals = new SignalControls(cancomm);
+  car = new Car(new CanbusComm(10, 8));
   Serial.begin(115200);
   for (int led: ledPins) {
     pinMode(led, OUTPUT);
@@ -47,112 +38,11 @@ void setup() {
   Serial.println("Ready!");
 }
 
-void processButtonRequest(char x) {
-  switch (x)
-  {
-  case '1':
-    cc->toggleESP();
-    break;
-  case '2':
-    cc->lockDoors();
-    break;
-  case '3':
-    cc->unlockDoors();
-    break;
-  case '4':
-    cc->retractHeadRest();
-    break;
-  case '5':
-    signals->enableRightIndicator();
-    break;
-  case '6':
-    signals->enableLeftIndicator();
-    break;
-  case '7':
-    signals->enableHazards();
-    break;
-  case '8':
-    signals->disableAll();
-    break;
-  default:
-    break;
-  }
-}
-
-void bluetoothListenThread() {
-  bt->readMessage();
-  String tmpMsg = String(bt->message);
-  if (tmpMsg != "") {
-    DPRINTLN("Incomming BT message: '"+tmpMsg+"'");
-    if (tmpMsg[0] == 'B') {
-      tmpMsg.remove(0, 2);
-      d->setBody(tmpMsg.c_str());
-    } else if (tmpMsg[0] == 'C') {
-      processButtonRequest(tmpMsg[2]);
-    } else if (tmpMsg[0] == 'A') {
-      tmpMsg.remove(0, 2);
-      int tmp = atoi(tmpMsg.c_str());
-      signals->intervalMS = tmp;
-    } else {
-      //TODO other messages
-    }
-  }
-}
-
-
-void keyPressThread() {
-  wheelControls::key key = wc->getPressed();
-  switch (key)
-  {
-  case wheelControls::key::ArrowUp:
-    if (!d->inDiagMode) {
-      bt->writeMessage("N");
-    } else {
-      d->nextDiagPage();
-    }
-    break;
-  case wheelControls::key::ArrowDown:
-    if(!d->inDiagMode) {
-    bt->writeMessage("P");
-    } else {
-      d->prevDiagPage();
-    }
-    break;
-  case wheelControls::key::TelUp:
-    d->inDiagMode = true;
-    break;
-  case wheelControls::key::TelDown:
-    d->inDiagMode = false;
-    break;
-  case wheelControls::key::ArrowUpLong:
-   // TODO
-    break;
-  case wheelControls::key::ArrowDownLong:
-    // TODO
-    break;
-  case wheelControls::key::TelUpLong:
-    if (!d->inDiagMode) {
-      bt->writeMessage("X");
-    }
-    break;
-  case wheelControls::key::TelDownLong:
-    if (!d->inDiagMode) {
-      bt->writeMessage("Z");
-    }
-    break;
-  default:
-    break;
-  }
-}
-
 bool clock = false;
 void loop() {
   int clockPin = clock ? 18 : 19;
   digitalWrite(clockPin, HIGH);
-  bluetoothListenThread();
-  keyPressThread();
-  d->update();
-  signals->update();
+  car->loop();
   digitalWrite(clockPin, LOW);
   clock = !clock;
 }

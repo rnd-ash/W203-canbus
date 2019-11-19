@@ -2,7 +2,7 @@
 #include <mcp2515.h>
 
 struct can_frame canMsg;
-MCP2515 mcp2515(8);
+MCP2515 mcp2515(10);
 
 
 void setup() {
@@ -10,11 +10,12 @@ void setup() {
   SPI.begin();
   
   mcp2515.reset();
-  mcp2515.setBitrate(CAN_500KBPS, MCP_8MHZ);
+  mcp2515.setBitrate(CAN_83K3BPS);
   mcp2515.setNormalMode();
   Serial.println("PID, DATA");
 }
 
+unsigned long time = millis();
 void loop() {
   if (mcp2515.readMessage(&canMsg) == MCP2515::ERROR_OK) {
     char buffer[7];

@@ -5,7 +5,9 @@
 #ifndef W203_CANBUS_WHEELCONTROL_H
 #define W203_CANBUS_WHEELCONTROL_H
 
-#include "canbuscomm.h"
+#include "can.h"
+#include "debug.h"
+#include "HardwareSerial.h"
 
 #define LONG_PRESS_TIME_MS 2000
 
@@ -26,8 +28,8 @@ public:
         TelUpLong = 0x41,
         TelDownLong = 0x81
     };
-    wheelControls(CanbusComm *c);
-    key getPressed();
+    wheelControls();
+    key getPressed(can_frame* r);
 private:
     unsigned long lastPressTime;
     key lastPress;
@@ -35,6 +37,5 @@ private:
     void setCurrentPage();
     can_frame readFrame;
     can_frame lastFrame;
-    CanbusComm *c;
 };
 #endif

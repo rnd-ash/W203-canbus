@@ -18,6 +18,7 @@ import org.w3c.dom.Text
 class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var manager : AudioManager
+        lateinit var ctx: Context
     }
 
     lateinit var textView: TextView
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        ctx = this.applicationContext
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -164,30 +166,41 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver, iF)
     }
 
-    var lastTrack: String = ""
+    var trackName: String = ""
     var wasPlaying = false
 
     val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.i("TRK", "Track modified!")
-            val action = intent.action
-            val isPlaying = intent.getBooleanExtra("playing", false)
-            val player = intent.action
-            val trackName = intent.getStringExtra("track")
-            val albumName = intent.getStringExtra("album")
-            val artistName = intent.getStringExtra("artist")
-            if (trackName != lastTrack) {
-                lastTrack = trackName
-                var msg = trackName
-                if (artistCheck.isChecked) {
-                    msg += " by $artistName "
+            val intentAction = intent.action!!;
+
+            if (intentAction.contains(".metadatachanged")) {
+                println("meta changed")
+                trackName = intent.getStringExtra("track")!!;
+                val trackDuration = (intent.getIntExtra("length", 0) / 1000).toInt()
+                Log.d("TK", "Track is $trackDuration seconds long")
+                ic.sendTrackName(trackName);
+                ic.sendByteArray('M',
+                    0x20,
+                    byteArrayOf(
+                        (trackDuration/256).toInt().toByte(),
+                        (trackDuration%256).toInt().toByte()
+                    )
+                )
+            } else if (intentAction.contains(".playbackstatechanged")) {
+                println("Play state changed!");
+                val isPlaying = intent.getBooleanExtra("playing", true)
+                val progress = (intent.getLongExtra("position", 0) / 1000).toInt()
+                when(isPlaying) {
+                    true -> {
+                        ic.btManager.sendString("M:P")
+                        //ic.btManager.sendString("M")
+                    }
+                    false -> {
+                        ic.btManager.sendString("M:X")
+                    }
                 }
-                if (albumCheck.isChecked) {
-                    msg += " in album $albumName"
-                }
-                ic.sendBodyText(msg)
+                textView.text = "Track: $trackName\nPlaying?: $isPlaying"
             }
-            textView.text = "Intent:$action\nTrack: $trackName\nArtist: $artistName\nAlbum: $albumName\nPlaying: $isPlaying"
         }
     }
 

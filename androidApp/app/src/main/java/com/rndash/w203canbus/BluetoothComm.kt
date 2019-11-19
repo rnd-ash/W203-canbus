@@ -23,6 +23,8 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
             when (readString()) {
                 "N" -> CarCommunicator.nextSong()
                 "P" -> CarCommunicator.previousSong()
+                "X" -> CarCommunicator.invokeAssistant()
+                "Z" -> CarCommunicator.killAssistant()
             }
             Thread.sleep(50)
         }
@@ -49,9 +51,17 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
 
     fun sendString(msg: String) {
         val sendMsg = msg.toByteArray(Charsets.US_ASCII)
-        val bytes = byteArrayOf(sendMsg.size.toByte()) + sendMsg
-        Log.d("BT", "Sending message: '$msg'")
-        bluetoothSocket.getOutputStream().write(bytes)
+        sendMsg(sendMsg)
+    }
+
+    fun sendBytes(bytes: ByteArray) {
+        Log.d("BT", "Sending Bytes: '$bytes'")
+        sendMsg(bytes);
+    }
+
+    private fun sendMsg(bytes: ByteArray) {
+        val ba = byteArrayOf(bytes.size.toByte()) + bytes
+        bluetoothSocket.getOutputStream().write(ba)
         bluetoothSocket.getOutputStream().flush()
     }
 

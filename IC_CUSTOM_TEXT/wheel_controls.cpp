@@ -4,10 +4,9 @@
 
 
 #include "wheel_controls.h"
-#include "debug.h"
+#include "wiring_private.h"
 
-wheelControls::wheelControls(CanbusComm *c) {
-    this->c = c;
+wheelControls::wheelControls() {
     this->keydown = false;
     this->lastPress = None;
     this->lastPressTime = millis();
@@ -34,24 +33,23 @@ wheelControls::key getKey(__u8 k) {
     }
 }
 
-wheelControls::key wheelControls::getPressed() {
-    can_frame r = this->c->readFrameWithID(CAN_BUS_B, 0x1CA, 10);
-    bool detect = r.can_id == 0x01CA;
+wheelControls::key wheelControls::getPressed(can_frame* r) {
+    bool detect = r->can_id == 0x01CA;
     // Detect if user is in the audio page before processing key presses
-    if (detect && r.data[0] == 0x03) {
+    if (detect && r->data[0] == 0x03) {
         // User has began to press a button
-        if (r.data[1] != 0x00 && readFrame.data[1] == 0x00) {
+        if (r->data[1] != 0x00 && readFrame.data[1] == 0x00) {
             DPRINTLN(F("Key down detected"));
             this->keydown = true;
             setCurrentPage();
-            readFrame = r;
+            readFrame = *r;
             lastPressTime = millis();
-            this->lastPress = getKey(r.data[1]);
+            this->lastPress = getKey(r->data[1]);
             return None;
         }
         // User is still holding down the key! 
-        else if (r.data[1] != 0x00 && readFrame.data[1] != 0x00) {
-            readFrame = r;
+        else if (r->data[1] != 0x00 && readFrame.data[1] != 0x00) {
+            readFrame = *r;
             if ((millis() - lastPressTime) > LONG_PRESS_TIME_MS && this->keydown) {
                 this->keydown = false;
                 switch (this->lastPress)
@@ -76,7 +74,7 @@ wheelControls::key wheelControls::getPressed() {
         }
         // User has let go of the key 
         else {
-            readFrame = r;
+            readFrame = *r;
             if (this->keydown) {
                 DPRINTLN(F("Simple key tap detected"));
                 this->keydown = false;

@@ -5,11 +5,11 @@
 #ifndef W203_CANBUS_PHONEBLUETOOTH_H
 #define W203_CANBUS_PHONEBLUETOOTH_H
 
-#include <wiring_private.h>
-#include <SoftwareSerial.h>
+#include "wiring_private.h"
+#include "SoftwareSerial.h"
 class phoneBluetooth {
 public:
-    char message[256];
+    char message[128];
     phoneBluetooth(int rxPin, int txPin);
     void writeMessage(const char msg[]);
     void readMessage();

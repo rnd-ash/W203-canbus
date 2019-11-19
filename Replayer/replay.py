@@ -20,13 +20,13 @@ for index, line in enumerate(lines):
     except Exception as e:
         break
     frameData=line.rstrip('\n').split(",")[1].split(":")
-    frameID = int(frameData[1].split("=")[1])
+    frameIDStr = frameData[1].split("=")[1]
+    frameID = int(frameIDStr)
     frameLen = int(frameData[2].split("=")[1])
     frameBytes = frameData[3:]
     frameBytes = [int(x, 16) for x in frameBytes]
     if frameID == 1048:
-        print(frameData)
         idh.setData(frameID, frameBytes)
-        print(idh.getValueFromOffset(56,8))
-    #time.sleep((nextTime.timestamp() - currtime.timestamp()))
+        print("{0} -> {1}".format(frameID,frameBytes))
+    time.sleep((nextTime.timestamp() - currtime.timestamp()))
     

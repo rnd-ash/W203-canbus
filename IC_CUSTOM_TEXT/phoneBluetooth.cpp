@@ -24,9 +24,7 @@ void phoneBluetooth::writeMessage(const char msg[]) {
 
 void phoneBluetooth::readMessage() {
     bool isCompleteString = false;
-    for (int i = 0; i < 256; i++) {
-        this->message[i] = 0x00;
-    }
+    memset(message, 0x00, sizeof(message));
     if (bluetooth->available()) {
         digitalWrite(14, HIGH);
         uint8_t len = bluetooth->read();
