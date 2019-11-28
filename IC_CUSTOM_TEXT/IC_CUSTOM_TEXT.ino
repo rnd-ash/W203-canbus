@@ -20,7 +20,7 @@ void setup() {
   // 5. CanBus  C TX (4)
   // 6. CanBus  C RX (5)
   // 7. Clock LED 1  (18)
-  // 8. Clock LED 2  (19)
+  // 8. Clock LED 2  (3)
   int ledPins[8] =  { 14, 15, 16, 17, 4, 5, 18, 19 };
   car = new Car(new CanbusComm(10, 8));
   Serial.begin(115200);

@@ -14,19 +14,26 @@ import java.nio.charset.Charset
 class BluetoothComm(private var device: BluetoothDevice, private var secure: Boolean,
                     private var adapter: BluetoothAdapter) {
 
+    var isConnected = false
     private var isReading = false
     private var queue = ArrayList<String>()
     val readSerialBT = Thread() {
         Log.i("BT", "Reader thread started!")
         var buffer = ""
         while(true) {
-            when (readString()) {
-                "N" -> CarCommunicator.nextSong()
-                "P" -> CarCommunicator.previousSong()
-                "X" -> CarCommunicator.invokeAssistant()
-                "Z" -> CarCommunicator.killAssistant()
+            if (isConnected) {
+                when (readString()) {
+                    "N" -> CarCommunicator.nextSong()
+                    "P" -> CarCommunicator.previousSong()
+                    "X" -> CarCommunicator.invokeAssistant()
+                    "Z" -> CarCommunicator.killAssistant()
+                }
             }
-            Thread.sleep(50)
+            try {
+                Thread.sleep(50)
+            } catch (e: InterruptedException) {
+                break
+            }
         }
     }
 
@@ -61,11 +68,24 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
 
     private fun sendMsg(bytes: ByteArray) {
         val ba = byteArrayOf(bytes.size.toByte()) + bytes
-        bluetoothSocket.getOutputStream().write(ba)
-        bluetoothSocket.getOutputStream().flush()
+        try {
+            bluetoothSocket.getOutputStream().write(ba)
+            bluetoothSocket.getOutputStream().flush()
+        } catch (e: IOException) {
+            Log.e("BT", "Arduino disconnected!")
+            if (isConnected) {
+                try {
+                    bluetoothSocket.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            isConnected = false
+        }
     }
 
     fun disconnect() {
+        isConnected = false
         readSerialBT.interrupt()
         bluetoothSocket.getInputStream().close()
         bluetoothSocket.getOutputStream().close()
@@ -74,30 +94,32 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
 
     @Throws(IOException::class)
     fun connect() : BluetoothSocketWrapper {
-        var success = false
+        adapter.cancelDiscovery()
         while(selectSocket()) {
-            adapter.cancelDiscovery()
             try {
                 bluetoothSocket.connect()
-                success = true
+                isConnected = true
                 break
             } catch (e: IOException) {
                 try {
                     bluetoothSocket = FallbackBluetoothSocket(bluetoothSocket.getUnderlyingSocket())
                     Thread.sleep(500)
                     bluetoothSocket.connect()
-                    success = true
+                    isConnected = true
                     break
                 } catch (e: FallbackException) {
                     Log.e("BT", "Cannot connect via fallback!")
+                    break
                 } catch (e: InterruptedException) {
                     Log.e("BT", "Interrupted!")
+                    break
                 } catch (e: IOException) {
                     Log.e("BT", "Fallback failed!. Cancelling", e)
+                    break
                 }
             }
         }
-        if(!success) {
+        if(!isConnected) {
             throw IOException("Cannot connect to device: ${device.address}")
         } else {
             readSerialBT.start()

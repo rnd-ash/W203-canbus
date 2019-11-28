@@ -123,6 +123,11 @@ String* CanbusComm::frameToString(can_frame *f) {
         sprintf(byteBuffer,"%02X ", f->data[k]);
         frameString += byteBuffer;
     }
+    if(f->can_dlc < 8) {
+        for (uint8_t k = f->can_dlc; k < 8; k++) {
+            frameString += F("   ");
+        }
+    }
     frameString += F(" CHARS: ");
     for (uint8_t k = 0; k < f->can_dlc; k++)  {
         uint8_t data = f->data[k];

@@ -14,15 +14,12 @@ class Music {
         void update();
         bool isPlaying();
         void setText(const char* track);
-        void setArtist(const char* artist);
-        char* getTrack();
-        char* getArtist();
+        char* getDisplayText();
         float progressPercent();
     private:
         unsigned long lastUpdateTime;
         bool playing;
-        char trackName[64];
-        char artist[32];
+        char trackName[32];
 };
 
 #endif

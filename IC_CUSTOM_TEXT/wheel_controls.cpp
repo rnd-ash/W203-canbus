@@ -5,6 +5,7 @@
 
 #include "wheel_controls.h"
 #include "wiring_private.h"
+#include "ic.h"
 
 wheelControls::wheelControls() {
     this->keydown = false;
@@ -36,12 +37,12 @@ wheelControls::key getKey(__u8 k) {
 wheelControls::key wheelControls::getPressed(can_frame* r) {
     bool detect = r->can_id == 0x01CA;
     // Detect if user is in the audio page before processing key presses
-    if (detect && r->data[0] == 0x03) {
+    if (detect) {
+        setCurrentPage(r);
         // User has began to press a button
         if (r->data[1] != 0x00 && readFrame.data[1] == 0x00) {
             DPRINTLN(F("Key down detected"));
             this->keydown = true;
-            setCurrentPage();
             readFrame = *r;
             lastPressTime = millis();
             this->lastPress = getKey(r->data[1]);
@@ -86,19 +87,17 @@ wheelControls::key wheelControls::getPressed(can_frame* r) {
     return None;
 }
 
-void wheelControls::setCurrentPage() {
-    /*
-    switch (readFrame.data[0])
+void wheelControls::setCurrentPage(can_frame* r) {
+    switch (r->data[0])
     {
     case 0x03:
-        IC_DISPLAY::currentPage = IC_DISPLAY::clusterPage::Audio;
+        IC_DISPLAY::page = IC_DISPLAY::PAGES::AUDIO;
         break;
     case 0x05:
-        IC_DISPLAY::currentPage = IC_DISPLAY::clusterPage::Telephone;
+        IC_DISPLAY::page = IC_DISPLAY::PAGES::TELEPHONE;
         break;
     default:
-        IC_DISPLAY::currentPage = IC_DISPLAY::clusterPage::Unknown;
+        IC_DISPLAY::page = IC_DISPLAY::PAGES::OTHER;
         break;
     }
-    */
 }

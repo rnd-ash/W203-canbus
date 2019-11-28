@@ -34,7 +34,7 @@ private:
     unsigned long lastPressTime;
     key lastPress;
     bool keydown;
-    void setCurrentPage();
+    void setCurrentPage(can_frame* r);
     can_frame readFrame;
     can_frame lastFrame;
 };

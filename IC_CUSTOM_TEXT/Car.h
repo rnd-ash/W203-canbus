@@ -1,6 +1,5 @@
 #ifndef W203_CANBUS_CAR_H
 #define W203_CANBUS_CAR_H
-
 #include "canbuscomm.h"
 #include "wheel_controls.h"
 #include "ic.h"
@@ -27,6 +26,7 @@ class Car {
         EngineData *engine;
         bool isLocked;
         bool lockJobDone;
+        bool phoneConnected = false;
 };
 
 #endif

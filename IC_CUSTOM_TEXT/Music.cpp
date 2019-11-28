@@ -54,6 +54,6 @@ void Music::setText(const char* track) {
     }
 }
 
-char* Music::getTrack() {
+char* Music::getDisplayText() {
     return this->trackName;
 }

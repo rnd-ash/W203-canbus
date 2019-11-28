@@ -26,9 +26,9 @@ void Car::processCanFrame() {
                 f.can_dlc = 4;
                 f.data[3] = 0x44;
                 f.data[4] = 0x04;
-                for (int i = 0; i < 2000; i++) {
+                for (int i = 0; i < 1000; i++) {
                     c->sendFrame(CAN_BUS_B, &f);
-                    delay(5);
+                    delay(10);
                 }
                 lockJobDone = true;
             }
@@ -38,7 +38,10 @@ void Car::processCanFrame() {
         }
     } else if (f.can_id == 0x0002) {
         engine->rpm = (f.data[2] << 8) | (f.data[3]);
-        engine->isOn = f.data[2] == 0xFF;
+        engine->isOn = f.data[2] != 0xFF;
+        engine->coolantTemp = f.data[4] - 40;
+    } else if (f.can_id == 0x000c) {
+        engine->speed = ((int) f.data[1] * 5) / 8;
     }
 }
 
@@ -47,7 +50,8 @@ void Car::processBluetoothRequest() {
     int len = strlen(bluetooth->message);
     char* ptr = bluetooth->message;
     if (len > 0) {
-        DPRINTLN("Incomming message -> "+String(bluetooth->message));
+        phoneConnected = true;
+        DPRINTLN("Incomming message -> " + String(bluetooth->message));
         // Track data
         if (ptr[0] == 'M') {
             if (ptr[2] == 'X' && len == 3) {
@@ -59,31 +63,36 @@ void Car::processBluetoothRequest() {
             } else if (ptr[1] == ' '){
                 int duration = (byte) ptr[2] * 256 + (byte)ptr[3];
                 music->setSeconds(duration);
+            } else {
             }
             updateMusic();
         } else if (ptr[0] == 'B') {
             ic->setBody(ptr+2);
+        } else if (ptr[0] == '!') {
+            music->pause();
+            ic->setBody("APP EXIT!");
+            phoneConnected = false;
         } else {
             String unknown;
             for (int i = 0; i < len; i++) {
                 unknown += ptr[i];
             }
-            DPRINTLN("Unknown message -> "+unknown);
         }
     }
 }
 
 void Car::processKeyPress(can_frame* f) {
     wheelControls::key k = wheel->getPressed(f);
-    if(!ic->inDiagMode) {
+    if(!ic->inDiagMode && IC_DISPLAY::page == IC_DISPLAY::PAGES::AUDIO) {
         switch(k) {
             case wheelControls::ArrowUp:
-                bluetooth->writeMessage("N");
+                if (phoneConnected) bluetooth->writeMessage("N");
                 break;
             case wheelControls::ArrowDown:
-                bluetooth->writeMessage("P");
+                if (phoneConnected) bluetooth->writeMessage("P");
                 break;
             case wheelControls::TelUp:
+                ic->diagSetHeader();
                 ic->inDiagMode = true;
                 break;
             case wheelControls::TelDown:
@@ -94,7 +103,7 @@ void Car::processKeyPress(can_frame* f) {
             default:
                 break;
         }
-    } else {
+    } else if (IC_DISPLAY::page == IC_DISPLAY::PAGES::AUDIO){
         switch(k) {
             case wheelControls::ArrowUp:
                 ic->nextDiagPage();
@@ -103,6 +112,7 @@ void Car::processKeyPress(can_frame* f) {
                 ic->prevDiagPage();
                 break;
             case wheelControls::TelDown:
+                ic->setHeader("BLTH");
                 ic->inDiagMode = false;
                 break;
             case wheelControls::TelUp:
@@ -118,10 +128,14 @@ void Car::processKeyPress(can_frame* f) {
 
 void Car::updateMusic() {
     if (music->isPlaying()) {
-        ic->setBody(music->getTrack());
-        DPRINTLN(String(music->getTrack()));
+        if (strlen(music->getDisplayText()) != 0) {
+            ic->setBody(music->getDisplayText());
+        } else {
+            ic->setBody("Track: ??");
+        }
+        DPRINTLN(String(music->getDisplayText()));
     } else {
-        ic->setBody("--PAUSED--");
+        ic->setBody("PAUSED");
     }
 }
 
@@ -130,8 +144,6 @@ void Car::drawMusicProgress() {
         lastUpdateMillis = millis();
         if(music->isPlaying()  && music->totalSeconds > 1) {
             String txt = String(music->elapsedSeconds)+"/"+String(music->totalSeconds);
-            //ic->setHeader(txt.c_str()); // Max of 8 chars
-            ic->setHeader("AS3 ");
         }
     }
 }
@@ -139,11 +151,13 @@ void Car::drawMusicProgress() {
 
 void Car::loop() {
     if(!isLocked) {
-        processCanFrame();
         processBluetoothRequest();
         ic->update();
-        music->update();
-        drawMusicProgress();
+        if (phoneConnected) {
+            music->update();
+            drawMusicProgress();
+        }
+        processCanFrame();
     } else {
         processCanFrame();
     }

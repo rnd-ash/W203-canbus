@@ -13,6 +13,7 @@ import java.io.IOException
 import java.lang.Exception
 
 class CarCommunicator(private val device: BluetoothDevice, private val adapter: BluetoothAdapter, private val context: Context) {
+    var shouldQuit = false
     companion object {
         fun nextSong() {
             val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
@@ -36,64 +37,42 @@ class CarCommunicator(private val device: BluetoothDevice, private val adapter: 
         }
     }
 
-    val t = Thread(){
-        Looper.prepare()
-        while(true) {
-            if (!isConnected) {
-                btManager = BluetoothComm(device, false, adapter)
-                openConnection()
-            } else {
-                Thread.sleep(5000L)
-            }
+    var btManager = BluetoothComm(device, false, adapter)
+
+    fun toggleArtist(checked: Boolean) = safeCommunication {
+        when(checked) {
+            false -> btManager.sendString("MAF")
+            true -> btManager.sendString("MAT")
         }
     }
-
-
-
-    var btManager = BluetoothComm(device, false, adapter)
-    private var isConnected = false
-
+    fun ping() =  btManager.sendString("-")
     fun sendBodyText(msg: String) = safeCommunication { btManager.sendString("B:$msg") }
 
     fun sendTrackName(name: String) = safeCommunication { btManager.sendString("M-$name") }
-
+    fun sendArtistName(name: String) = safeCommunication { btManager.sendString("M_$name") }
     fun sendHeaderText(msg: String) = safeCommunication{ btManager.sendString("H:$msg") }
     fun sendByteArray(id: Char, sep: Byte, bytes: ByteArray) = safeCommunication {
         btManager.sendBytes(byteArrayOf(id.toByte(), sep) + bytes)
     }
-    fun setScrollSpeed(intervalMS: Int) = safeCommunication { btManager.sendString("S:$intervalMS") }
-    fun setInidcatorSpeed(intervalMS: Int) = safeCommunication { btManager.sendString("A:$intervalMS") }
 
     private inline fun safeCommunication(x: () -> Unit) {
-        if (isConnected) {
+        if (btManager.isConnected) {
             try {
                 x()
             } catch (e: IOException) {
-                isConnected = false
+                Log.e("IC", "Oops. Skipping action")
             }
+        } else {
+            Log.e("IC", "Not connected. Skipping action")
         }
     }
-
-
-    fun toggleESP() = safeCommunication { btManager.sendString("C:1") }
-    fun lockDoors() = safeCommunication { btManager.sendString("C:2") }
-    fun unlockDoors() = safeCommunication { btManager.sendString("C:3") }
-    fun retractHeadRest() = safeCommunication { btManager.sendString("C:4") }
-    fun enableRightIndicator() = safeCommunication { btManager.sendString("C:5") }
-    fun enableLeftIndicator() = safeCommunication { btManager.sendString("C:6") }
-    fun enableHazards() = safeCommunication { btManager.sendString("C:7") }
-    fun disableSignalLights() = safeCommunication { btManager.sendString("C:8") }
 
     fun openConnection() {
         try {
             btManager.connect()
-            isConnected = true
             Toast.makeText(context, "Connected!", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(context, "Cannot connect to BT!", Toast.LENGTH_SHORT).show()
-        }
-        if (!t.isAlive) {
-            t.start()
         }
     }
 
@@ -105,10 +84,56 @@ class CarCommunicator(private val device: BluetoothDevice, private val adapter: 
         return (0..128).random()
     }
 
+    /**
+     * Thread to constantly check if Arduino is responding. If not, try and reconnect
+     */
+    var isScanning = false
+    val t = Thread() {
+        while(true) {
+            var shouldReconnect = true
+            if (btManager.isConnected) {
+                Log.d("BT", "Pinging")
+                try {
+                    ping()
+                    shouldReconnect = false
+                    isScanning = false
+                    context.startService(Intent(context, ConnectService::class.java).setAction("connect"))
+                } catch (e: Exception) {
+                    shouldReconnect = true
+                    context.startService(Intent(context, ConnectService::class.java).setAction("disconnect"))
+                    Log.e("BT", "Ping failed")
+                }
+            }
+            if (shouldReconnect) {
+                try {
+                    isScanning = true
+                    context.startService(Intent(context, ConnectService::class.java).setAction("scan"))
+                    btManager.connect()
+                } catch (e: Exception) {
 
+                }
+            }
+            try {
+                Thread.sleep(5000L)
+            } catch (e: InterruptedException) {
+                if(shouldQuit) {
+                    break
+                }
+            }
+        }
+    }
+    init {
+        t.start()
+    }
+
+    // Called when app closes
     fun destroy() {
-        if (isConnected) {
+        if (btManager.isConnected) {
+            btManager.sendString("!")
+            Thread.sleep(1000L)
             btManager.disconnect()
         }
+        shouldQuit = true
+        t.interrupt()
     }
 }
