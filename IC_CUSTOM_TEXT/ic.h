@@ -11,10 +11,10 @@
 #define SCROLLING_UPDATE_FREQ 150
 #define IC_DISPLAY_ID 0x1A4
 #define DIAG_MODE_UPDATE_FREQ 100
-#define DIAG_SCREENS 3
+#define DIAG_SCREENS 5
 
 #ifdef W203
-    #define MAX_IC_BODY_CHARS 10
+    #define MAX_IC_BODY_CHARS 9
     #define MAX_IC_HEAD_CHARS  4
 #else
     #define MAX_IC_BODY_CHARS 11
@@ -24,13 +24,21 @@
 
 class IC_DISPLAY{
     public:
+        enum PAGES {
+            AUDIO = 0x03,
+            TELEPHONE = 0x05,
+            OTHER = 0x00
+        };
+        static byte page;
         IC_DISPLAY(CanbusComm *c, EngineData *d);
         void setBody(const char* body);
+        void setBody(const __FlashStringHelper* h);
         void setHeader(const char* header);
         void update();
         void nextDiagPage();
         void prevDiagPage();
         bool inDiagMode;
+        void diagSetHeader();
     private:
         unsigned long lastKeepAliveMillis;
         void setDiagText();
@@ -51,10 +59,10 @@ class IC_DISPLAY{
         CanbusComm *c;
         uint8_t sendFrame();
         uint8_t calculateBodyChecksum(uint8_t len);
-        uint8_t diagPage;
         EngineData *d;
         uint8_t currFrame;
         bool isUpdating;
+        uint8_t diagPage;
 };
 
 

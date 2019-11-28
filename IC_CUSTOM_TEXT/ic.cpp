@@ -2,6 +2,8 @@
 #include "debug.h"
 
 
+
+byte IC_DISPLAY::page;
 IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
     char displayBuffer[10];
     char charBuffer[256];
@@ -10,12 +12,14 @@ IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
     this->lastUpdateMillis = millis();
     this->curr_frame.can_id = IC_DISPLAY_ID;
     this->curr_frame.can_dlc = 0x08;
-    this->setBody("NO BT");
+    this->setBody("NO BT!!");
+    this->setHeader("TELE");
     this->isSending = false;
     this->diagPage = 0;
     this->diagBuffer.reserve(9);
     this->currFrame = 0;
     this->d = d;
+    this->page = OTHER;
 
     diag_frame.can_dlc = 8;
     diag_frame.can_id = 0x1c;
@@ -33,6 +37,11 @@ IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
     diag_frame.data[2] = 0x02;
 
     isUpdating = false;
+
+    #ifdef SIMULATION
+        this->inDiagMode = true;
+        this->diagPage = 4;
+    #endif
 }
 
 void IC_DISPLAY::setBody(const char* body) {
@@ -49,14 +58,14 @@ void IC_DISPLAY::setBody(const char* body) {
         bodyCharBuffer[bufferLen+3] = ' ';
         textLen+=4;
     }
-    setBody();
+    this->lastUpdateMillis = 0L;
 }
 
 void IC_DISPLAY::setHeader(const char* header) {
-    /*
+
     memset(headerFramePayload, 0x00, sizeof(headerFramePayload));
     int slen = min(8, strlen(header));
-    int len = strlen(header) + 5;
+    int len = slen + 5;
     headerFramePayload[0] = 0x10;
     headerFramePayload[1] = len;
     headerFramePayload[2] = 0x03;
@@ -65,12 +74,9 @@ void IC_DISPLAY::setHeader(const char* header) {
     headerFramePayload[8] = 0x21;
     for (int i = 0; i < min(3, slen); i++) headerFramePayload[5+i] = header[i];
     for (int i = 0; i < min(8, slen); i++) headerFramePayload[9+i] = header[i+3];
-    uint8_t hash = 0xd3;
-    for (int i = 5; i < 8; i++) hash -= headerFramePayload[i];
-    for (int i = 9; i < 14; i++) hash -= headerFramePayload[i];
-    for (int i = 0; i < len; i++) hash -= i;
-    headerFramePayload[len + 2] = hash;
-
+    uint8_t hash = 439 - (header[0] + header[1] + header[2] + header[3]);
+    headerFramePayload[11] = hash;
+    Serial.println(len);
     for (uint8_t i = 0; i <= 7; i++) {
         curr_frame.data[i] = headerFramePayload[i];
     }
@@ -80,8 +86,7 @@ void IC_DISPLAY::setHeader(const char* header) {
         curr_frame.data[i-8] = headerFramePayload[i];
     }
     c->sendFrame(CAN_BUS_B, &curr_frame);
-    delay(2);
-    */
+    delay(7);
 }
 
 
@@ -89,7 +94,7 @@ void IC_DISPLAY::setDiagText() {
     switch (diagPage)
     {
     case 0:
-        diagBuffer = "DIAG MODE";
+        diagBuffer = F("DIAG MODE");
         break;
     case 1:
         diagBuffer = d->getSpeed();
@@ -99,6 +104,12 @@ void IC_DISPLAY::setDiagText() {
         break;
     case 3:
         diagBuffer = d->getCoolantTemp();
+        break;
+    case 4:
+        diagBuffer = d->getBhp();
+        break;
+    case 5:
+        diagBuffer = d->getTorque();
         break;
     default:
         break;
@@ -117,6 +128,11 @@ void IC_DISPLAY::update() {
             setBody();
             lastUpdateMillis = millis();
             nextUpdateMillis = millis();
+            #ifdef SIMULATION
+                delay(100);
+                d->isOn = true;
+                d->speed += random(2);
+            #endif
         }
     }
     else if (textLen > MAX_IC_BODY_CHARS) {
@@ -222,6 +238,7 @@ void IC_DISPLAY::nextDiagPage() {
     } else {
         diagPage++;
     }
+    diagSetHeader();
 }
 
 void IC_DISPLAY::prevDiagPage(){
@@ -230,4 +247,31 @@ void IC_DISPLAY::prevDiagPage(){
    } else {
        diagPage--;
    }
+   diagSetHeader();
+}
+
+void IC_DISPLAY::diagSetHeader() {
+    switch (diagPage)
+    {
+    case 0:
+        setHeader("MAIN");
+        break;
+    case 1:
+        setHeader("SPD ");
+        break;
+    case 2:
+        setHeader("RPM ");
+        break;
+    case 3:
+        setHeader("CLNT");
+        break;
+    case 4:
+        setHeader("BHP");
+        break;
+    case 5:
+        setHeader("TORQ");
+        break;
+    default:
+        break;
+    }
 }
