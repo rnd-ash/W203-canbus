@@ -141,16 +141,20 @@ void Car::updateMusic() {
     }
 }
 
-/*
+int lastProg = 0;
 void Car::drawMusicProgress() {
     if(millis() - lastUpdateMillis > 1000) {
         lastUpdateMillis = millis();
-        if(music->isPlaying()  && music->totalSeconds > 1) {
-            String txt = String(music->elapsedSeconds)+"/"+String(music->totalSeconds);
+        if (!ic->inDiagMode) {
+            if(music->isPlaying() && lastProg != music->progressPercent) {
+                char txt[4];
+                sprintf(txt, "%d%%", music->progressPercent);
+                lastProg = music->progressPercent;
+                ic->setHeader(txt);
+            }
         }
     }
 }
-*/
 
 
 void Car::loop() {
@@ -159,7 +163,7 @@ void Car::loop() {
         ic->update();
         if (phoneConnected) {
             music->update();
-            //drawMusicProgress();
+            drawMusicProgress();
         }
         processCanFrame();
     } else {

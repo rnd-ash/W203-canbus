@@ -31,6 +31,11 @@ void Music::update() {
         lastUpdateTime = millis();
         if(this->playing) {
             elapsedSeconds++;
+            if (totalSeconds != 0) {
+                progressPercent = ((float) elapsedSeconds / (float) totalSeconds) * 100;
+            } else {
+                progressPercent = 0;
+            }
         }
     }
 }

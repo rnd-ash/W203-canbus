@@ -15,7 +15,7 @@ class Music {
         bool isPlaying();
         void setText(const char* track);
         char* getDisplayText();
-        float progressPercent();
+        int progressPercent;
     private:
         unsigned long lastUpdateTime;
         bool playing;

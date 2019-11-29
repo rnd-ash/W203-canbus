@@ -63,9 +63,23 @@ void IC_DISPLAY::setBody(const char* body) {
 }
 
 void IC_DISPLAY::setHeader(const char* header) {
+    char text[MAX_IC_HEAD_CHARS+1];
+    memset(text, 0x00, sizeof(text));
+    if (strlen(header) < MAX_IC_HEAD_CHARS) {
+        for (uint8_t i = 0; i < strlen(header); i++) {
+            text[i] = header[i];
+        }
+        for (uint8_t i = strlen(header); i < MAX_IC_HEAD_CHARS; i++) {
+            text[i] = ' ';
+        }
+    } else {
+        for (uint8_t i = 0; i < MAX_IC_HEAD_CHARS; i++) {
+            text[i] = header[i];
+        }
+    }
 
     memset(headerFramePayload, 0x00, sizeof(headerFramePayload));
-    int slen = min(8, strlen(header));
+    int slen = min(8, strlen(text));
     int len = slen + 5;
     headerFramePayload[0] = 0x10;
     headerFramePayload[1] = len;
@@ -73,11 +87,10 @@ void IC_DISPLAY::setHeader(const char* header) {
     headerFramePayload[3] = 0x29;
     headerFramePayload[4] = 0x00;
     headerFramePayload[8] = 0x21;
-    for (int i = 0; i < min(3, slen); i++) headerFramePayload[5+i] = header[i];
-    for (int i = 0; i < min(8, slen); i++) headerFramePayload[9+i] = header[i+3];
-    uint8_t hash = 439 - (header[0] + header[1] + header[2] + header[3]);
+    for (int i = 0; i < min(3, slen); i++) headerFramePayload[5+i] = text[i];
+    for (int i = 0; i < min(8, slen); i++) headerFramePayload[9+i] = text[i+3];
+    uint8_t hash = 439 - (text[0] + text[1] + text[2] + text[3]);
     headerFramePayload[11] = hash;
-    Serial.println(len);
     for (uint8_t i = 0; i <= 7; i++) {
         curr_frame.data[i] = headerFramePayload[i];
     }
@@ -252,10 +265,10 @@ void IC_DISPLAY::prevDiagPage(){
 }
 
 const char * const PROGMEM DIAG_HEAD_MAIN    = "MAIN";
-const char * const PROGMEM DIAG_HEAD_SPEED   = "SPD ";
-const char * const PROGMEM DIAG_HEAD_RPM     = "RPM ";
+const char * const PROGMEM DIAG_HEAD_SPEED   = "SPD";
+const char * const PROGMEM DIAG_HEAD_RPM     = "RPM";
 const char * const PROGMEM DIAG_HEAD_COOLENT = "CLNT";
-const char * const PROGMEM DIAG_HEAD_POWER   = "BHP ";
+const char * const PROGMEM DIAG_HEAD_POWER   = "BHP";
 const char * const PROGMEM DIAG_HEAD_TORQUE  = "TORQ";
 
 void IC_DISPLAY::diagSetHeader() {
