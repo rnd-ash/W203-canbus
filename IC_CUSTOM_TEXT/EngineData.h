@@ -5,13 +5,18 @@
 #include "debug.h"
 #include <stdio.h>
 
-// Needed for BHP / Torque calculation to get the engine outputs rather than wheel outputs
-// https://en.wikipedia.org/wiki/Mercedes-Benz_5G-Tronic_transmission
+// Ratio of engine turns to driveshaft turns (W211's / AMG cars may be different!)
 #define GEAR_RATIO_1 3.9319
 #define GEAR_RATIO_2 2.4079
 #define GEAR_RATIO_3 1.4857
 #define GEAR_RATIO_4 1.0
 #define GEAR_RATIO_5 0.8305
+
+// Automatic drive train loss is typically 15%
+#define DRIVETRAIN_EFFICIENCY_LOSS 0.15
+
+// 3 rotations of driveshaft to 1 rotation of wheel (W211's / AMG cars may be different!)
+#define DIFF_RATIO 3.0
 
 class EngineData {
     public:
@@ -27,9 +32,11 @@ class EngineData {
         int coolantTemp = 0;
         char dataStr[9];
         int lastSpd = 0.0;
+        uint8_t curr_gear = 0;
+        float fuel_level_l = 66.0;
         unsigned long lastTime;
     private:
-        void calculateBHP();
+        void calculatePower();
         float bhp = 0.0;
         float torque = 0.0;
 };

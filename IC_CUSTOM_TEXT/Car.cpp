@@ -1,5 +1,8 @@
 #include "Car.h"
 
+const char * const PROGMEM APP_EXIT_TXT = "APP EXIT!";
+const char * const PROGMEM UNKNOWN_TRACK = "Track: ??";
+const char * const PROGMEM TRACK_PAUSED = "PAUSED";
 
 Car::Car(CanbusComm *c) {
     this->engine = new EngineData();
@@ -70,7 +73,7 @@ void Car::processBluetoothRequest() {
             ic->setBody(ptr+2);
         } else if (ptr[0] == '!') {
             music->pause();
-            ic->setBody("APP EXIT!");
+            ic->setBody(APP_EXIT_TXT);
             phoneConnected = false;
         } else {
             String unknown;
@@ -112,7 +115,6 @@ void Car::processKeyPress(can_frame* f) {
                 ic->prevDiagPage();
                 break;
             case wheelControls::TelDown:
-                ic->setHeader("BLTH");
                 ic->inDiagMode = false;
                 break;
             case wheelControls::TelUp:
@@ -131,14 +133,15 @@ void Car::updateMusic() {
         if (strlen(music->getDisplayText()) != 0) {
             ic->setBody(music->getDisplayText());
         } else {
-            ic->setBody("Track: ??");
+            ic->setBody(UNKNOWN_TRACK);
         }
         DPRINTLN(String(music->getDisplayText()));
     } else {
-        ic->setBody("PAUSED");
+        ic->setBody(TRACK_PAUSED);
     }
 }
 
+/*
 void Car::drawMusicProgress() {
     if(millis() - lastUpdateMillis > 1000) {
         lastUpdateMillis = millis();
@@ -147,6 +150,7 @@ void Car::drawMusicProgress() {
         }
     }
 }
+*/
 
 
 void Car::loop() {
@@ -155,7 +159,7 @@ void Car::loop() {
         ic->update();
         if (phoneConnected) {
             music->update();
-            drawMusicProgress();
+            //drawMusicProgress();
         }
         processCanFrame();
     } else {

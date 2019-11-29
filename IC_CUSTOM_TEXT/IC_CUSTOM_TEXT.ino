@@ -35,7 +35,7 @@ void setup() {
     digitalWrite(led, LOW);
   }
   delay(25);
-  Serial.println("Ready!");
+  Serial.println(F("Ready!"));
 }
 
 bool clock = false;

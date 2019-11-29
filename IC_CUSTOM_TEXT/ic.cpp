@@ -1,8 +1,9 @@
 #include "ic.h"
 #include "debug.h"
 
-
-
+const char * const PROGMEM BT_MSG = "NO BT!!";
+const char * const PROGMEM TELE_HEAD = "TELE";
+const char * const PROGMEM DIAG_TXT = "DIAG MODE";
 byte IC_DISPLAY::page;
 IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
     char displayBuffer[10];
@@ -12,8 +13,8 @@ IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
     this->lastUpdateMillis = millis();
     this->curr_frame.can_id = IC_DISPLAY_ID;
     this->curr_frame.can_dlc = 0x08;
-    this->setBody("NO BT!!");
-    this->setHeader("TELE");
+    this->setBody(BT_MSG);
+    this->setHeader(TELE_HEAD);
     this->isSending = false;
     this->diagPage = 0;
     this->diagBuffer.reserve(9);
@@ -94,7 +95,7 @@ void IC_DISPLAY::setDiagText() {
     switch (diagPage)
     {
     case 0:
-        diagBuffer = F("DIAG MODE");
+        diagBuffer = DIAG_TXT;
         break;
     case 1:
         diagBuffer = d->getSpeed();
@@ -250,26 +251,33 @@ void IC_DISPLAY::prevDiagPage(){
    diagSetHeader();
 }
 
+const char * const PROGMEM DIAG_HEAD_MAIN    = "MAIN";
+const char * const PROGMEM DIAG_HEAD_SPEED   = "SPD ";
+const char * const PROGMEM DIAG_HEAD_RPM     = "RPM ";
+const char * const PROGMEM DIAG_HEAD_COOLENT = "CLNT";
+const char * const PROGMEM DIAG_HEAD_POWER   = "BHP ";
+const char * const PROGMEM DIAG_HEAD_TORQUE  = "TORQ";
+
 void IC_DISPLAY::diagSetHeader() {
     switch (diagPage)
     {
     case 0:
-        setHeader("MAIN");
+        setHeader(DIAG_HEAD_MAIN);
         break;
     case 1:
-        setHeader("SPD ");
+        setHeader(DIAG_HEAD_SPEED);
         break;
     case 2:
-        setHeader("RPM ");
+        setHeader(DIAG_HEAD_RPM);
         break;
     case 3:
-        setHeader("CLNT");
+        setHeader(DIAG_HEAD_COOLENT);
         break;
     case 4:
-        setHeader("BHP");
+        setHeader(DIAG_HEAD_POWER);
         break;
     case 5:
-        setHeader("TORQ");
+        setHeader(DIAG_HEAD_TORQUE);
         break;
     default:
         break;

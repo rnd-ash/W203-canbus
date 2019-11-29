@@ -17,7 +17,7 @@ class Car {
         void updateMusic();
         void windUpWindows();
         unsigned long lastUpdateMillis;
-        void drawMusicProgress();
+        //void drawMusicProgress();
         wheelControls *wheel;
         CanbusComm *c;
         phoneBluetooth *bluetooth;
