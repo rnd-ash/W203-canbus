@@ -35,6 +35,7 @@ class EngineData {
         uint8_t curr_gear = 0;
         float fuel_level_l = 66.0;
         unsigned long lastTime;
+        bool isInReverse = false;
     private:
         void calculatePower();
         float bhp = 0.0;

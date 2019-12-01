@@ -42,6 +42,8 @@ bool clock = false;
 void loop() {
   int clockPin = clock ? 18 : 19;
   digitalWrite(clockPin, HIGH);
+  
+  
   car->loop();
   digitalWrite(clockPin, LOW);
   clock = !clock;

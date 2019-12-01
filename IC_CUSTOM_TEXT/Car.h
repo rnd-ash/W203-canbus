@@ -5,6 +5,7 @@
 #include "ic.h"
 #include "phoneBluetooth.h"
 #include "Music.h"
+#include "mirror_controls.h"
 
 class Car {
     public:
@@ -24,6 +25,7 @@ class Car {
         Music *music;
         IC_DISPLAY *ic;
         EngineData *engine;
+        Mirrors *mirrors;
         bool isLocked;
         bool lockJobDone;
         bool phoneConnected = false;

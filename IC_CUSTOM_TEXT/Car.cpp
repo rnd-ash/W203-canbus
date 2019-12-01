@@ -3,6 +3,7 @@
 const char * const PROGMEM APP_EXIT_TXT = "APP EXIT!";
 const char * const PROGMEM UNKNOWN_TRACK = "Track: ??";
 const char * const PROGMEM TRACK_PAUSED = "PAUSED";
+const char * const PROGMEM TRACK_PAUSED_HEAD = "----";
 
 Car::Car(CanbusComm *c) {
     this->engine = new EngineData();
@@ -14,8 +15,11 @@ Car::Car(CanbusComm *c) {
     this->lastUpdateMillis = millis();
     this->isLocked = false;
     this->lockJobDone = false;
+    this->mirrors = new Mirrors(c);
 }
 
+uint8_t count = 0;
+bool reverseJobDone = false;
 void Car::processCanFrame() {
     can_frame f = c->pollForFrame(CAN_BUS_B);
     if (f.can_id == 0x1CA) {
@@ -43,6 +47,22 @@ void Car::processCanFrame() {
         engine->rpm = (f.data[2] << 8) | (f.data[3]);
         engine->isOn = f.data[2] != 0xFF;
         engine->coolantTemp = f.data[4] - 40;
+    } else if (f.can_id == 0x0003) {
+        // frames 8th bit indicates if car is in reverse or not
+        bool isReverse = f.data[1] >> 7 == 1;
+        if (isReverse) {
+            count++;
+            if (count == 10 && !reverseJobDone) {
+                mirrors->lowerMirror(15, false, true);
+                reverseJobDone = true;
+            }
+        } else {
+            if (reverseJobDone) {
+                mirrors->raiseMirror(15, false, true);
+                reverseJobDone = false;
+            }
+            count = 0;
+        }
     } else if (f.can_id == 0x000c) {
         engine->speed = ((int) f.data[1] * 5) / 8;
     }
@@ -116,6 +136,7 @@ void Car::processKeyPress(can_frame* f) {
                 break;
             case wheelControls::TelDown:
                 ic->inDiagMode = false;
+                updateMusic();
                 break;
             case wheelControls::TelUp:
             case wheelControls::ArrowUpLong:
@@ -135,8 +156,8 @@ void Car::updateMusic() {
         } else {
             ic->setBody(UNKNOWN_TRACK);
         }
-        DPRINTLN(String(music->getDisplayText()));
     } else {
+        ic->setHeader(TRACK_PAUSED_HEAD);
         ic->setBody(TRACK_PAUSED);
     }
 }
