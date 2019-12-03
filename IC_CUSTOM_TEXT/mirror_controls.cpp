@@ -5,24 +5,42 @@ Mirrors::Mirrors(CanbusComm *c) {
    this->c = c; 
 }
 
-void Mirrors::lowerPassengerMirror() {
+void Mirrors::lowerMirror(uint8_t degrees, bool drivers, bool passengers) {
     can_frame f;
     f.can_dlc = 1;
     f.can_id = 0x2CC;
-    f.data[0] = 0x08;
-    for (int i = 0; i < 150; i++) {
-        c->sendFrame(CAN_BUS_B, &f);
-        delay(10);
+    if (drivers) {
+        f.data[0] = 0x88;
+        for (int i = 0; i < degrees * 10; i++) {
+            c->sendFrame(CAN_BUS_B, &f);
+            delay(10);
+        }
+    }
+    if (passengers) {
+        f.data[0] = 0x08;
+        for (int i = 0; i < degrees * 10; i++) {
+            c->sendFrame(CAN_BUS_B, &f);
+            delay(10);
+        }
     }
 }
 
-void Mirrors::raisePassengerMIrror() {
+void Mirrors::raiseMirror(uint8_t degrees, bool drivers, bool passengers) {
     can_frame f;
     f.can_dlc = 1;
     f.can_id = 0x2CC;
-    f.data[0] = 0x04;
-    for (int i = 0; i < 150; i++) {
-        c->sendFrame(CAN_BUS_B, &f);
-        delay(10);
+    if (drivers) {
+        f.data[0] = 0x84;
+        for (int i = 0; i < degrees * 10; i++) {
+            c->sendFrame(CAN_BUS_B, &f);
+            delay(10);
+        }
+    }
+    if (passengers) {
+        f.data[0] = 0x04;
+        for (int i = 0; i < degrees * 10; i++) {
+            c->sendFrame(CAN_BUS_B, &f);
+            delay(10);
+        }
     }
 }

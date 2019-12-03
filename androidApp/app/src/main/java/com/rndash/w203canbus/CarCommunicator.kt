@@ -39,17 +39,10 @@ class CarCommunicator(private val device: BluetoothDevice, private val adapter: 
 
     var btManager = BluetoothComm(device, false, adapter)
 
-    fun toggleArtist(checked: Boolean) = safeCommunication {
-        when(checked) {
-            false -> btManager.sendString("MAF")
-            true -> btManager.sendString("MAT")
-        }
-    }
     fun ping() =  btManager.sendString("-")
     fun sendBodyText(msg: String) = safeCommunication { btManager.sendString("B:$msg") }
 
     fun sendTrackName(name: String) = safeCommunication { btManager.sendString("M-$name") }
-    fun sendArtistName(name: String) = safeCommunication { btManager.sendString("M_$name") }
     fun sendHeaderText(msg: String) = safeCommunication{ btManager.sendString("H:$msg") }
     fun sendByteArray(id: Char, sep: Byte, bytes: ByteArray) = safeCommunication {
         btManager.sendBytes(byteArrayOf(id.toByte(), sep) + bytes)

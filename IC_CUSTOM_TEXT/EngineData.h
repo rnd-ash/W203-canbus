@@ -36,6 +36,7 @@ class EngineData {
         float fuel_level_l = 66.0;
         unsigned long lastTime;
         bool isInReverse = false;
+        float odometer_milage = 0.0;
     private:
         void calculatePower();
         float bhp = 0.0;

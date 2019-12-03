@@ -21,10 +21,14 @@ Car::Car(CanbusComm *c) {
 uint8_t count = 0;
 bool reverseJobDone = false;
 void Car::processCanFrame() {
+    // Poll for a can frame on bus B (Interior Can)
     can_frame f = c->pollForFrame(CAN_BUS_B);
+    // Key press related frame
     if (f.can_id == 0x1CA) {
         processKeyPress(&f);
-    } else if (f.can_id == 0x0000 && f.can_dlc > 0) {
+    } 
+    // Frame from EZS_A1
+    else if (f.can_id == 0x0000 && f.can_dlc > 0) {
         if (f.data[5] == 0xaa && !engine->isOn) {
             isLocked = true;
             if (!lockJobDone) {
@@ -43,16 +47,20 @@ void Car::processCanFrame() {
             isLocked = false;
             lockJobDone = false;
         }
-    } else if (f.can_id == 0x0002) {
+    }
+    // Frame from GW_C_B1 
+    else if (f.can_id == 0x0002) {
         engine->rpm = (f.data[2] << 8) | (f.data[3]);
         engine->isOn = f.data[2] != 0xFF;
         engine->coolantTemp = f.data[4] - 40;
-    } else if (f.can_id == 0x0003) {
+    }
+    // Frame from GW_C_B2 
+    else if (f.can_id == 0x0003) {
         // frames 8th bit indicates if car is in reverse or not
         bool isReverse = f.data[1] >> 7 == 1;
         if (isReverse) {
             count++;
-            if (count == 10 && !reverseJobDone) {
+            if (count == 5 && !reverseJobDone) {
                 mirrors->lowerMirror(15, false, true);
                 reverseJobDone = true;
             }
@@ -63,8 +71,13 @@ void Car::processCanFrame() {
             }
             count = 0;
         }
-    } else if (f.can_id == 0x000c) {
+    }
+    // Frame from KOMBI_A1 
+    else if (f.can_id == 0x000c) {
+        // Read speed frpm V_SIGNAL (Source is in KM/H so convert to MPH)
         engine->speed = ((int) f.data[1] * 5) / 8;
+    } else if (f.can_id == 0x009e) {
+        engine->odometer_milage = (float) (((long) f.data[3] << 16) + ((int) f.data[4] << 8) + f.data[5]) / 8 * 5;
     }
 }
 

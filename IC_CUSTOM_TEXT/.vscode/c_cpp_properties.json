@@ -16,8 +16,16 @@
             },
             "intelliSenseMode": "clang-x64",
             "cStandard": "c11",
-            "cppStandard": "c++11",
-            "defines": [ "USBCON" ]
+            "cppStandard": "c++17",
+            "defines": [ 
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "F_CPU=16000000L",
+                "ARDUINO=10805",
+                "ARDUINO_AVR_UNO",
+                "ARDUINO_ARCH_AVR"
+             ]
         }
     ],
     "version": 4

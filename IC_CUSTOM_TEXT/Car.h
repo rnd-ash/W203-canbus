@@ -12,11 +12,23 @@ class Car {
         Car(CanbusComm *c);
         void loop();
     private:
+        /**
+         * Processes an incomming can frame
+         */
         void processCanFrame();
+        /**
+         * Processes a key press from can frame f (ID = 0x1CA)
+         */
         void processKeyPress(can_frame* f);
+        /**
+         * Processes an incomming message from bluetooth
+         */
         void processBluetoothRequest();
+        /**
+         * Updates music
+         */
         void updateMusic();
-        void windUpWindows();
+
         unsigned long lastUpdateMillis;
         void drawMusicProgress();
         wheelControls *wheel;

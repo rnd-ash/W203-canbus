@@ -74,18 +74,6 @@ class MainActivity : AppCompatActivity() {
             manager.dispatchMediaKeyEvent(event)
         }
 
-        artistCheck.setOnCheckedChangeListener { _, isChecked ->
-            when(isChecked) {
-                true -> {
-                    ConnectService.ic.toggleArtist(true)
-                    if (artistName.isNotEmpty()) {
-                        ConnectService.ic.sendArtistName(artistName)
-                    }
-                }
-                false -> ConnectService.ic.toggleArtist(false)
-            }
-        }
-
         val iF = IntentFilter()
         iF.addAction("com.android.music.metachanged")
         iF.addAction("com.spotify.music.playbackstatechanged")
@@ -139,7 +127,6 @@ class MainActivity : AppCompatActivity() {
                 if (intentAction.contains(".metadatachanged")) {
                     println("meta changed")
                     trackName = intent.getStringExtra("track")!!
-                    artistName = intent.getStringExtra("artist")!!;
                     val trackDuration = (intent.getIntExtra("length", 0) / 1000).toInt()
                     Log.d("TK", "Track is $trackDuration seconds long")
                     ConnectService.ic.sendTrackName(trackName);
