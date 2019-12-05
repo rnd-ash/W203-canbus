@@ -1,9 +1,54 @@
 #include "ic.h"
 #include "debug.h"
+#include "avr/pgmspace.h"
 
 const char * const PROGMEM BT_MSG = "NO BT!!";
 const char * const PROGMEM TELE_HEAD = "TELE";
 const char * const PROGMEM DIAG_TXT = "DIAG MODE";
+
+// Width of different ASCII Codes when the IC Renders them
+const uint8_t ASCII_WIDTHS[256] PROGMEM = {
+
+    // ------------------------STANDARD ASCII----------------------//
+    0, 0, 0, 0, 0, 0, 0, 0, // NUL, SOH, STX, ETX, EOT, ENQ, ACK, BEL
+    0, 0, 0, 0, 0, 0, 0, 0, //  BS, TAB,  LF,  VT,  FF,  CR,  SO,  SI
+    0, 0, 0, 0, 0, 0, 0, 0, // DLE, DC1, DC2, DC3, DC4, NAK, SYN, ETB
+    0, 0, 0, 0, 0, 0, 0, 0, // CAN,  EM, SUB, ESC,  FS,  GS,  RS,  US
+    3, 3, 4, 6, 0, 6, 6, 2, // ' ', '!', '"', '#', '$', '%', '&', '''
+    5, 5, 6, 6, 3, 5, 2, 6, // '(', ')', '*', '+', '`', '-', '.', '/'
+    7, 4, 7, 7, 8, 7, 7, 6, // '0', '1', '2', '3', '4', '5', '6', '7'
+    7, 7, 3, 4, 0, 6, 0, 5, // '8', '9', ':', ';', '<', '=', '>', '?'
+    6, 7, 7, 7, 7, 5, 5, 7, // '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G'
+    7, 3, 5, 7, 5, 7, 7, 7, // 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'
+    7, 7, 7, 7, 7, 7, 7, 11, // 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'
+    7, 7, 6, 4, 6, 4, 0, 5, // 'X', 'Y', 'Z', '[', '\', ']', '^', '_'
+    2, 7, 6, 6, 6, 7, 6, 7, // '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g'
+    6, 3, 5, 6, 3, 9, 7, 7, // 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'
+    6, 6, 6, 6, 5, 7, 7, 9, // 'p', 'q', 'r', 's', 't', 'u', 'v', 'w'
+    7, 6, 5, 5, 2, 5, 0, 0, // 'x', 'y', 'z', '{', '|', '}', '~', DEL
+
+    // ------------------------EXTENDED ASCII----------------------//
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
+
+};
+
+
+
 byte IC_DISPLAY::page;
 IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
     char displayBuffer[10];
@@ -38,7 +83,7 @@ IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
     diag_frame.data[2] = 0x02;
 
     isUpdating = false;
-
+    showArrows();
     #ifdef SIMULATION
         this->inDiagMode = true;
         this->diagPage = 4;
@@ -47,17 +92,31 @@ IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
 
 void IC_DISPLAY::setBody(const char* body) {
     memset(bodyCharBuffer, 0x00, sizeof(bodyCharBuffer));
+    int text_width=0;
     for (int i = 0; i < strlen(body); i++) {
-        bodyCharBuffer[i] = body[i];
+        // Remove ~ from string as that causes the IC to freak out and display garbage
+
+        // On a side note, sending '~ Test' to the IC will make it render the text 'Test' with left justification!
+        if (body[i] == '~') {
+            bodyCharBuffer[i] = ' ';
+            text_width += ASCII_WIDTHS[20];
+        } else {
+            bodyCharBuffer[i] = body[i];
+            text_width += pgm_read_byte_near(ASCII_WIDTHS + (uint8_t) body[i]);
+        }
     }
-    int bufferLen = strlen(bodyCharBuffer);
-    textLen = bufferLen;
-    if (bufferLen > MAX_IC_BODY_CHARS) {
+    text_width--; // minus 1 because last character has no padding
+    DPRINTLN("Text width: "+String(text_width)+" pixels");
+    // Text too wide, scroll, or too many chars to send in 2 frames
+    if (text_width > IC_WIDTH_PIXELS || strlen(bodyCharBuffer) > ABSOLUTE_IC_MAX_BODY_CHARS) {
+        int bufferLen = strlen(bodyCharBuffer);
         bodyCharBuffer[bufferLen]  = ' ';
         bodyCharBuffer[bufferLen+1] = ' ';
         bodyCharBuffer[bufferLen+2] = ' ';
         bodyCharBuffer[bufferLen+3] = ' ';
-        textLen+=4;
+        this->shouldScrollText = true;
+    } else {
+        this->shouldScrollText = false;
     }
     this->lastUpdateMillis = 0L;
 }
@@ -130,7 +189,7 @@ void IC_DISPLAY::setDiagText() {
     }
 }
 
-
+uint8_t x = 0;
 void IC_DISPLAY::update() {
     if (isUpdating) {
         asyncSendBody();
@@ -149,7 +208,7 @@ void IC_DISPLAY::update() {
             #endif
         }
     }
-    else if (textLen > MAX_IC_BODY_CHARS) {
+    else if (shouldScrollText) {
         if (millis() - lastUpdateMillis > SCROLLING_UPDATE_FREQ) {
             lastUpdateMillis = millis();
             nextUpdateMillis = millis();
@@ -167,10 +226,11 @@ void IC_DISPLAY::update() {
 
 void IC_DISPLAY::shiftText() {
     char first = bodyCharBuffer[0];
-    for (uint8_t i = 1; i < textLen; i++) {
+    uint8_t len = strlen(bodyCharBuffer);
+    for (uint8_t i = 1; i < len; i++) {
         bodyCharBuffer[i-1] = bodyCharBuffer[i];
     }
-    bodyCharBuffer[textLen-1] = first;
+    bodyCharBuffer[len-1] = first;
 }
 
 void IC_DISPLAY::setBody() {
@@ -178,12 +238,16 @@ void IC_DISPLAY::setBody() {
     char displayBuffer[12];
     memset(displayBuffer, 0x00, sizeof(displayBuffer));
     if (inDiagMode) {
-        strLen = min(MAX_IC_BODY_CHARS, diagBuffer.length());
+        strLen = min(ABSOLUTE_IC_MAX_BODY_CHARS, diagBuffer.length());
         for (int i = 0; i < strLen; i++) {
             displayBuffer[i] = diagBuffer[i];
         }
     } else {
-        strLen = min(MAX_IC_BODY_CHARS, strlen(bodyCharBuffer));
+        if (shouldScrollText) {
+            strLen = min(SCROLL_CHARS, strlen(bodyCharBuffer));
+        } else {
+            strLen = min(ABSOLUTE_IC_MAX_BODY_CHARS, strlen(bodyCharBuffer));
+        }
         for (int i = 0; i < strLen; i++) {
             displayBuffer[i] = bodyCharBuffer[i];
         }
@@ -203,7 +267,7 @@ void IC_DISPLAY::setBody() {
     framePayload[16] = 0x22;
 
     for(uint8_t i = 0; i < min(6,strLen); i++) framePayload[10+i] = displayBuffer[i];
-    for(uint8_t i = 0; i < min(MAX_IC_BODY_CHARS, strLen) - 6; i++) framePayload[17+i] = displayBuffer[i+6];
+    for(uint8_t i = 0; i < min(SCROLL_CHARS, strLen) - 6; i++) framePayload[17+i] = displayBuffer[i+6];
 
     uint8_t hash = 0xCA;
     for(uint8_t i = 0; i < len; i++) hash -= i;

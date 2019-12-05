@@ -13,11 +13,13 @@
 #define DIAG_MODE_UPDATE_FREQ 100
 #define DIAG_SCREENS 5
 
+#define ABSOLUTE_IC_MAX_BODY_CHARS 11 // Absolute maximum number of ASCII Chars allowed in 2 frames
+#define SCROLL_CHARS 10
 #ifdef W203
-    #define MAX_IC_BODY_CHARS 9
+    #define IC_WIDTH_PIXELS 56
     #define MAX_IC_HEAD_CHARS  4
 #else
-    #define MAX_IC_BODY_CHARS 11
+    #define IC_WIDTH_PIXELS 140
     #define MAX_IC_HEAD_CHARS  8
 #endif
 #define SENSOR_UDPATE_TIME 50
@@ -44,7 +46,7 @@ class IC_DISPLAY{
         void setDiagText();
         bool isSending;
         uint8_t displayTextLen;
-        uint8_t textLen;
+        uint8_t textWidth;
         can_frame curr_frame;
         can_frame diag_frame;
         uint8_t framePayload[24] = {0x00};
@@ -63,6 +65,7 @@ class IC_DISPLAY{
         uint8_t currFrame;
         bool isUpdating;
         uint8_t diagPage;
+        bool shouldScrollText = false;
 };
 
 

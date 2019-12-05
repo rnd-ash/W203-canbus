@@ -3,7 +3,6 @@
 #include "wiring_private.h"
 
 /**
- * 
  * Music stuff
  * 
  */
@@ -17,12 +16,10 @@ Music::Music() {
 }
 
 void Music::play() {
-    DPRINTLN(F("MUSIC PLAYING"));
     this->playing = true;
 }
 
 void Music::pause() {
-    DPRINTLN(F("MUSIC PAUSED"));
     this->playing = false;
 }
 
@@ -43,7 +40,6 @@ void Music::update() {
 void Music::setSeconds(int seconds) {
     this->elapsedSeconds = 0;
     this->totalSeconds = seconds;
-    DPRINTLN("Track is of length "+String(totalSeconds));
 }
 
 bool Music::isPlaying() {

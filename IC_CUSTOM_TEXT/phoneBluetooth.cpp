@@ -13,7 +13,6 @@ phoneBluetooth::phoneBluetooth(int rxPin, int txPin) {
 
 void phoneBluetooth::writeMessage(const char msg[]) {
     digitalWrite(15, HIGH);
-    DPRINTLN("Sending '"+String(msg)+"' to BT");
     for(uint8_t i = 0; i < strlen(msg); i++) {
         bluetooth->write(msg[i]);
     }

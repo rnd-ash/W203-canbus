@@ -61,12 +61,12 @@ void Car::processCanFrame() {
         if (isReverse) {
             count++;
             if (count == 5 && !reverseJobDone) {
-                mirrors->lowerMirror(15, false, true);
+                mirrors->lowerMirror(10, true, true);
                 reverseJobDone = true;
             }
         } else {
             if (reverseJobDone) {
-                mirrors->raiseMirror(15, false, true);
+                mirrors->raiseMirror(10, true, true);
                 reverseJobDone = false;
             }
             count = 0;
@@ -108,11 +108,6 @@ void Car::processBluetoothRequest() {
             music->pause();
             ic->setBody(APP_EXIT_TXT);
             phoneConnected = false;
-        } else {
-            String unknown;
-            for (int i = 0; i < len; i++) {
-                unknown += ptr[i];
-            }
         }
     }
 }
