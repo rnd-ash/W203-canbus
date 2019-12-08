@@ -14,6 +14,7 @@ class Music {
         void update();
         bool isPlaying();
         void setText(const char* track);
+        void setElapsed(int seconds);
         char* getDisplayText();
         int progressPercent;
     private:

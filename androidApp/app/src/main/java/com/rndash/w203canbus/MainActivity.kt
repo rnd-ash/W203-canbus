@@ -142,6 +142,14 @@ class MainActivity : AppCompatActivity() {
                     println("Play state changed!");
                     val isPlaying = intent.getBooleanExtra("playing", true)
                     val progress = (intent.getLongExtra("position", 0) / 1000).toInt()
+                    ConnectService.ic.sendByteArray(
+                        'M',
+                        0x5F, // underscore
+                        byteArrayOf(
+                            (progress / 256).toInt().toByte(),
+                            (progress % 256).toInt().toByte()
+                        )
+                    )
                     when (isPlaying) {
                         true -> {
                             ConnectService.ic.btManager.sendString("M:P")

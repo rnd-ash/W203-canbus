@@ -99,8 +99,10 @@ void Car::processBluetoothRequest() {
             } else if (ptr[1] == ' '){
                 int duration = (byte) ptr[2] * 256 + (byte)ptr[3];
                 music->setSeconds(duration);
-            } else {
-            }
+            } else if (ptr[1] == '_'){
+                int seek = (byte) ptr[2] * 256 + (byte)ptr[3];
+                music->setElapsed(seek);
+            } else {}
             updateMusic();
         } else if (ptr[0] == 'B') {
             ic->setBody(ptr+2);

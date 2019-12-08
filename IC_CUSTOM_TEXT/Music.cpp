@@ -42,6 +42,12 @@ void Music::setSeconds(int seconds) {
     this->totalSeconds = seconds;
 }
 
+void Music::setElapsed(int seconds) {
+    DPRINTLN("Seeking track to "+String(seconds));
+    this->elapsedSeconds = seconds;
+    lastUpdateTime = millis();
+}
+
 bool Music::isPlaying() {
     return this->playing;
 }
