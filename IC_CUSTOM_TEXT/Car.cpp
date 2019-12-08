@@ -61,12 +61,12 @@ void Car::processCanFrame() {
         if (isReverse) {
             count++;
             if (count == 5 && !reverseJobDone) {
-                mirrors->lowerMirror(10, true, true);
+                mirrors->lowerMirror(7, false, true);
                 reverseJobDone = true;
             }
         } else {
             if (reverseJobDone) {
-                mirrors->raiseMirror(10, true, true);
+                mirrors->raiseMirror(7, false, true);
                 reverseJobDone = false;
             }
             count = 0;

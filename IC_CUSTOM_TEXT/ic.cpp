@@ -83,7 +83,6 @@ IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
     diag_frame.data[2] = 0x02;
 
     isUpdating = false;
-    showArrows();
     #ifdef SIMULATION
         this->inDiagMode = true;
         this->diagPage = 4;

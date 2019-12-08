@@ -18,11 +18,7 @@
             "cStandard": "c11",
             "cppStandard": "c++17",
             "defines": [ 
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE",
-                "F_CPU=16000000L",
-                "ARDUINO=10805",
+                "USBCON",
                 "ARDUINO_AVR_UNO",
                 "ARDUINO_ARCH_AVR"
              ]

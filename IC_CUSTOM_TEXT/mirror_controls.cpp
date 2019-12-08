@@ -16,6 +16,7 @@ void Mirrors::lowerMirror(uint8_t degrees, bool drivers, bool passengers) {
             delay(10);
         }
     }
+    delay(10);
     if (passengers) {
         f.data[0] = 0x08;
         for (int i = 0; i < degrees * 10; i++) {
@@ -36,6 +37,7 @@ void Mirrors::raiseMirror(uint8_t degrees, bool drivers, bool passengers) {
             delay(10);
         }
     }
+    delay(10);
     if (passengers) {
         f.data[0] = 0x04;
         for (int i = 0; i < degrees * 10; i++) {

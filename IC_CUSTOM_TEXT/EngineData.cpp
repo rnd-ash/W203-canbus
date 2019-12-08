@@ -46,8 +46,8 @@ char* EngineData::getCoolantTemp() {
  * Calculates Horsepower and Torque AT THE WHEELS
  */
 void EngineData::calculatePower() {
-    // Run this update every 1/2 second
-    if (millis() - this->lastTime >= 250 && speed - lastSpd != 0.0) {
+    // Run this update every second
+    if (millis() - this->lastTime >= 1000) {
 
         // Time difference in seconds
         float time_sec = (millis() - lastTime) / 1000.0;

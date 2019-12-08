@@ -89,10 +89,10 @@ can_frame CanbusComm::pollForFrame(byte canDevice) {
         Serial.println(F("Invalid canDevice ID."));
         return error;
     }
-    digitalWrite(ledPin, HIGH);
     MCP2515::ERROR res = this->currentCan->readMessage(&read_frame);
-    digitalWrite(ledPin, LOW);
     if (res == MCP2515::ERROR_OK) {
+        digitalWrite(ledPin, HIGH);
+        digitalWrite(ledPin, LOW);
         return read_frame;
     } else {
         return error;
