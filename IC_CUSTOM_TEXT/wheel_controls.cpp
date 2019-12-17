@@ -35,13 +35,16 @@ wheelControls::key getKey(__u8 k) {
 }
 
 wheelControls::key wheelControls::getPressed(can_frame* r) {
+    if (r->can_id == 0x01D0) {
+        setCurrentPage(r);
+        return;
+    }
     bool detect = r->can_id == 0x01CA;
     // Detect if user is in the audio page before processing key presses
     if (detect) {
         setCurrentPage(r);
         // User has began to press a button
         if (r->data[1] != 0x00 && readFrame.data[1] == 0x00) {
-            DPRINTLN(F("Key down detected"));
             this->keydown = true;
             readFrame = *r;
             lastPressTime = millis();
@@ -88,16 +91,32 @@ wheelControls::key wheelControls::getPressed(can_frame* r) {
 }
 
 void wheelControls::setCurrentPage(can_frame* r) {
-    switch (r->data[0])
-    {
-    case 0x03:
-        IC_DISPLAY::page = IC_DISPLAY::PAGES::AUDIO;
-        break;
-    case 0x05:
-        IC_DISPLAY::page = IC_DISPLAY::PAGES::TELEPHONE;
-        break;
-    default:
-        IC_DISPLAY::page = IC_DISPLAY::PAGES::OTHER;
-        break;
+    if (r->can_id == 0x01CA && r->data[1] != 0x00) {
+        switch (r->data[0])
+        {
+        case 0x03:
+            IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::AUDIO;
+            break;
+        case 0x05:
+            IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::TELEPHONE;
+            break;
+        default:
+            IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::OTHER;
+            break;
+        }
+    } else if (r->can_id == 0x1D0 && r->data[0] == 0x06 && r->data[2] == 0x27) {
+        if (r->data[1] == 0x03 && r->data[6] == 0xC4) {
+            IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::AUDIO;
+        }
+        else if (r->data[1] == 0x03 && r->data[6] == 0xC3) {
+            IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::OTHER;
+        }
+
+        if (r->data[1] == 0x05 && r->data[6] == 0xC2) {
+            IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::TELEPHONE;
+        }
+        else if (r->data[1] == 0x05 && r->data[6] == 0xC1) {
+            IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::OTHER;
+        }
     }
 }

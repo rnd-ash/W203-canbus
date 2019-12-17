@@ -2,10 +2,6 @@
 #include "debug.h"
 #include "avr/pgmspace.h"
 
-const char * const PROGMEM BT_MSG = "NO BT!!";
-const char * const PROGMEM TELE_HEAD = "TELE";
-const char * const PROGMEM DIAG_TXT = "DIAG MODE";
-
 // Width of different ASCII Codes when the IC Renders them
 const uint8_t ASCII_WIDTHS[256] PROGMEM = {
 
@@ -48,314 +44,198 @@ const uint8_t ASCII_WIDTHS[256] PROGMEM = {
 };
 
 
+bool IC_DISPLAY::textCanFit(const char* chars) { 
+    uint8_t l = 0;
+    for (uint8_t i = 0; i < strlen(chars); i++) {
+        l += pgm_read_byte_near(ASCII_WIDTHS + (uint8_t) chars[i]);
+    }
+    return l-- < IC_WIDTH_PIXELS; // Minus 1 on return value as last char has no padding
+}
+
 
 byte IC_DISPLAY::page;
 IC_DISPLAY::IC_DISPLAY(CanbusComm *c, EngineData *d) {
-    char displayBuffer[10];
-    char charBuffer[256];
     this-> c = c;
-    this->inDiagMode = false;
-    this->lastUpdateMillis = millis();
-    this->curr_frame.can_id = IC_DISPLAY_ID;
-    this->curr_frame.can_dlc = 0x08;
-    this->setBody(BT_MSG);
-    this->setHeader(TELE_HEAD);
-    this->isSending = false;
-    this->diagPage = 0;
-    this->diagBuffer.reserve(9);
-    this->currFrame = 0;
-    this->d = d;
-    this->page = OTHER;
-
-    diag_frame.can_dlc = 8;
-    diag_frame.can_id = 0x1c;
-    diag_frame.data[0] = 0x02;
-    diag_frame.data[1] = 0x10;
-    diag_frame.data[2] = 0x92;
-    diag_frame.data[3] = 0xff;
-    diag_frame.data[4] = 0xff;
-    diag_frame.data[5] = 0xff;
-    diag_frame.data[6] = 0xff;
-    diag_frame.data[7] = 0xff;
-    c->sendFrame(CAN_BUS_B, &diag_frame);
-    lastKeepAliveMillis = millis();
-    diag_frame.data[1] = 0x3e;
-    diag_frame.data[2] = 0x02;
-
-    isUpdating = false;
-    #ifdef SIMULATION
-        this->inDiagMode = true;
-        this->diagPage = 4;
-    #endif
 }
 
-void IC_DISPLAY::setBody(const char* body) {
-    memset(bodyCharBuffer, 0x00, sizeof(bodyCharBuffer));
-    int text_width=0;
-    for (int i = 0; i < strlen(body); i++) {
-        // Remove ~ from string as that causes the IC to freak out and display garbage
-
-        // On a side note, sending '~ Test' to the IC will make it render the text 'Test' with left justification!
-        if (body[i] == '~') {
-            bodyCharBuffer[i] = ' ';
-            text_width += ASCII_WIDTHS[20];
-        } else {
-            bodyCharBuffer[i] = body[i];
-            text_width += pgm_read_byte_near(ASCII_WIDTHS + (uint8_t) body[i]);
-        }
+void IC_DISPLAY::setHeader(DISPLAY_PAGE p, bool shouldCenter, const char* header) {
+    uint8_t buffer[20];
+    uint8_t slen = strlen(header);
+    uint8_t len = slen + 3;
+    if (slen > 13) slen = 12;
+    buffer[0] = p == AUDIO ? 0x03 : 0x05;
+    buffer[1] = 0x29;
+    buffer[2] = shouldCenter ? 0x10 : 0x00;
+    for (uint8_t i = 0; i < slen; i++) {
+        buffer[i+3] = header[i];
     }
-    text_width--; // minus 1 because last character has no padding
-    DPRINTLN("Text width: "+String(text_width)+" pixels");
-    // Text too wide, scroll, or too many chars to send in 2 frames
-    if (text_width > IC_WIDTH_PIXELS || strlen(bodyCharBuffer) > ABSOLUTE_IC_MAX_BODY_CHARS) {
-        int bufferLen = strlen(bodyCharBuffer);
-        bodyCharBuffer[bufferLen]  = ' ';
-        bodyCharBuffer[bufferLen+1] = ' ';
-        bodyCharBuffer[bufferLen+2] = ' ';
-        bodyCharBuffer[bufferLen+3] = ' ';
-        this->shouldScrollText = true;
+    buffer[len] = 0x00;
+    buffer[len+1] = calculateChecksum(len, buffer);
+    sendPacketsISO(len+=2, buffer);
+}
+
+void IC_DISPLAY::initPage(DISPLAY_PAGE p, IC_DISPLAY::SYMBOL upper, IC_DISPLAY::SYMBOL lower , bool shouldCenter, const char* header) {
+    delay(350);
+    uint8_t buffer[64];
+    uint8_t slen = strlen(header);
+    if (slen > 13) slen = 12;
+    uint8_t len = 17 + slen + 2;
+    buffer[0] = p == AUDIO ? 0x03 : 0x05;
+    buffer[1] = 0x24;
+    buffer[2] = 0x02;
+    buffer[3] = 0x60;
+    buffer[4] = 0x01;
+
+    buffer[5] = 0x04; // Number of strs
+
+    buffer[6] = 0x00;
+    buffer[7] = 0x00;
+    buffer[8] = 0x00;
+    buffer[9] = 0x13;
+
+    buffer[10] = upper; // Symbols (TOP)
+    buffer[11] = 0x01;
+
+    buffer[12] = lower; // Symbols (BOTTOM)
+    buffer[13] = 0x02;
+
+    buffer[14] = 0x00;
+    buffer[15] = slen + 2;
+    buffer[16] = shouldCenter ? 0x10 : 0x00;
+    for (uint8_t i = 0; i < slen; i++) {
+        buffer[i+17] = header[i];
+    }
+    buffer[len-2] = 0x00;
+    buffer[len-1] = calculateChecksum(len-2, buffer);
+    sendPacketsISO(len, buffer);
+    delay(50);
+}
+
+void IC_DISPLAY::sendPacketsISO(uint8_t byteCount, uint8_t* bytes) {
+    can_frame x;
+    x.can_dlc = 8;
+    x.can_id = IC_DISPLAY_ID;
+    // Too many Bytes check
+    if (byteCount > 55) {
+        Serial.println(F("IC PAYLOAD TOO BIG (> 55 Bytes)"));
+    } 
+    else if (byteCount == 0) {
+        Serial.println(F("IC PAYLOAD IS EMPTY!"));
+    }
+    // Send 1 frame as 7 or less bytes 
+    else if (byteCount < 7) {
+        x.data[0] = byteCount;
+        for (uint8_t i = 1; i < 8; i++) {
+            x.data[i] = bytes[i-1];
+        }
+        c->sendFrame(CAN_BUS_B, &x);
+        delay(7);
     } else {
-        this->shouldScrollText = false;
-    }
-    this->lastUpdateMillis = 0L;
-}
-
-void IC_DISPLAY::setHeader(const char* header) {
-    char text[MAX_IC_HEAD_CHARS+1];
-    memset(text, 0x00, sizeof(text));
-    if (strlen(header) < MAX_IC_HEAD_CHARS) {
-        for (uint8_t i = 0; i < strlen(header); i++) {
-            text[i] = header[i];
+        x.data[0] = 0x10;
+        x.data[1] = byteCount;
+        for (uint8_t i = 2; i < 8; i++) x.data[i] = bytes[i-2];
+        c->sendFrame(CAN_BUS_B, &x);
+        delay(7);
+        x.data[0] = 0x21;
+        for (uint8_t i = 1; i < 8; i++) x.data[i] = bytes[i+5];
+        c->sendFrame(CAN_BUS_B, &x);
+        delay(2);
+        if (byteCount > 13) {
+            x.data[0] = 0x22;
+            for (uint8_t i = 1; i < 8; i++) x.data[i] = bytes[i+12];
+            c->sendFrame(CAN_BUS_B, &x);
+            delay(2);
         }
-        for (uint8_t i = strlen(header); i < MAX_IC_HEAD_CHARS; i++) {
-            text[i] = ' ';
+        if (byteCount > 20) {
+            x.data[0] = 0x23;
+            for (uint8_t i = 1; i < 8; i++) x.data[i] = bytes[i+19];
+            c->sendFrame(CAN_BUS_B, &x);
+            delay(2);
         }
-    } else {
-        for (uint8_t i = 0; i < MAX_IC_HEAD_CHARS; i++) {
-            text[i] = header[i];
+        if (byteCount > 27) {
+            x.data[0] = 0x24;
+            for (uint8_t i = 1; i < 8; i++) x.data[i] = bytes[i+26];
+            c->sendFrame(CAN_BUS_B, &x);
+            delay(2);
         }
-    }
-
-    memset(headerFramePayload, 0x00, sizeof(headerFramePayload));
-    int slen = min(8, strlen(text));
-    int len = slen + 5;
-    headerFramePayload[0] = 0x10;
-    headerFramePayload[1] = len;
-    headerFramePayload[2] = 0x03;
-    headerFramePayload[3] = 0x29;
-    headerFramePayload[4] = 0x00;
-    headerFramePayload[8] = 0x21;
-    for (int i = 0; i < min(3, slen); i++) headerFramePayload[5+i] = text[i];
-    for (int i = 0; i < min(8, slen); i++) headerFramePayload[9+i] = text[i+3];
-    uint8_t hash = 439 - (text[0] + text[1] + text[2] + text[3]);
-    headerFramePayload[11] = hash;
-    for (uint8_t i = 0; i <= 7; i++) {
-        curr_frame.data[i] = headerFramePayload[i];
-    }
-    c->sendFrame(CAN_BUS_B, &curr_frame);
-    delay(7);
-    for (uint8_t i = 8; i <= 15; i++) {
-        curr_frame.data[i-8] = headerFramePayload[i];
-    }
-    c->sendFrame(CAN_BUS_B, &curr_frame);
-    delay(7);
-}
-
-
-void IC_DISPLAY::setDiagText() {
-    switch (diagPage)
-    {
-    case 0:
-        diagBuffer = DIAG_TXT;
-        break;
-    case 1:
-        diagBuffer = d->getSpeed();
-        break;
-    case 2:
-        diagBuffer = d->getRpm();
-        break;
-    case 3:
-        diagBuffer = d->getCoolantTemp();
-        break;
-    case 4:
-        diagBuffer = d->getBhp();
-        break;
-    case 5:
-        diagBuffer = d->getTorque();
-        break;
-    default:
-        break;
+        if (byteCount > 34) {
+            x.data[0] = 0x25;
+            for (uint8_t i = 1; i < 8; i++) x.data[i] = bytes[i+33];
+            c->sendFrame(CAN_BUS_B, &x);
+            delay(2);
+        }
+        if (byteCount > 41) {
+            x.data[0] = 0x26;
+            for (uint8_t i = 1; i < 8; i++) x.data[i] = bytes[i+40];
+            c->sendFrame(CAN_BUS_B, &x);
+            delay(2);
+        }
+        if (byteCount > 48) {
+            x.data[0] = 0x27;
+            for (uint8_t i = 1; i < 8; i++) x.data[i] = bytes[i+47];
+            c->sendFrame(CAN_BUS_B, &x);
+            delay(2);
+        }
+        delay(10);
     }
 }
 
-uint8_t x = 0;
-void IC_DISPLAY::update() {
-    if (isUpdating) {
-        asyncSendBody();
+uint8_t IC_DISPLAY::calculateChecksum(uint8_t size, uint8_t* bytes) {
+    uint8_t hash = 0xFF;
+    for (uint8_t i = 0; i <= size; i++) hash -= i + bytes[i];
+    return hash;
+}
+
+void IC_DISPLAY::setbodyText(DISPLAY_PAGE p, bool centerText, const char* line1, const char* line2, const char* line3, const char* line4) {
+    uint8_t bytes[64];
+    uint8_t len1 = strlen(line1);
+    uint8_t len2 = strlen(line2);
+    uint8_t len3 = strlen(line3);
+    uint8_t len4 = strlen(line4);
+    uint8_t arrLen = 7;
+    bool has1 = len1 > 1;
+    bool has2 = len2 > 1;
+    bool has3 = len3 > 1;
+    bool has4 = len4 > 1;
+    // Break early if no text
+    if (!has1) {
         return;
     }
-    if (inDiagMode) {
-        if (millis() - lastUpdateMillis > DIAG_MODE_UPDATE_FREQ) {
-            setDiagText();
-            setBody();
-            lastUpdateMillis = millis();
-            nextUpdateMillis = millis();
-            #ifdef SIMULATION
-                delay(100);
-                d->isOn = true;
-                d->speed += random(2);
-            #endif
+    bytes[0] = p == AUDIO ? 0x03 : 0x05;
+    bytes[1] = 0x26;
+    bytes[2] = 0x01;
+    bytes[3] = 0x00;
+    bytes[4] = 1 + has2 + has3 + has4;
+    bytes[5] = len1 + 2;
+    bytes[6] = centerText ? 0x10 : 0x00;
+    for (uint8_t i = 0; i < len1; i++) bytes[i+7] = line1[i];
+    arrLen += len1;
+    // IC Does not accept more than 1 line on Audio page
+    if (has2 && p == TELEPHONE) {
+        bytes[arrLen] = len2+2;
+        bytes[arrLen+1] = centerText ? 0x10 : 0x00;
+        arrLen+=2;
+        for (uint8_t i = 0; i < len2; i++) {
+            bytes[arrLen+i] = line2[i];
         }
+        arrLen += len2;
+        bytes[arrLen] = 0x02;
+        bytes[arrLen+1] = 0x10;
+        bytes[arrLen+2] = 0x02;
+        bytes[arrLen+3] = 0x10;
+        arrLen += 3;
     }
-    else if (shouldScrollText) {
-        if (millis() - lastUpdateMillis > SCROLLING_UPDATE_FREQ) {
-            lastUpdateMillis = millis();
-            nextUpdateMillis = millis();
-            setBody();
-            this->shiftText();
-        }
-    } else {
-        if (millis() - lastUpdateMillis > STATIC_UPDATE_FREQ) {
-            lastUpdateMillis = millis();
-            nextUpdateMillis = millis();
-            setBody();
-        }
-    }
+    bytes[arrLen] = 0x00;
+    bytes[arrLen + 1] = calculateChecksum(arrLen, bytes);
+    arrLen+=2;
+    sendPacketsISO(arrLen, bytes);
 }
 
-void IC_DISPLAY::shiftText() {
-    char first = bodyCharBuffer[0];
-    uint8_t len = strlen(bodyCharBuffer);
-    for (uint8_t i = 1; i < len; i++) {
-        bodyCharBuffer[i-1] = bodyCharBuffer[i];
-    }
-    bodyCharBuffer[len-1] = first;
-}
-
-void IC_DISPLAY::setBody() {
-    uint8_t strLen = 0;
-    char displayBuffer[12];
-    memset(displayBuffer, 0x00, sizeof(displayBuffer));
-    if (inDiagMode) {
-        strLen = min(ABSOLUTE_IC_MAX_BODY_CHARS, diagBuffer.length());
-        for (int i = 0; i < strLen; i++) {
-            displayBuffer[i] = diagBuffer[i];
-        }
-    } else {
-        if (shouldScrollText) {
-            strLen = min(SCROLL_CHARS, strlen(bodyCharBuffer));
-        } else {
-            strLen = min(ABSOLUTE_IC_MAX_BODY_CHARS, strlen(bodyCharBuffer));
-        }
-        for (int i = 0; i < strLen; i++) {
-            displayBuffer[i] = bodyCharBuffer[i];
-        }
-    }
-    uint8_t len = strLen + 9;
-    memset(framePayload, 0x00, sizeof(framePayload));
-    framePayload[0] = 0x10;
-    framePayload[1] = len;
-    framePayload[2] = 0x03;
-    framePayload[3] = 0x26;
-    framePayload[4] = 0x01;
-    framePayload[5] = 0x00;
-    framePayload[6] = 0x01;
-    framePayload[7] = strLen + 2;
-    framePayload[8] = 0x21;
-    framePayload[9] = 0x10;
-    framePayload[16] = 0x22;
-
-    for(uint8_t i = 0; i < min(6,strLen); i++) framePayload[10+i] = displayBuffer[i];
-    for(uint8_t i = 0; i < min(SCROLL_CHARS, strLen) - 6; i++) framePayload[17+i] = displayBuffer[i+6];
-
-    uint8_t hash = 0xCA;
-    for(uint8_t i = 0; i < len; i++) hash -= i;
-    for (uint8_t i = 10; i < 16; i++) hash -=framePayload[i];
-    for (uint8_t i = 17; i < 23; i++) hash -=framePayload[i];
-    framePayload[(len > 13) ? (len + 3) : (len + 2)] = hash;
-    isUpdating = true;
-}
-
-uint8_t IC_DISPLAY::sendFrame() {
-    if (currFrame == 0) {
-        for (uint8_t i = 0; i <= 7; i++) {
-            curr_frame.data[i] = framePayload[i];
-        }
-        c->sendFrame(CAN_BUS_B, &curr_frame);
-        currFrame++;
-        return 7;
-    } else if (currFrame == 1) {
-        for (uint8_t i = 8; i <= 15; i++) {
-            curr_frame.data[i-8] = framePayload[i];
-        }
-        c->sendFrame(CAN_BUS_B, &curr_frame);
-        currFrame++;
-        return 2;
-    } else if (currFrame == 2) {
-        for (uint8_t i = 16; i <= 23; i++) {
-            curr_frame.data[i-16] = framePayload[i];
-        }
-        c->sendFrame(CAN_BUS_B, &curr_frame);
-        currFrame = 0;
-        isUpdating = false;
-        return 2;
-    }
-}
-
-
-void IC_DISPLAY::asyncSendBody() {
-    if (millis() >= nextUpdateMillis) {
-        nextUpdateMillis = lastUpdateMillis + sendFrame();
-    }
-}
-
-void IC_DISPLAY::nextDiagPage() {
-    if(diagPage == DIAG_SCREENS) {
-        diagPage = 0;
-    } else {
-        diagPage++;
-    }
-    diagSetHeader();
-}
-
-void IC_DISPLAY::prevDiagPage(){
-   if(diagPage == 0) {
-       diagPage = DIAG_SCREENS;
-   } else {
-       diagPage--;
-   }
-   diagSetHeader();
-}
-
-const char * const PROGMEM DIAG_HEAD_MAIN    = "MAIN";
-const char * const PROGMEM DIAG_HEAD_SPEED   = "SPD";
-const char * const PROGMEM DIAG_HEAD_RPM     = "RPM";
-const char * const PROGMEM DIAG_HEAD_COOLENT = "CLNT";
-const char * const PROGMEM DIAG_HEAD_POWER   = "BHP";
-const char * const PROGMEM DIAG_HEAD_TORQUE  = "TORQ";
-
-void IC_DISPLAY::diagSetHeader() {
-    switch (diagPage)
-    {
-    case 0:
-        setHeader(DIAG_HEAD_MAIN);
-        break;
-    case 1:
-        setHeader(DIAG_HEAD_SPEED);
-        break;
-    case 2:
-        setHeader(DIAG_HEAD_RPM);
-        break;
-    case 3:
-        setHeader(DIAG_HEAD_COOLENT);
-        break;
-    case 4:
-        setHeader(DIAG_HEAD_POWER);
-        break;
-    case 5:
-        setHeader(DIAG_HEAD_TORQUE);
-        break;
-    default:
-        break;
+void IC_DISPLAY::setSymbols(DISPLAY_PAGE p, SYMBOL top, SYMBOL bottom){
+    // For now, only AUDIO page supports symbols
+    if (p == AUDIO) {
+        uint8_t buffer[8] = { 0x03, 0x28, 0x01, top, 0x01, bottom, 0x02 };
+        buffer[7] = calculateChecksum(7, buffer);
+        sendPacketsISO(7, buffer);
     }
 }

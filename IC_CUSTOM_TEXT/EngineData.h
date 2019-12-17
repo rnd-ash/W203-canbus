@@ -26,6 +26,8 @@ class EngineData {
         char* getSpeed();
         char* getRpm();
         char* getCoolantTemp();
+        char* getAcFanPercent();
+        char* getInternalTemp();
         bool isOn = false;
         float speed = 0.0;
         int rpm = 0;
@@ -37,6 +39,10 @@ class EngineData {
         unsigned long lastTime;
         bool isInReverse = false;
         float odometer_milage = 0.0;
+
+        // -- AC (0x0030) --
+        int internal_temp_c = 0;
+        int ac_fan_percent = 0;
     private:
         void calculatePower();
         float bhp = 0.0;

@@ -2,12 +2,12 @@
 
 const char * const PROGMEM APP_EXIT_TXT = "APP EXIT!";
 const char * const PROGMEM UNKNOWN_TRACK = "Track: ??";
-const char * const PROGMEM TRACK_PAUSED = "PAUSED";
+const char * const PROGMEM TRACK_PAUSED = "AUX ";
 const char * const PROGMEM TRACK_PAUSED_HEAD = "----";
-
+const char * const PROGMEM READY = "NO PHONE";
 Car::Car(CanbusComm *c) {
     this->engine = new EngineData();
-    this->ic = new IC_DISPLAY(c, engine);
+    this->audio = new Audio_Page(new IC_DISPLAY(c, engine));
     this->wheel = new wheelControls();
     this->bluetooth = new phoneBluetooth(6, 7);
     this->c = c;
@@ -16,6 +16,7 @@ Car::Car(CanbusComm *c) {
     this->isLocked = false;
     this->lockJobDone = false;
     this->mirrors = new Mirrors(c);
+    audio->setText(READY);
 }
 
 uint8_t count = 0;
@@ -24,29 +25,12 @@ void Car::processCanFrame() {
     // Poll for a can frame on bus B (Interior Can)
     can_frame f = c->pollForFrame(CAN_BUS_B);
     // Key press related frame
-    if (f.can_id == 0x1CA) {
+    if (f.can_id == 0x1CA || f.can_id == 0x1D0) {
         processKeyPress(&f);
     } 
     // Frame from EZS_A1
     else if (f.can_id == 0x0000 && f.can_dlc > 0) {
-        if (f.data[5] == 0xaa && !engine->isOn) {
-            isLocked = true;
-            if (!lockJobDone) {
-                can_frame f;
-                f.can_id = 0x0045;
-                f.can_dlc = 4;
-                f.data[3] = 0x44;
-                f.data[4] = 0x04;
-                for (int i = 0; i < 1000; i++) {
-                    c->sendFrame(CAN_BUS_B, &f);
-                    delay(10);
-                }
-                lockJobDone = true;
-            }
-        } else {
-            isLocked = false;
-            lockJobDone = false;
-        }
+        
     }
     // Frame from GW_C_B1 
     else if (f.can_id == 0x0002) {
@@ -79,6 +63,24 @@ void Car::processCanFrame() {
     } else if (f.can_id == 0x009e) {
         engine->odometer_milage = (float) (((long) f.data[3] << 16) + ((int) f.data[4] << 8) + f.data[5]) / 8 * 5;
     }
+    else if (f.can_id == 0x0030) {
+        engine->internal_temp_c = (int) f.data[7] - 40;
+        engine->ac_fan_percent = (int) f.data[3];
+    } else if (f.can_id == 0x0004) {
+        if (f.data[1] == 0x04 && f.data[2] == 0x40) {
+            isLocked = true;
+            if (!lockJobDone) {
+                //TODO DO LOCK
+                lockJobDone = true;
+            }
+        } else {
+            isLocked = false;
+            lockJobDone = false;
+        }
+    } else if (f.can_id == 0x0250) {
+        DPRINTLN(*c->frameToString(&f));
+        DPRINTLN(millis());
+    }
 }
 
 void Car::processBluetoothRequest() {
@@ -99,24 +101,31 @@ void Car::processBluetoothRequest() {
             } else if (ptr[1] == ' '){
                 int duration = (byte) ptr[2] * 256 + (byte)ptr[3];
                 music->setSeconds(duration);
+                drawMusicProgress();
             } else if (ptr[1] == '_'){
                 int seek = (byte) ptr[2] * 256 + (byte)ptr[3];
                 music->setElapsed(seek);
+                drawMusicProgress();
             } else {}
             updateMusic();
         } else if (ptr[0] == 'B') {
-            ic->setBody(ptr+2);
+            // ptr + 2
         } else if (ptr[0] == '!') {
             music->pause();
-            ic->setBody(APP_EXIT_TXT);
             phoneConnected = false;
+        } else if (ptr[0] == 'D') {
+            doLightShow();
+        } else if (ptr[0] == 'F') {
+            flash_dipped_beam(1000);
+        } else if (ptr[0] == 'G') {
+            soundHorn();
         }
     }
 }
 
 void Car::processKeyPress(can_frame* f) {
     wheelControls::key k = wheel->getPressed(f);
-    if(!ic->inDiagMode && IC_DISPLAY::page == IC_DISPLAY::PAGES::AUDIO) {
+    if(IC_DISPLAY::page == IC_DISPLAY::DISPLAY_PAGE::AUDIO) {
         switch(k) {
             case wheelControls::ArrowUp:
                 if (phoneConnected) bluetooth->writeMessage("N");
@@ -125,30 +134,7 @@ void Car::processKeyPress(can_frame* f) {
                 if (phoneConnected) bluetooth->writeMessage("P");
                 break;
             case wheelControls::TelUp:
-                ic->diagSetHeader();
-                ic->inDiagMode = true;
-                break;
             case wheelControls::TelDown:
-            case wheelControls::ArrowUpLong:
-            case wheelControls::ArrowDownLong:
-            case wheelControls::TelUpLong:
-            case wheelControls::TelDownLong:
-            default:
-                break;
-        }
-    } else if (IC_DISPLAY::page == IC_DISPLAY::PAGES::AUDIO){
-        switch(k) {
-            case wheelControls::ArrowUp:
-                ic->nextDiagPage();
-                break;
-            case wheelControls::ArrowDown:
-                ic->prevDiagPage();
-                break;
-            case wheelControls::TelDown:
-                ic->inDiagMode = false;
-                updateMusic();
-                break;
-            case wheelControls::TelUp:
             case wheelControls::ArrowUpLong:
             case wheelControls::ArrowDownLong:
             case wheelControls::TelUpLong:
@@ -162,13 +148,14 @@ void Car::processKeyPress(can_frame* f) {
 void Car::updateMusic() {
     if (music->isPlaying()) {
         if (strlen(music->getDisplayText()) != 0) {
-            ic->setBody(music->getDisplayText());
+            audio->setText(music->getDisplayText());
         } else {
-            ic->setBody(UNKNOWN_TRACK);
+            audio->setText(UNKNOWN_TRACK);
         }
     } else {
-        ic->setHeader(TRACK_PAUSED_HEAD);
-        ic->setBody(TRACK_PAUSED);
+        audio->setHeader("Not Playing ");
+        delay(5);
+        audio->setText("PAUSED");
     }
 }
 
@@ -176,22 +163,19 @@ int lastProg = 0;
 void Car::drawMusicProgress() {
     if(millis() - lastUpdateMillis > 1000) {
         lastUpdateMillis = millis();
-        if (!ic->inDiagMode) {
-            if(music->isPlaying() && lastProg != music->progressPercent) {
-                char txt[4];
-                sprintf(txt, "%d%%", music->progressPercent);
-                lastProg = music->progressPercent;
-                ic->setHeader(txt);
-            }
+        if(music->isPlaying() && lastProg != music->progressPercent) {
+            char txt[14];
+            sprintf(txt, "Playing %d%%", music->progressPercent);
+            lastProg = music->progressPercent;
+            audio->setHeader(txt);
         }
     }
 }
 
-
 void Car::loop() {
+    audio->update();
     if(!isLocked) {
         processBluetoothRequest();
-        ic->update();
         if (phoneConnected) {
             music->update();
             drawMusicProgress();
@@ -200,6 +184,81 @@ void Car::loop() {
     } else {
         processCanFrame();
     }
+}
+
+
+void Car::doLightShow() {
+    int del = 500;
+    uint8_t timeOn = 0x11;
+    flash_indicatorLights(1, timeOn);
+    delay(del);
+    flash_indicatorLights(1, timeOn);
+    delay(del);
+    flash_indicatorLights(2, timeOn);
+    delay(del);
+    flash_indicatorLights(2, timeOn);
+    delay(del*3);
+    flash_indicatorLights(0, timeOn);
+    delay(del);
+    flash_indicatorLights(0, timeOn);
+    delay(del*2);
+    flash_dipped_beam(timeOn*5);
+    soundHorn();
+}
+
+void Car::soundHorn() {
+    /*
+    can_frame x;
+    x.can_id = 0x0006;
+    x.can_dlc = 5;
+    x.data[0] = 0xA0;
+    x.data[1] = 0x00;
+    x.data[2] = 0x00;
+    x.data[3] = 0x00;
+    x.data[4] = 0x09;
+    */
+
+    can_frame x;
+    x.can_id = 0x0015;
+    x.can_dlc = 5;
+    x.data[0] = (uint8_t) 0b00100000;
+    x.data[1] = 0x00;
+    x.data[2] = 0x00;
+    x.data[3] = 0x00;
+    x.data[4] = 0x09;
+    for (int i = 0; i < 2; i++) {
+        c->sendFrame(CAN_BUS_B, &x);
+        delay(10);
+    }
+    delay(300);
+    for (int i = 0; i < 2; i++) {
+        c->sendFrame(CAN_BUS_B, &x);
+        delay(10);
+    }
+}
+
+void Car::flash_indicatorLights(uint8_t id, uint8_t msec) {
+    can_frame x;
+    x.can_id = 0x000E;
+    x.can_dlc = 2;
+    if (id == 0) {
+        x.data[0] = 0xE0;
+    } else if (id == 1) {
+        x.data[0] = 0x80;
+    } else {
+        x.data[0] = 0x40;
+    }
+    x.data[1] = msec;
+    c->sendFrame(CAN_BUS_B, &x);
+}
+
+void Car::flash_dipped_beam(uint8_t msec) {
+    can_frame x;
+    x.can_id = 0x0230;
+    x.can_dlc = 2;
+    x.data[0] = 0b01000000;
+    x.data[1] = msec;
+    c->sendFrame(CAN_BUS_B, &x);
 }
 
 

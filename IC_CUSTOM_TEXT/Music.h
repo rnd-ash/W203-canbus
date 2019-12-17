@@ -20,7 +20,7 @@ class Music {
     private:
         unsigned long lastUpdateTime;
         bool playing;
-        char trackName[32];
+        char trackName[64];
 };
 
 #endif

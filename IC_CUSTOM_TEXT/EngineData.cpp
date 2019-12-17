@@ -15,7 +15,7 @@ const char * const IDLE_MSG PROGMEM = "CAR IDLE";
 char* EngineData::getRpm() {
     memset(dataStr, 0x00, sizeof(dataStr));
     if (!isOn) {
-        strncpy(dataStr, IGN_OFF_MSG, 9);
+        snprintf(dataStr, 9, "%s", IGN_OFF_MSG);
     } else {
         snprintf(dataStr, 9, "%d RPM", ((int)this->rpm/10)*10);
     }
@@ -142,5 +142,16 @@ char* EngineData::getTorque() {
             snprintf(dataStr, 9, "%d NM", (int) this->torque);
         }
     }
+    return dataStr;
+}
+
+char* EngineData::getAcFanPercent() {
+    memset(dataStr, 0x00, sizeof(dataStr));
+    snprintf(dataStr, 9, "%d %%", this->ac_fan_percent);
+    return dataStr;
+}
+char* EngineData::getInternalTemp() {
+    memset(dataStr, 0x00, sizeof(dataStr));
+    snprintf(dataStr, 9, "%d %%", this->internal_temp_c);
     return dataStr;
 }

@@ -6,67 +6,52 @@
 
 
 #define W203 // Disable to compile for W211 IC display
-
-#define STATIC_UPDATE_FREQ 2000
-#define SCROLLING_UPDATE_FREQ 150
 #define IC_DISPLAY_ID 0x1A4
-#define DIAG_MODE_UPDATE_FREQ 100
-#define DIAG_SCREENS 5
 
 #define ABSOLUTE_IC_MAX_BODY_CHARS 11 // Absolute maximum number of ASCII Chars allowed in 2 frames
-#define SCROLL_CHARS 10
+#define SCROLL_CHARS 12
 #ifdef W203
     #define IC_WIDTH_PIXELS 56
-    #define MAX_IC_HEAD_CHARS  4
+    #define MAX_IC_HEAD_CHARS  8
 #else
     #define IC_WIDTH_PIXELS 140
     #define MAX_IC_HEAD_CHARS  8
 #endif
-#define SENSOR_UDPATE_TIME 50
 
 class IC_DISPLAY{
     public:
-        enum PAGES {
-            AUDIO = 0x03,
-            TELEPHONE = 0x05,
-            OTHER = 0x00
+        enum DISPLAY_PAGE {
+            AUDIO = 0x03, /// Audio page
+            TELEPHONE = 0x05, /// Telephone page
+            OTHER = 0x00 /// Any other page that we don't want
+        };
+        
+        /**
+         * Used to represent a symbol that the IC can display on a page
+         */
+        enum SYMBOL {
+            NONE = 0x00, /// No symbol to be displayed
+            NEXT_TRACK = 0x01, /// Next track icon 
+            PREV_TRACK = 0x02, /// Previous track icon
+            FAST_FWD   = 0x03, /// Fast forward icon
+            FAST_REV   = 0x04, /// Fast reverse icon
+            PLAY       = 0x05, /// Play icon
+            REWIND     = 0x06, /// Rewind icon
+            UP_ARROW   = 0x09, /// Up arrow
+            DOWN_ARROW = 0x0A /// Down arrow
         };
         static byte page;
+        static uint8_t MAX_DISPLAY_WIDTH_PIXELS;
         IC_DISPLAY(CanbusComm *c, EngineData *d);
-        void setBody(const char* body);
-        void setBody(const __FlashStringHelper* h);
-        void setHeader(const char* header);
-        void update();
-        void nextDiagPage();
-        void prevDiagPage();
-        bool inDiagMode;
-        void diagSetHeader();
+        void initPage(DISPLAY_PAGE p, IC_DISPLAY::SYMBOL upper, IC_DISPLAY::SYMBOL lower , bool shouldCenter, const char* header);
+        void setSymbols(DISPLAY_PAGE p, SYMBOL top, SYMBOL bottom);
+        void setbodyText(DISPLAY_PAGE p, bool centerText, const char* line1, const char* line2, const char* line3, const char* line4);
+        void setHeader(DISPLAY_PAGE p, bool shouldCenter, const char* header);
+        static bool textCanFit(const char* chars);
     private:
-        unsigned long lastKeepAliveMillis;
-        void setDiagText();
-        bool isSending;
-        uint8_t displayTextLen;
-        uint8_t textWidth;
-        can_frame curr_frame;
-        can_frame diag_frame;
-        uint8_t framePayload[24] = {0x00};
-        uint8_t headerFramePayload[16] = { 0x00 };
-        unsigned long lastUpdateMillis;
-        unsigned long nextUpdateMillis;
-        String diagBuffer;
-        char bodyCharBuffer[128];
-        void shiftText();
-        void setBody();
-        void asyncSendBody();
+        void sendPacketsISO(uint8_t byteCount, uint8_t* bytes);
+        uint8_t calculateChecksum(uint8_t size, uint8_t* bytes);
         CanbusComm *c;
         uint8_t sendFrame();
-        uint8_t calculateBodyChecksum(uint8_t len);
-        EngineData *d;
-        uint8_t currFrame;
-        bool isUpdating;
-        uint8_t diagPage;
-        bool shouldScrollText = false;
 };
-
-
 #endif
