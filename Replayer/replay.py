@@ -8,9 +8,9 @@ import collections
 from FrameHandler import idHandler
 
 idh = idHandler()
-
+print("Testing!")
 car = Car()
-lines = open("canbusC.dmp", "r").readlines()
+lines = open("canbusB.dmp", "r").readlines()
 ids=list()
 for index, line in enumerate(lines):
     currtime=datetime.datetime.strptime(line.split(",")[0].split("=")[1], '%Y-%m-%d %H:%M:%S.%f')
@@ -25,8 +25,7 @@ for index, line in enumerate(lines):
     frameLen = int(frameData[2].split("=")[1])
     frameBytes = frameData[3:]
     frameBytes = [int(x, 16) for x in frameBytes]
-    if frameID == 1048:
-        idh.setData(frameID, frameBytes)
-        print("{0} -> {1}".format(frameID,frameBytes))
+    car.getData(frameID, frameBytes)
+    car.printData()
     time.sleep((nextTime.timestamp() - currtime.timestamp()))
     

@@ -7,12 +7,17 @@
 
 #include "wiring_private.h"
 #include "SoftwareSerial.h"
+#include "debug.h"
 class phoneBluetooth {
 public:
-    char message[128];
     phoneBluetooth(int rxPin, int txPin);
     void writeMessage(const char msg[]);
     void readMessage();
+    char message[128];
+    #ifdef SIMULATION
+        void debugInit();
+    #endif
+
 private:
     SoftwareSerial *bluetooth;
 };

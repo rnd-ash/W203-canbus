@@ -30,19 +30,22 @@ class IC_DISPLAY{
          * Used to represent a symbol that the IC can display on a page
          */
         enum SYMBOL {
-            NONE = 0x00, /// No symbol to be displayed
-            NEXT_TRACK = 0x01, /// Next track icon 
-            PREV_TRACK = 0x02, /// Previous track icon
-            FAST_FWD   = 0x03, /// Fast forward icon
-            FAST_REV   = 0x04, /// Fast reverse icon
-            PLAY       = 0x05, /// Play icon
-            REWIND     = 0x06, /// Rewind icon
-            UP_ARROW   = 0x09, /// Up arrow
-            DOWN_ARROW = 0x0A /// Down arrow
+            NONE = 0x00, // No symbol to be displayed
+            NEXT_TRACK = 0x01, // Next track icon 
+            PREV_TRACK = 0x02, // Previous track icon
+            FAST_FWD   = 0x03, // Fast forward icon
+            FAST_REV   = 0x04, // Fast reverse icon
+            PLAY       = 0x05, // Play icon
+            REWIND     = 0x06, // Rewind icon
+            UP_ARROW   = 0x09, // Up arrow
+            DOWN_ARROW = 0x0A // Down arrow
         };
         static byte page;
         static uint8_t MAX_DISPLAY_WIDTH_PIXELS;
         IC_DISPLAY(CanbusComm *c, EngineData *d);
+        /**
+         * Initialises the Target page, after waiting for the OEM to do its init first, so this overrides it 
+         **/
         void initPage(DISPLAY_PAGE p, IC_DISPLAY::SYMBOL upper, IC_DISPLAY::SYMBOL lower , bool shouldCenter, const char* header);
         void setSymbols(DISPLAY_PAGE p, SYMBOL top, SYMBOL bottom);
         void setbodyText(DISPLAY_PAGE p, bool centerText, const char* line1, const char* line2, const char* line3, const char* line4);

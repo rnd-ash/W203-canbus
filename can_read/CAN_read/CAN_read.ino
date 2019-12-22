@@ -18,18 +18,18 @@ void setup() {
 unsigned long time = millis();
 void loop() {
   if (mcp2515.readMessage(&canMsg) == MCP2515::ERROR_OK) {
-    char buffer[7];
-    Serial.print("FRAME:ID=");
-    Serial.print(canMsg.can_id);
-    Serial.print(":LEN=");
-    Serial.print(canMsg.can_dlc);
-    char tmp[3];
-    for (int i = 0; i<canMsg.can_dlc; i++)  {  // print the data
-      char buffer[5];
-      Serial.print(":");
-      sprintf(buffer,"%02X", canMsg.data[i]);
-      Serial.print(buffer);
-    }
-    Serial.println();
+      char buffer[7];
+      Serial.print("FRAME:ID=");
+      Serial.print(canMsg.can_id);
+      Serial.print(":LEN=");
+      Serial.print(canMsg.can_dlc);
+      char tmp[3];
+      for (int i = 0; i<canMsg.can_dlc; i++)  {  // print the data
+        char buffer[5];
+        Serial.print(":");
+        sprintf(buffer,"%02X", canMsg.data[i]);
+        Serial.print(buffer);
+      }
+      Serial.println();
   }
 }

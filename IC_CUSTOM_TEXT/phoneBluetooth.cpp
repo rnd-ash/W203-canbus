@@ -11,7 +11,15 @@ phoneBluetooth::phoneBluetooth(int rxPin, int txPin) {
     }
 }
 
+#ifdef SIMULATION
+void phoneBluetooth::debugInit() {
+    //this->bluetooth = new SoftwareSerial(6, 7);
+    bluetooth->begin(9600);
+}
+#endif
+
 void phoneBluetooth::writeMessage(const char msg[]) {
+    bluetooth->begin(9600);
     digitalWrite(15, HIGH);
     for(uint8_t i = 0; i < strlen(msg); i++) {
         bluetooth->write(msg[i]);

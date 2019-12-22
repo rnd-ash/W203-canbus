@@ -35,7 +35,11 @@ class ID03handler(idHandler):
     brake=False
     def setData(self, id, bytes):
         super().setData(id, bytes)
-        self.gear = self.getValueFromOffset(6, 2)
+        self.gear = self.getValueFromOffset(40, 3)
+        # 4 -> Drive (100)
+        # 1 -> Park  (001)
+        # 2 -> Reverse (101)
+        
         brake = self.getValueFromOffset(6, 2)
         if (brake > 0):
             self.brake = True

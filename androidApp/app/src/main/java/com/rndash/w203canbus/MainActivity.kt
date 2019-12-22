@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.graphics.Color
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        var mPlayer = MediaPlayer.create(this, R.raw.xmas)
         val adapter = BluetoothAdapter.getDefaultAdapter()
         val dev = adapter.bondedDevices.first { it.name == "HC-06" }
         ConnectService.ic = CarCommunicator(dev, adapter, this.applicationContext)
@@ -50,6 +52,9 @@ class MainActivity : AppCompatActivity() {
         val bluetoothBtn = findViewById<Button>(R.id.btTest)
         val textInput = findViewById<EditText>(R.id.customText)
         val statusText = findViewById<TextView>(R.id.arduino_status)
+        val showBtn = findViewById<Button>(R.id.showtime)
+        val hornBtn = findViewById<Button>(R.id.horn)
+        val lightBtn = findViewById<Button>(R.id.lights)
         artistCheck = findViewById<CheckBox>(R.id.artist)
 
         playPauseBtn.setOnClickListener {
@@ -72,6 +77,24 @@ class MainActivity : AppCompatActivity() {
             Log.i("BTN", "Previous track pressed")
             val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
             manager.dispatchMediaKeyEvent(event)
+        }
+
+        showBtn.setOnClickListener {
+            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
+            manager.dispatchMediaKeyEvent(event)
+            mPlayer = MediaPlayer.create(this, R.raw.xmas)
+            mPlayer.start()
+            ConnectService.ic.sendByteArray('D',0x00, byteArrayOf())
+        }
+
+        lightBtn.setOnClickListener {
+            mPlayer.stop()
+            ConnectService.ic.sendByteArray('F',0x00, byteArrayOf())
+        }
+
+        hornBtn.setOnClickListener {
+            mPlayer.stop()
+            ConnectService.ic.sendByteArray('G',0x00, byteArrayOf())
         }
 
         val iF = IntentFilter()
@@ -139,7 +162,6 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
                 } else if (intentAction.contains(".playbackstatechanged")) {
-                    println("Play state changed!");
                     val isPlaying = intent.getBooleanExtra("playing", true)
                     val progress = (intent.getLongExtra("position", 0) / 1000).toInt()
                     ConnectService.ic.sendByteArray(

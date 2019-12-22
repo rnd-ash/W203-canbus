@@ -4,7 +4,6 @@ const char * const PROGMEM APP_EXIT_TXT = "APP EXIT!";
 const char * const PROGMEM UNKNOWN_TRACK = "Track: ??";
 const char * const PROGMEM TRACK_PAUSED = "AUX ";
 const char * const PROGMEM TRACK_PAUSED_HEAD = "----";
-const char * const PROGMEM READY = "NO PHONE";
 Car::Car(CanbusComm *c) {
     this->engine = new EngineData();
     this->audio = new Audio_Page(new IC_DISPLAY(c, engine));
@@ -16,7 +15,12 @@ Car::Car(CanbusComm *c) {
     this->isLocked = false;
     this->lockJobDone = false;
     this->mirrors = new Mirrors(c);
-    audio->setText(READY);
+    #ifdef SIMULATION
+        ser = new SoftwareSerial(8,3);
+        DPRINTLN("SERIAL READY");
+    #endif
+
+
 }
 
 uint8_t count = 0;
@@ -70,26 +74,27 @@ void Car::processCanFrame() {
         if (f.data[1] == 0x04 && f.data[2] == 0x40) {
             isLocked = true;
             if (!lockJobDone) {
-                //TODO DO LOCK
                 lockJobDone = true;
+
             }
         } else {
             isLocked = false;
             lockJobDone = false;
         }
-    } else if (f.can_id == 0x0250) {
-        DPRINTLN(*c->frameToString(&f));
-        DPRINTLN(millis());
+    } else if (f.can_id == 0x01D0) {
+        DPRINTLN("IC >> AGW: "+*c->frameToString(&f));
+    } else if (f.can_id == 0x01A0) {
+        DPRINTLN("IC << AGW: "+*c->frameToString(&f));
     }
 }
 
 void Car::processBluetoothRequest() {
     bluetooth->readMessage();
-    int len = strlen(bluetooth->message);
     char* ptr = bluetooth->message;
+    int len = strlen(bluetooth->message);
     if (len > 0) {
         phoneConnected = true;
-        DPRINTLN("Incomming message -> " + String(bluetooth->message));
+        DPRINTLN("Incomming message -> " + String(ptr));
         // Track data
         if (ptr[0] == 'M') {
             if (ptr[2] == 'X' && len == 3) {
@@ -114,9 +119,21 @@ void Car::processBluetoothRequest() {
             music->pause();
             phoneConnected = false;
         } else if (ptr[0] == 'D') {
+            #ifdef SIMULATION
+            ser->begin(9600);
+            #endif
             doLightShow();
+            #ifdef SIMULATION
+            this->bluetooth->debugInit();
+            #endif
         } else if (ptr[0] == 'F') {
+            #ifdef SIMULATION
+            ser->begin(9600);
+            #endif
             flash_dipped_beam(1000);
+            #ifdef SIMULATION
+            this->bluetooth->debugInit();
+            #endif
         } else if (ptr[0] == 'G') {
             soundHorn();
         }
@@ -154,7 +171,7 @@ void Car::updateMusic() {
         }
     } else {
         audio->setHeader("Not Playing ");
-        delay(5);
+        delay(20);
         audio->setText("PAUSED");
     }
 }
@@ -168,6 +185,7 @@ void Car::drawMusicProgress() {
             sprintf(txt, "Playing %d%%", music->progressPercent);
             lastProg = music->progressPercent;
             audio->setHeader(txt);
+            delay(50);
         }
     }
 }
@@ -186,42 +204,11 @@ void Car::loop() {
     }
 }
 
-
-void Car::doLightShow() {
-    int del = 500;
-    uint8_t timeOn = 0x11;
-    flash_indicatorLights(1, timeOn);
-    delay(del);
-    flash_indicatorLights(1, timeOn);
-    delay(del);
-    flash_indicatorLights(2, timeOn);
-    delay(del);
-    flash_indicatorLights(2, timeOn);
-    delay(del*3);
-    flash_indicatorLights(0, timeOn);
-    delay(del);
-    flash_indicatorLights(0, timeOn);
-    delay(del*2);
-    flash_dipped_beam(timeOn*5);
-    soundHorn();
-}
-
 void Car::soundHorn() {
-    /*
     can_frame x;
     x.can_id = 0x0006;
     x.can_dlc = 5;
     x.data[0] = 0xA0;
-    x.data[1] = 0x00;
-    x.data[2] = 0x00;
-    x.data[3] = 0x00;
-    x.data[4] = 0x09;
-    */
-
-    can_frame x;
-    x.can_id = 0x0015;
-    x.can_dlc = 5;
-    x.data[0] = (uint8_t) 0b00100000;
     x.data[1] = 0x00;
     x.data[2] = 0x00;
     x.data[3] = 0x00;
@@ -243,22 +230,68 @@ void Car::flash_indicatorLights(uint8_t id, uint8_t msec) {
     x.can_dlc = 2;
     if (id == 0) {
         x.data[0] = 0xE0;
+        #ifdef SIMULATION
+        char snd[3] = {'H', ':', msec};
+        writeToSim(snd);
+    #endif
     } else if (id == 1) {
         x.data[0] = 0x80;
+        #ifdef SIMULATION
+       char snd[3] = {'R', ':', msec};
+        writeToSim(snd);
+    #endif
     } else {
         x.data[0] = 0x40;
+        #ifdef SIMULATION
+        char snd[3] = {'L', ':', msec};
+        writeToSim(snd);
+    #endif
     }
     x.data[1] = msec;
     c->sendFrame(CAN_BUS_B, &x);
 }
 
 void Car::flash_dipped_beam(uint8_t msec) {
+    /*
     can_frame x;
     x.can_id = 0x0230;
     x.can_dlc = 2;
     x.data[0] = 0b01000000;
     x.data[1] = msec;
     c->sendFrame(CAN_BUS_B, &x);
+    #ifdef SIMULATION
+        char snd[3] = {'D', ':', msec};
+        writeToSim(snd);
+    #endif
+    */
+   audio->setSymbols(IC_DISPLAY::SYMBOL::PLAY, IC_DISPLAY::SYMBOL::NEXT_TRACK);
 }
 
+#ifdef SIMULATION
+void Car::writeToSim(const char *s) {
+    DPRINTLN("Sending");
+    DPRINTLN((uint8_t) s[0]);
+    for (int i = 0; i < 3; i++) {
+        ser->write(s[i]);
+    }
+    ser->flush();
+}
+#endif
 
+// Wizards of Winter
+// 148 BPM
+// 1 note -> 405.4MS
+// 1/2 Note -> 203 MS
+void Car::doLightShow() {
+    delay(250);
+    for (int i = 0; i < 12; i++) {
+        flash_indicatorLights(1,100);
+        delay(203);
+        flash_indicatorLights(2,100);
+        delay(203);
+    }
+    flash_dipped_beam(255);
+    flash_indicatorLights(0, 100);
+    delay(100);
+    flash_dipped_beam(255);
+}

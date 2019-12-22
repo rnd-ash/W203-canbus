@@ -84,5 +84,26 @@
             android:id="@+id/textView3" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/customText"/>
+    <Button
+            android:text="Horn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/horn" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/showtime" app:layout_constraintTop_toTopOf="@+id/lights"
+            app:layout_constraintBottom_toBottomOf="@+id/lights"/>
+    <Button
+            android:text="Showtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/showtime"
+            app:layout_constraintBottom_toTopOf="@+id/next" app:layout_constraintTop_toBottomOf="@+id/customText"
+            app:layout_constraintEnd_toEndOf="@+id/next" app:layout_constraintStart_toStartOf="@+id/next"/>
+    <Button
+            android:text="Flash lights"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lights" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/showtime" app:layout_constraintTop_toTopOf="@+id/showtime"
+            app:layout_constraintBottom_toBottomOf="@+id/showtime"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -108,7 +108,7 @@ void IC_DISPLAY::initPage(DISPLAY_PAGE p, IC_DISPLAY::SYMBOL upper, IC_DISPLAY::
     buffer[len-2] = 0x00;
     buffer[len-1] = calculateChecksum(len-2, buffer);
     sendPacketsISO(len, buffer);
-    delay(50);
+    delay(100);
 }
 
 void IC_DISPLAY::sendPacketsISO(uint8_t byteCount, uint8_t* bytes) {

@@ -7,6 +7,7 @@
 #include "Music.h"
 #include "mirror_controls.h"
 #include "Audio_Display.h"
+#include "SoftwareSerial.h"
 
 class Car {
     public:
@@ -45,6 +46,10 @@ class Car {
         bool isLocked;
         bool lockJobDone;
         bool phoneConnected = false;
+        #ifdef SIMULATION
+            SoftwareSerial *ser;
+            void writeToSim(const char *s);
+        #endif
 };
 
 #endif

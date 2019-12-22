@@ -5,12 +5,14 @@
 Audio_Page::Audio_Page(IC_DISPLAY *ic) {
     this->lastUpdatetime = millis();
     this->display = ic;
+    strcpy(bodyText, "OPEN APP");
 }
 
 
 void Audio_Page::update() {
+    //IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::AUDIO;
     // Copy this text into header buffer if it is empty
-    if (strlen(headerText) <= 1) {
+    if (strlen(headerText) == 0) {
         strcpy(headerText, "BLUETOOTH");
     }
     // Stop sending useless packets if not in audio page
@@ -21,6 +23,9 @@ void Audio_Page::update() {
             DPRINTLN(F("INIT AUDIO PAGE"));
             isInPage = true;
             display->initPage(IC_DISPLAY::DISPLAY_PAGE::AUDIO, IC_DISPLAY::SYMBOL::UP_ARROW, IC_DISPLAY::SYMBOL::DOWN_ARROW, true, headerText);
+            if (!isScrolling) {
+                display->setbodyText(IC_DISPLAY::DISPLAY_PAGE::AUDIO, true, bodyText, NULL, NULL, NULL);
+            }
         }
         if (this->isScrolling) {
             if (millis() - lastUpdatetime > SCROLL_UPDATE_FREQ) {
@@ -34,12 +39,15 @@ void Audio_Page::update() {
                 // Rotate the text by 1 character
                 rotateText();
             }
-        } else {
+        } 
+        /*
+        else {
             if (millis() - lastUpdatetime > STATIC_UPDATE_FREQ) {
                 lastUpdatetime = millis();
                 display->setbodyText(IC_DISPLAY::DISPLAY_PAGE::AUDIO, true, bodyText, NULL, NULL, NULL);
             }
         }
+        */
     } else {
         isInPage = false;
     }
@@ -66,15 +74,22 @@ void Audio_Page::setText(const char* body) {
         bodyText[len+1] = ' ';
         bodyText[len+2] = ' ';
         bodyText[len+3] = ' ';
+    } else {
+        display->setbodyText(IC_DISPLAY::DISPLAY_PAGE::AUDIO, true, bodyText, NULL, NULL, NULL);
     }
     lastUpdatetime = 0;
 }
 
 void Audio_Page::setSymbols(IC_DISPLAY::SYMBOL upper, IC_DISPLAY::SYMBOL lower) {
-    display->setSymbols(IC_DISPLAY::DISPLAY_PAGE::AUDIO, upper, lower);
+    display->initPage(IC_DISPLAY::DISPLAY_PAGE::AUDIO,
+    upper,
+    lower,
+    false,
+    headerText);
 }
 
 void Audio_Page::setHeader(const char* header) {
+    strcpy(headerText, header);
     display->setHeader(IC_DISPLAY::DISPLAY_PAGE::AUDIO, false, header);
 }
         
