@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/ashcon/.arduino15/packages/arduino/tools/**",
+                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.1/**"
+            ],
+            "forcedInclude": [
+                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.1/cores/arduino/Arduino.h"
+            ],
+            "compilerPath": "/usr/bin/avr-gcc -mmcu=atmega328p",
+            "intelliSenseMode": "gcc-x64",
+            "defines": [ 
+                "USBCON",
+                "ARDUINO_AVR_UNO",
+                "ARDUINO_ARCH_AVR"
+            ]
+        }
+    ],
+    "version": 4
+}
