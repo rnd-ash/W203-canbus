@@ -10,7 +10,7 @@ Audio_Page::Audio_Page(IC_DISPLAY *ic) {
 
 
 void Audio_Page::update() {
-    //IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::AUDIO;
+    IC_DISPLAY::page = IC_DISPLAY::DISPLAY_PAGE::AUDIO;
     // Copy this text into header buffer if it is empty
     if (strlen(headerText) == 0) {
         strcpy(headerText, "BLUETOOTH");
@@ -22,10 +22,12 @@ void Audio_Page::update() {
             // audio unit will override our display!
             DPRINTLN(F("INIT AUDIO PAGE"));
             isInPage = true;
-            display->initPage(IC_DISPLAY::DISPLAY_PAGE::AUDIO, IC_DISPLAY::SYMBOL::UP_ARROW, IC_DISPLAY::SYMBOL::DOWN_ARROW, true, headerText);
+            display->initPage(IC_DISPLAY::DISPLAY_PAGE::AUDIO, IC_DISPLAY::SYMBOL::UP_ARROW, IC_DISPLAY::SYMBOL::DOWN_ARROW, true, "TEST");
+            /*
             if (!isScrolling) {
                 display->setbodyText(IC_DISPLAY::DISPLAY_PAGE::AUDIO, true, bodyText, NULL, NULL, NULL);
             }
+            */
         }
         if (this->isScrolling) {
             if (millis() - lastUpdatetime > SCROLL_UPDATE_FREQ) {
@@ -84,12 +86,24 @@ void Audio_Page::setSymbols(IC_DISPLAY::SYMBOL upper, IC_DISPLAY::SYMBOL lower) 
     display->initPage(IC_DISPLAY::DISPLAY_PAGE::AUDIO,
     upper,
     lower,
-    false,
-    headerText);
+    true,
+    "TEST");
 }
 
 void Audio_Page::setHeader(const char* header) {
     strcpy(headerText, header);
     display->setHeader(IC_DISPLAY::DISPLAY_PAGE::AUDIO, false, header);
 }
-        
+
+void Audio_Page::enableDiagMode() {
+    if (isInDiagMode == false) {
+        isInDiagMode = true;
+        isInPage = false;
+    }
+}
+void Audio_Page::disableDiagMode() {
+    if (isInDiagMode == true) {
+        isInDiagMode = false;
+        isInPage = false;
+    }
+}

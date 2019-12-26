@@ -5,16 +5,14 @@
 #include "wiring_private.h"
 #include "defines.h"
 
-#define BT_RX_LED 14
-#define BT_TX_LED 15
-
+const char * const PROGMEM BT_REC_STR = "Bluetooth MSG: ";
 class BLUETOOTH {
     public:
         BLUETOOTH(uint8_t rx, uint8_t tx);
-        void read_message();
-        void write_message(char* msg);
-        char buffer[255];
+        char* read_message();
+        void write_message(const char* msg);
     private:
+        char buffer[255];
         SoftwareSerial *bt;
 };
 

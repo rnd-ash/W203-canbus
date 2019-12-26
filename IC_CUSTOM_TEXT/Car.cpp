@@ -22,14 +22,13 @@ Car::Car(CanbusComm *c) {
 
 
 }
-
 uint8_t count = 0;
 bool reverseJobDone = false;
 void Car::processCanFrame() {
     // Poll for a can frame on bus B (Interior Can)
     can_frame f = c->pollForFrame(CAN_BUS_B);
     // Key press related frame
-    if (f.can_id == 0x1CA || f.can_id == 0x1D0) {
+    if (f.can_id == 0x1CA /*|| f.can_id == 0x1D0*/) {
         processKeyPress(&f);
     } 
     // Frame from EZS_A1
@@ -81,10 +80,6 @@ void Car::processCanFrame() {
             isLocked = false;
             lockJobDone = false;
         }
-    } else if (f.can_id == 0x01D0) {
-        DPRINTLN("IC >> AGW: "+*c->frameToString(&f));
-    } else if (f.can_id == 0x01A0) {
-        DPRINTLN("IC << AGW: "+*c->frameToString(&f));
     }
 }
 
@@ -194,10 +189,11 @@ void Car::loop() {
     audio->update();
     if(!isLocked) {
         processBluetoothRequest();
-        if (phoneConnected) {
+        /*if (phoneConnected) {
             music->update();
             drawMusicProgress();
         }
+        */
         processCanFrame();
     } else {
         processCanFrame();
@@ -252,7 +248,6 @@ void Car::flash_indicatorLights(uint8_t id, uint8_t msec) {
 }
 
 void Car::flash_dipped_beam(uint8_t msec) {
-    /*
     can_frame x;
     x.can_id = 0x0230;
     x.can_dlc = 2;
@@ -263,8 +258,6 @@ void Car::flash_dipped_beam(uint8_t msec) {
         char snd[3] = {'D', ':', msec};
         writeToSim(snd);
     #endif
-    */
-   audio->setSymbols(IC_DISPLAY::SYMBOL::PLAY, IC_DISPLAY::SYMBOL::NEXT_TRACK);
 }
 
 #ifdef SIMULATION

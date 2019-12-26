@@ -11,6 +11,20 @@
 #define ABSOLUTE_IC_MAX_BODY_CHARS 11 // Absolute maximum number of ASCII Chars allowed in 2 frames
 #define SCROLL_CHARS 12
 #ifdef W203
+/*
+    |----------|
+    |          |
+    |          |
+    |          |
+    |          |
+    |<--56px-->|
+    |          |
+    |          |
+    |          |
+    |          |
+    |          |
+    |----------|
+*/
     #define IC_WIDTH_PIXELS 56
     #define MAX_IC_HEAD_CHARS  8
 #else

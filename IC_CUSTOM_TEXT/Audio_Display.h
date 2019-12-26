@@ -24,7 +24,11 @@ class Audio_Page {
          * @param header Header text to display
          */
         void setHeader(const char* header);
+
+        void enableDiagMode();
+        void disableDiagMode();
     private:
+        bool isInDiagMode = false;
         /** Rotates string in bodyText by 1 character **/
         void rotateText();
         /** Used to store header string information **/

@@ -2,12 +2,10 @@
 
 #define CANCOM_H
 
+#include "defines.h"
 #include "can.h"
 #include "mcp2515.h"
 #include "wiring_private.h"
-
-#define RX_LED 16
-#define TX_LED 17
 
 /**
  * Class to handle reading and writing to Canbus
@@ -43,8 +41,8 @@ class CANBUS_COMMUNICATOR {
          * @param includeBinary If true, the binary string of the frame is also included in the string
          */
         String *frame_to_string(can_frame *f, bool includeBinary);
-        String frame_string;
     private:
+        String frame_string;
         can_frame read;
         MCP2515 *mcp;
 };

@@ -20,6 +20,7 @@ import org.w3c.dom.Text
 import java.lang.Exception
 import java.lang.NullPointerException
 import java.util.*
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -140,7 +141,11 @@ class MainActivity : AppCompatActivity() {
         timer.schedule(t, 0, 500)
     }
 
-    var trackName: String = ""
+    var trackName: String by Delegates.observable("") { p, o, n ->
+        if (o != n) {
+            ConnectService.ic.sendTrackName(n);
+        }
+    }
     var wasPlaying = false
 
     val receiver = object : BroadcastReceiver() {
@@ -151,8 +156,7 @@ class MainActivity : AppCompatActivity() {
                     println("meta changed")
                     trackName = intent.getStringExtra("track")!!
                     val trackDuration = (intent.getIntExtra("length", 0) / 1000).toInt()
-                    Log.d("TK", "Track is $trackDuration seconds long")
-                    ConnectService.ic.sendTrackName(trackName);
+                    Log.d("TK", "Track is $trackDuration seconds long");
                     ConnectService.ic.sendByteArray(
                         'M',
                         0x20,
@@ -184,7 +188,7 @@ class MainActivity : AppCompatActivity() {
                     textView.text = "Track: $trackName\nPlaying?: $isPlaying"
                 }
             } catch (e: UninitializedPropertyAccessException) {
-                Log.d("IT", "IC not initailised")
+                Log.d("IT", "IC not initialised")
             } catch (e: NullPointerException) {
             } catch (e:Exception) {
                 e.printStackTrace()

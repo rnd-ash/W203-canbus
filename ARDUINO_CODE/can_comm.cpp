@@ -7,22 +7,22 @@ CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_CL
     this->mcp->setNormalMode();
     pinMode(RX_LED, OUTPUT);
     pinMode(TX_LED, OUTPUT);
-    frame_string.reserve(150);
+    frame_string.reserve(140);
 }
 
 CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed) {
     SPI.begin();
     this->mcp = new MCP2515(cs_pin);
-    this->mcp->setBitrate(speed, MCP_16MHZ);
+    this->mcp->setBitrate(speed);
     this->mcp->setNormalMode();
     pinMode(RX_LED, OUTPUT);
     pinMode(TX_LED, OUTPUT);
-    frame_string.reserve(150);
+    frame_string.reserve(140);
 }
 
 void CANBUS_COMMUNICATOR::sendToBus(can_frame *send) {
     digitalWrite(TX_LED, HIGH);
-    mcp->sendMessage(send);
+    MCP2515::ERROR x = mcp->sendMessage(send);
     digitalWrite(TX_LED, LOW);
 }
 

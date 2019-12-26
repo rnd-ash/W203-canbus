@@ -9,6 +9,9 @@
 // CAN ID of AGW that communicates to the IC Display
 #define SEND_CAN_ID 0x1A4
 
+// CAN ID of IC Display back to AGW
+#define RECEIVE_CAN_ID 0x1D0
+
 // Width in pixels of display in the IC
 #define DISPLAY_WIDTH_PX 56
 
@@ -38,8 +41,16 @@ class IC_DISPLAY {
          */
         enum PAGE {
             AUDIO = 0x03,
-            TELEPHONE = 0x05
+            TELEPHONE = 0x05,
+            OTHER = 0x00
         };
+
+        void update();
+
+        /**
+         * Used to store the current page on the IC being active
+         */
+        static PAGE current_page;
 
         /**
          * Symbols that can be sent to the IC display
@@ -58,15 +69,18 @@ class IC_DISPLAY {
 
         IC_DISPLAY(CANBUS_COMMUNICATOR *can);
 
-        void update();
-
         /**
          * Returns true if body text can fit in display's width
+         * @param text Pointer to char array of text to fit in the body
          */
         bool can_fit_body_text(const char* text);
 
         /**
          * Sets the header text by itself using Package 29
+         * 
+         * @param p Page to send header text to Audio / Telephone
+         * @param text Header text to display on page
+         * @param should_center Should the header text be centered?
          */
         void setHeader(PAGE p, const char* text, bool should_center);
 
@@ -88,12 +102,21 @@ class IC_DISPLAY {
         
         /**
          * Sends Package 24 to display to tell it how to format the page.
-         * This package contains the following data:
-         * * Symbols
-         * * Header text
-         * * Number of lines of text to expect
+         * 
+         * @param p Page to initialise. Audio / Telephone
+         * @param header Header text to set on init.
+         * @param should_center Should the header text be centered?
+         * @param upper_Symbol Symbol above body text
+         * @param lower_Symbol Symbol below body text
          */
         void initPage(PAGE p, const char* header, bool should_center, IC_SYMBOL upper_Symbol, IC_SYMBOL lower_Symbol);
+
+
+        /**
+         * Processes an incomming can frame from the IC display
+         * @param r Pointer to can frame with ID 0x1D0 that has been read from the bus
+         */
+        void processIcResponse(can_frame *r);
     private:
         /** Used to store payload buffer */
         uint8_t buffer[55] = { 0x00 };
@@ -105,7 +128,7 @@ class IC_DISPLAY {
          * Sends [buffer] in a wrapped ISO 15765-2 protocol.
          * Up to a maximum of 8 can frames can be sent to the IC at a time.
          */
-        void sendBytes();
+        void sendBytes(int pre_delay, int post_delay);
 
         can_frame x;
 
@@ -118,6 +141,8 @@ class IC_DISPLAY {
 
         CANBUS_COMMUNICATOR *canB;
 };
+
+const char * const PROGMEM AGW_TO_IC_STR = "AGW >> IC: ";
 
 /**
  * Stores widths of charcters in table (plus 1 pixel gap between each char)
