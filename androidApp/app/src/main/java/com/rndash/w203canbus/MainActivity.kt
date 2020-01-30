@@ -16,7 +16,6 @@ import android.util.Log
 import android.view.KeyEvent
 import android.widget.*
 import androidx.annotation.RequiresApi
-import org.w3c.dom.Text
 import java.lang.Exception
 import java.lang.NullPointerException
 import java.util.*
@@ -32,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var artistCheck : CheckBox
     lateinit var thread : Thread
     var artistName = ""
+    lateinit var service : ConnectService
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         val adapter = BluetoothAdapter.getDefaultAdapter()
         val dev = adapter.bondedDevices.first { it.name == "HC-06" }
         ConnectService.ic = CarCommunicator(dev, adapter, this.applicationContext)
+        startService(Intent(this.baseContext, ConnectService::class.java))
         ctx = this.applicationContext
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -109,26 +110,23 @@ class MainActivity : AppCompatActivity() {
             var off = false
             override fun run() {
                 runOnUiThread {
-                    when (ConnectService.ic.btManager.isConnected) {
-                        true -> {
+                    when (ConnectService.conn_state) {
+                        BT_STATE.CONNECTED -> {
                             statusText.setText("Status: Connected")
                             statusText.setTextColor(Color.GREEN)
                         }
-                        false -> {
+                        BT_STATE.SCANNING, BT_STATE.DISCONNECTED -> {
                             when (off) {
                                 true -> {
                                     statusText.setText(" ")
                                 }
                                 false -> {
-                                    when (ConnectService.ic.isScanning) {
-                                        true -> {
-                                            statusText.setText("Status: Scanning")
-                                            statusText.setTextColor(Color.parseColor("#ffa500"))
-                                        }
-                                        false -> {
-                                            statusText.setText("Status: Disconnected")
-                                            statusText.setTextColor(Color.RED)
-                                        }
+                                    if (ConnectService.conn_state == BT_STATE.SCANNING) {
+                                        statusText.setText("Status: Scanning")
+                                        statusText.setTextColor(Color.parseColor("#ffa500"))
+                                    } else {
+                                        statusText.setText("Status: Disconnected")
+                                        statusText.setTextColor(Color.RED)
                                     }
                                 }
                             }
@@ -198,6 +196,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+
     }
 
     override fun onResume() {
@@ -215,8 +214,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        ConnectService.ic.destroy()
         unregisterReceiver(receiver)
-        stopService(Intent(this, ConnectService::class.java))
+        stopService(Intent(this.baseContext, ConnectService::class.java))
     }
 }

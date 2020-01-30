@@ -15,8 +15,6 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
                     private var adapter: BluetoothAdapter) {
 
     var isConnected = false
-    private var isReading = false
-    private var queue = ArrayList<String>()
     val readSerialBT = Thread() {
         Log.i("BT", "Reader thread started!")
         var buffer = ""

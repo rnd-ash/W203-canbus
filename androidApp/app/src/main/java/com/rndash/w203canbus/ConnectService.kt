@@ -10,35 +10,66 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import java.lang.Exception
+import kotlin.properties.Delegates
 
+enum class BT_STATE {
+    CONNECTED,
+    SCANNING,
+    DISCONNECTED
+}
 class ConnectService() : Service() {
     val id = 543
     companion object {
         lateinit var ic: CarCommunicator
-        var isCreate = false
-    }
-    override fun onCreate() {
-        super.onCreate()
+        var conn_state : BT_STATE = BT_STATE.DISCONNECTED
     }
 
-    override fun onStart(intent: Intent?, startId: Int) {
-        intent?.let {
-            when(it.action) {
-                "disconnect" -> {
+    private var connection_state by Delegates.observable(BT_STATE.DISCONNECTED) { p, old, new ->
+        if (old != new) {
+            conn_state = new
+            when (new) {
+                BT_STATE.DISCONNECTED -> disconnectedNotification()
+                BT_STATE.SCANNING -> scanningNotification()
+                BT_STATE.CONNECTED -> connectedNotification()
+            }
+        }
+    }
+
+    val workerThread = Thread() {
+        while(true) {
+            if (ic.btManager.isConnected) {
+                try {
+                    ic.ping()
+                    connection_state = BT_STATE.CONNECTED
+                } catch (e: Exception) {
                     disconnectedNotification()
+                    connection_state = BT_STATE.DISCONNECTED
                 }
-                "scan" -> {
-                    scanningNotification()
-                }
-                "connect" -> {
-                    ConnectNotification()
+            } else {
+                connection_state = BT_STATE.SCANNING
+                try {
+                    ic.btManager.connect()
+                    connection_state = BT_STATE.CONNECTED
+                } catch (e: Exception) {
+
                 }
             }
+            Thread.sleep(2000L)
         }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        try {
+            workerThread.start()
+        } catch (e: IllegalThreadStateException) {
+            Log.e("CS","Worker already running!")
+        }
+        return super.onStartCommand(intent, flags, startId)
     }
 
     fun scanningNotification() {
@@ -58,7 +89,7 @@ class ConnectService() : Service() {
         startForeground(id, notification)
     }
 
-    fun ConnectNotification() {
+    fun connectedNotification() {
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 createNotificationChannel("service", "Arduino notification service")
