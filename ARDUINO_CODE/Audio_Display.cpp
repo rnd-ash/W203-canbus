@@ -98,7 +98,8 @@ void AUDIO_DISPLAY::setTrackName(const char* name) {
 
 void AUDIO_DISPLAY::createHeader() {
     if (strlen(trackName) == 0) {
-        if (isInPage) display->setHeader(IC_DISPLAY::AUDIO, STARTUP_HEADER, true);
+        //if (isInPage) display->setHeader(IC_DISPLAY::AUDIO, STARTUP_HEADER, true);
+        if (isInPage) display->setHeader(IC_DISPLAY::AUDIO, "Oil pressure", true);
         if (isInPage) display->setBody(IC_DISPLAY::AUDIO, STARTUP_BODY, true);
         return;
     }
@@ -119,6 +120,8 @@ const char * AUDIO_DISPLAY::getDiagHeader() {
     switch(diagPage) {
         case 0:
             return DIAG_MODE_HEADER;
+        case 1:
+            return DIAG_HEADER_ATF;
         default:
             return "";
     }
@@ -128,6 +131,8 @@ const char * AUDIO_DISPLAY::getDiagBody() {
     switch(diagPage) {
         case 0:
             return DIAG_MODE_BODY;
+        case 1:
+            return "60C";
         default:
             return "";
     }
@@ -147,4 +152,24 @@ void AUDIO_DISPLAY::disableDiagMode() {
         inDiagMode = false;
         isInPage = false;
     }
+}
+
+void AUDIO_DISPLAY::diagNextPage() {
+    if (diagPage == MAX_DIAG_PAGES) {
+        diagPage = 0;
+    } else {
+        diagPage++;
+    }
+    display->setHeader(IC_DISPLAY::AUDIO, getDiagHeader(), true);
+    display->setBody(IC_DISPLAY::AUDIO, getDiagBody(), true);
+}
+
+void AUDIO_DISPLAY::diagPrevPage() {
+    if (diagPage == 0) {
+        diagPage = MAX_DIAG_PAGES;
+    } else {
+        diagPage--;
+    }
+    display->setHeader(IC_DISPLAY::AUDIO, getDiagHeader(), true);
+    display->setBody(IC_DISPLAY::AUDIO, getDiagBody(), true);
 }

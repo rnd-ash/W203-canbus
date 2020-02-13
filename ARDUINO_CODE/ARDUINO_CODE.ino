@@ -5,32 +5,34 @@
 #include "Audio_Display.h"
 #include "Lights.h"
 #include "wheel_controls.h"
-
-bool useClockALED = false;
+#include "Telephone_Display.h"
+#include "defines.h"
 
 BLUETOOTH *bt;
 IC_DISPLAY *ic;
-CANBUS_COMMUNICATOR *can;
+CANBUS_COMMUNICATOR *canB;
+CANBUS_COMMUNICATOR *canC;
 AUDIO_DISPLAY *audio;
+TELEPHONE_DISPLAY *tel;
 LIGHT_CONTROLS *lights;
 WHEEL_CONTROLS *wheel_controls;
 
 const char * const PROGMEM NEXT_TRACK_CMD = "N";
 const char * const PROGMEM PREV_TRACK_CMD = "P";
+const char * const PROGMEM SKIDDING_ACT = "S";
+const char * const PROGMEM SKIDDING_DIS = "D";
+
 
 void setup() {
     Serial.begin(115200);
-    Serial.println(F("READY"));
-    
+    SPI.begin();
     bt = new BLUETOOTH(6, 7);
-    can = new CANBUS_COMMUNICATOR(10, CAN_83K3BPS);
-    ic = new IC_DISPLAY(can);
+    canC = new CANBUS_COMMUNICATOR(9, CAN_500KBPS, MCP_8MHZ ,CANBUS_COMMUNICATOR::CAN_C);
+    canB = new CANBUS_COMMUNICATOR(10, CAN_83K3BPS, CANBUS_COMMUNICATOR::CAN_B);
+    ic = new IC_DISPLAY(canB);
     audio = new AUDIO_DISPLAY(ic);
+    tel = new TELEPHONE_DISPLAY(ic);
     wheel_controls = new WHEEL_CONTROLS();
-
-
-    pinMode(CLOCK_A_PIN, OUTPUT);
-    pinMode(CLOCK_B_PIN, OUTPUT);
 }
 
 void HandleBluetoothRequest() {
@@ -52,7 +54,7 @@ void HandleBluetoothRequest() {
         } else if (ptr[0] == '!') { // Disconnect message
             audio->setPlayState(false);
         } else if (ptr[0] == 'F') {
-            lights = new LIGHT_CONTROLS(can);
+            lights = new LIGHT_CONTROLS(canB);
             for (uint8_t i = 0; i < 10; i++) {
                 lights->flash_lights(true, true, 200);
                 delay(50);
@@ -65,11 +67,19 @@ void HandleBluetoothRequest() {
 }
 
 void handleFrameRead() {
-    can_frame *read = can->read_frame();
-    if (read->can_dlc != 0) {
-        ic->processIcResponse(read);
-        handleKeyInputs(read);
+    can_frame *readB = canB->read_frame();
+    if (readB->can_dlc != 0) {
+        //canB->printFrame(readB);
+        ic->processIcResponse(readB);
+        handleKeyInputs(readB);
+
     }
+    can_frame *read = canC->read_frame();
+    #ifndef DEBUG 
+    if (read->can_dlc != 0) {
+        canC->printFrame(read);
+    }
+    #endif
 }
 
 void handleKeyInputs(can_frame *f) {
@@ -79,13 +89,12 @@ void handleKeyInputs(can_frame *f) {
         if (audio->getDiagModeEnabled()) {
             switch(wheel_controls->getPressed(f)) {
                 case WHEEL_CONTROLS::ARROW_UP:
-                    //bt->write_message("N");
+                    audio->diagNextPage();
                     break;
                 case WHEEL_CONTROLS::ARROW_DOWN:
-                    //bt->write_message("P");
+                    audio->diagPrevPage();
                     break;
                 case WHEEL_CONTROLS::TELEPHONE_ANSWER:
-                    //audio->enableDiagMode();
                     break;
                 case WHEEL_CONTROLS::TELEPHONE_HANGUP:
                     audio->disableDiagMode(); // Disable diag mode
@@ -112,17 +121,30 @@ void handleKeyInputs(can_frame *f) {
                     break;
             }
         }
+    } 
+    // Telephone screen
+    else if (ic->current_page == IC_DISPLAY::TELEPHONE) {
+
+    }
+    // Other screen - Here the Arrows / Page buttons are used so we can only use the telephone buttons 
+    else {
+        switch(wheel_controls->getPressed(f)) {
+            case WHEEL_CONTROLS::TELEPHONE_ANSWER:
+                bt->write_message(NEXT_TRACK_CMD); // Use telephone Answer button to seek track
+                break;
+            case WHEEL_CONTROLS::TELEPHONE_HANGUP:
+                bt->write_message(PREV_TRACK_CMD); // Use telephone decline button to repeat track
+                break;
+            default:
+                break;
+        }
     }
 }
 
 
-
 void loop() {
-    uint8_t led = useClockALED ? CLOCK_A_PIN : CLOCK_B_PIN;
-    useClockALED = !useClockALED;
-    digitalWrite(led, HIGH);
     HandleBluetoothRequest();
     audio->update();
+    tel->update();
     handleFrameRead();
-    digitalWrite(led, LOW);
 }

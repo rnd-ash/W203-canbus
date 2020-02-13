@@ -39,7 +39,7 @@ void IC_DISPLAY::setHeader(PAGE p, const char* text, bool should_center) {
 
 void IC_DISPLAY::setBody(PAGE p, const char* text, bool should_center = true) {
     DPRINTLN(F("-- Update body --"));
-    uint8_t str_len = min(strlen(text), 12);
+    uint8_t str_len = min(strlen(text), 32);
     buffer_size = str_len + 7; // Not including CS bit
     buffer[0] = p; // Page number
     buffer[1] = 0x26; // Package 26 (Body text update)
@@ -110,7 +110,7 @@ void IC_DISPLAY::initPage(PAGE p, const char* header, bool should_center, IC_SYM
 }
 
 void IC_DISPLAY::sendBytes(int pre_delay, int post_delay) {
-    delay(post_delay);
+    this->delay(pre_delay);
     x.can_id = SEND_CAN_ID;
     x.can_dlc = 0x08;
     if (buffer_size == 0) {
@@ -124,7 +124,7 @@ void IC_DISPLAY::sendBytes(int pre_delay, int post_delay) {
         for (uint8_t i = 0; i < buffer_size; i++) x.data[i+1] = buffer[i];
         DPRINTLN(AGW_TO_IC_STR+*canB->frame_to_string(&x, false));
         canB->sendToBus(&x);
-        delay(post_delay);
+        this->delay(post_delay);
         return;
     } else {
         x.data[0] = 0x10;
@@ -132,54 +132,64 @@ void IC_DISPLAY::sendBytes(int pre_delay, int post_delay) {
         for (uint8_t i = 2; i < 8; i++) x.data[i] = buffer[i-2];
         DPRINTLN(AGW_TO_IC_STR+*canB->frame_to_string(&x, false));
         canB->sendToBus(&x);
-        delay(5);
+        this->delay(5);
         x.data[0] = 0x21;
         for (uint8_t i = 1; i < 8; i++) x.data[i] = buffer[i+5];
         DPRINTLN(AGW_TO_IC_STR+*canB->frame_to_string(&x, false));
         canB->sendToBus(&x);
-        delay(2);
+        this->delay(2);
         if (buffer_size > 13) {
             x.data[0] = 0x22;
             for (uint8_t i = 1; i < 8; i++) x.data[i] = buffer[i+12];
             DPRINTLN(AGW_TO_IC_STR+*canB->frame_to_string(&x, false));
             canB->sendToBus(&x);
-            delay(2);
+            this->delay(2);
         }
         if (buffer_size > 20) {
             x.data[0] = 0x23;
             for (uint8_t i = 1; i < 8; i++) x.data[i] = buffer[i+19];
             DPRINTLN(AGW_TO_IC_STR+*canB->frame_to_string(&x, false));
             canB->sendToBus(&x);
-            delay(2);
+            this->delay(2);
         }
         if (buffer_size > 27) {
             x.data[0] = 0x24;
             for (uint8_t i = 1; i < 8; i++) x.data[i] = buffer[i+26];
             DPRINTLN(AGW_TO_IC_STR+*canB->frame_to_string(&x, false));
             canB->sendToBus(&x);
-            delay(2);
+            this->delay(2);
         }
         if (buffer_size > 34) {
             x.data[0] = 0x25;
             for (uint8_t i = 1; i < 8; i++) x.data[i] = buffer[i+33];
             DPRINTLN(AGW_TO_IC_STR+*canB->frame_to_string(&x, false));
             canB->sendToBus(&x);
-            delay(2);
+            this->delay(2);
         }
         if (buffer_size > 41) {
             x.data[0] = 0x26;
             for (uint8_t i = 1; i < 8; i++) x.data[i] = buffer[i+40];
             DPRINTLN(AGW_TO_IC_STR+*canB->frame_to_string(&x, false));
             canB->sendToBus(&x);
-            delay(2);
+            this->delay(2);
         }
         if (buffer_size > 48) {
             x.data[0] = 0x27;
             for (uint8_t i = 1; i < 8; i++) x.data[i] = buffer[i+47];
             DPRINTLN(AGW_TO_IC_STR+*canB->frame_to_string(&x, false));
             canB->sendToBus(&x);
-            delay(2);
+            this->delay(2);
         }
-        delay(post_delay+10);
+        this->delay(post_delay+10);
+    }
+}
+
+void IC_DISPLAY::delay(int msec) {
+    can_frame *read = canB->read_frame();
+    unsigned long target = millis() + msec;
+    while (millis() <= target) {
+        if (read->can_dlc != 0) {
+            //canB->printFrame(read);
+        }
     }
 }

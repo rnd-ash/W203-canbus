@@ -9,14 +9,6 @@
 
 #define SYSTEM_SRAM_SIZE 2048
 
-// LED Pins
-#define CLOCK_A_PIN 19
-#define CLOCK_B_PIN 18
-#define BT_RX_LED 14
-#define BT_TX_LED 15
-#define RX_LED 16
-#define TX_LED 17
-
 // Audio page settings
 #define UPDATE_FREQ_HEADER 1000
 #define UPDATE_FREQ_SCROLL_BODY 175

@@ -1,5 +1,6 @@
 package com.rndash.w203canbus
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -28,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     lateinit var textView: TextView
-    lateinit var artistCheck : CheckBox
     lateinit var thread : Thread
     var artistName = ""
     lateinit var service : ConnectService
@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         val showBtn = findViewById<Button>(R.id.showtime)
         val hornBtn = findViewById<Button>(R.id.horn)
         val lightBtn = findViewById<Button>(R.id.lights)
-        artistCheck = findViewById<CheckBox>(R.id.artist)
 
         playPauseBtn.setOnClickListener {
             Log.i("BTN", "Play/Pause track pressed")
@@ -112,20 +111,20 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     when (ConnectService.conn_state) {
                         BT_STATE.CONNECTED -> {
-                            statusText.setText("Status: Connected")
+                            statusText.text = "Status: Connected"
                             statusText.setTextColor(Color.GREEN)
                         }
                         BT_STATE.SCANNING, BT_STATE.DISCONNECTED -> {
                             when (off) {
                                 true -> {
-                                    statusText.setText(" ")
+                                    statusText.text = " "
                                 }
                                 false -> {
                                     if (ConnectService.conn_state == BT_STATE.SCANNING) {
-                                        statusText.setText("Status: Scanning")
+                                        statusText.text = "Status: Scanning"
                                         statusText.setTextColor(Color.parseColor("#ffa500"))
                                     } else {
-                                        statusText.setText("Status: Disconnected")
+                                        statusText.text = "Status: Disconnected"
                                         statusText.setTextColor(Color.RED)
                                     }
                                 }
@@ -139,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         timer.schedule(t, 0, 500)
     }
 
-    var trackName: String by Delegates.observable("") { p, o, n ->
+    var trackName: String by Delegates.observable("") { _, o, n ->
         if (o != n) {
             ConnectService.ic.sendTrackName(n);
         }
@@ -147,6 +146,7 @@ class MainActivity : AppCompatActivity() {
     var wasPlaying = false
 
     val receiver = object : BroadcastReceiver() {
+        @SuppressLint("SetTextI18n")
         override fun onReceive(context: Context, intent: Intent) {
             try {
                 val intentAction = intent.action!!

@@ -2,6 +2,7 @@
 #define AUDIO_DISPLAY_H
 
 #include "ic_display.h"
+#define MAX_DIAG_PAGES 1
 
 const char * const PROGMEM STARTUP_HEADER = "No Connection";
 const char * const PROGMEM STARTUP_BODY = "Open App!";
@@ -14,6 +15,10 @@ const char * const PROGMEM SPEED_HEADER = "Speed (MPH)";
 
 const char * const PROGMEM MEMORY_STR_1 = "FREE SRAM: ";
 const char * const PROGMEM MEMORY_STR_2 = " Bytes";
+
+const char * const PROGMEM DIAG_HEADER_ATF = "ATF Temp (C)";
+
+
 class AUDIO_DISPLAY {
     public:
         AUDIO_DISPLAY(IC_DISPLAY *d);
@@ -25,6 +30,8 @@ class AUDIO_DISPLAY {
         void enableDiagMode();
         void disableDiagMode();
         bool getDiagModeEnabled();
+        void diagNextPage();
+        void diagPrevPage();
     private:
         bool inDiagMode = false;
         uint8_t diagPage = 0;

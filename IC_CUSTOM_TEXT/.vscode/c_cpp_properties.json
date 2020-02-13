@@ -5,10 +5,12 @@
             "includePath": [
                 "/home/ashcon/.arduino15/packages/arduino/tools/**",
                 "/home/ashcon/Arduino/**",
-                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.1/**"
+                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.1/**",
+                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.2/**"
             ],
             "forcedInclude": [
-                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.1/cores/arduino/Arduino.h"
+                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.1/cores/arduino/Arduino.h",
+                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.2/cores/arduino/Arduino.h"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
@@ -17,11 +19,11 @@
             "intelliSenseMode": "clang-x64",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "defines": [ 
+            "defines": [
                 "USBCON",
                 "ARDUINO_AVR_UNO",
                 "ARDUINO_ARCH_AVR"
-             ]
+            ]
         }
     ],
     "version": 4

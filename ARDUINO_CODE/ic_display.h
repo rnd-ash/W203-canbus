@@ -111,7 +111,7 @@ class IC_DISPLAY {
          */
         void initPage(PAGE p, const char* header, bool should_center, IC_SYMBOL upper_Symbol, IC_SYMBOL lower_Symbol);
 
-
+        void delay(int msec);
         /**
          * Processes an incomming can frame from the IC display
          * @param r Pointer to can frame with ID 0x1D0 that has been read from the bus

@@ -1,8 +1,9 @@
 #include <SPI.h>
-#include <mcp2515.h>
+#include "mcp2515.h"
 
 struct can_frame canMsg;
-MCP2515 mcp2515(10);
+MCP2515 mcp2515(9);
+MCP2515 mcp2515_b(10);
 
 
 void setup() {
@@ -10,8 +11,11 @@ void setup() {
   SPI.begin();
   
   mcp2515.reset();
-  mcp2515.setBitrate(CAN_83K3BPS);
+  mcp2515.setBitrate(CAN_500KBPS, MCP_8MHZ);
   mcp2515.setNormalMode();
+  mcp2515_b.reset();
+  mcp2515_b.setBitrate(CAN_83K3BPS);
+  mcp2515_b.setNormalMode();
   Serial.println("PID, DATA");
 }
 
