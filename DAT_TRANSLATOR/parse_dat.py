@@ -2,7 +2,7 @@ import sys
 import os
 import struct
 import codecs
-from google.cloud import translate_v2 as translate
+from googletrans import Translator
 
 #
 # CANBUS .DAT Decoder file
