@@ -1,6 +1,8 @@
 import sys
 import os
 import struct
+import codecs
+from google.cloud import translate_v2 as translate
 
 #
 # CANBUS .DAT Decoder file
@@ -15,8 +17,12 @@ import struct
 
 # Open the data and output file
 file=open(sys.argv[1], "rb")
-write = open(sys.argv[2], 'w')
+write = codecs.open(sys.argv[2], 'w', encoding='utf8')
 
+translator = Translator(service_urls=["translate.google.com", "translate.google.co.kr",
+                      "translate.google.at", "translate.google.de",
+                      "translate.google.ru", "translate.google.ch",
+                      "translate.google.fr", "translate.google.es"])
 
 class can_frame_msg:
     __bytes__ = []
@@ -41,14 +47,10 @@ class can_frame_msg:
         Sanitizes byte array of any char's that are not ascii, then
         returns a string from the byte array
         """
-        ret = bytearray()
-        for b in list(chars):
-            if b <= 127:
-                ret.append(b)
-        return ret.decode('ascii')
+        return chars.decode('iso-8859-1')
 
     def process(self):
-        self.__msg_name__ = self.read_range(self.read_range(1)[0]).decode('ascii')
+        self.__msg_name__ = self.read_range(self.read_range(1)[0]).decode('iso-8859-1')
         self.__offset__ = int(self.read_range(1)[0])
         self.__length__ = int(self.read_range(1)[0])
         self.read_range(0xE)
@@ -80,6 +82,9 @@ class can_frame_msg:
         else:
             return self.__msg_desc__
 
+    def set_translated_text(self, trans: str):
+        self.__msg_desc__ = trans
+
 
 
 
@@ -109,7 +114,9 @@ class can_frame_data:
 
     def parse_frame(self):
         self.read_range(2)
-        self.__ecu_name__ = self.read_range(self.read_range(1)[0]).decode('ascii')
+        self.__ecu_name__ = self.read_range(self.read_range(1)[0]).decode('iso-8859-1')
+        if len(self.__ecu_name__) < 2:
+            self.__ecu_name__ = "UNKNOWN"
         self.read_range(1)
         self.__ecu_id__ = int(struct.unpack("<H", self.read_range(2))[0])
         self.read_range(4)
@@ -149,6 +156,19 @@ class can_frame_data:
         """
         return self.__num_msgs__
 
+    def translate(self, lang: str):
+        
+        to_translate = []
+        for i in self.__msgs__:
+            to_translate.append(i.get_desc().encode('utf8').decode('utf8'))
+        translated_text = translator.translate(to_translate, src="DE", dest="EN").text
+        for pos, line in enumerate(translated_text):
+            try:
+                self.__msgs__[pos].set_translated_text(line.text)
+            except IndexError:
+                continue
+        
+
 
 
 can_frames = []
@@ -168,8 +188,10 @@ print("Found {0} can frames. Decoding".format(len(can_frames)))
 for f in can_frames:
     x = can_frame_data(f)
     x.parse_frame()
+    x.translate('en')
     print("ECU NAME: {0}, ID: {1}. MSG COUNT: {2}".format(x.get_name(), "0x%04X" % x.get_id(), x.get_num_msgs()))
     write.write("ECU NAME: {0}, ID: {1}. MSG COUNT: {2}\n".format(x.get_name(), "0x%04X" % x.get_id(), x.get_num_msgs()))
     for i in x.get_msgs():
         print("\tMSG NAME: {0} - {1}, OFFSET {2}, LENGTH {3}".format(i.get_msg_name(), i.get_desc(), i.get_offset(), i.get_len()))
-        write.write("\tMSG NAME: {0} - {1}, OFFSET {2}, LENGTH {3}\n".format(i.get_msg_name(), i.get_desc(), i.get_offset(), i.get_len()))
+        desc = i.get_desc()
+        write.write("\tMSG NAME: {0} - {1}, OFFSET {2}, LENGTH {3}\n".format(i.get_msg_name(), desc, i.get_offset(), i.get_len()))
