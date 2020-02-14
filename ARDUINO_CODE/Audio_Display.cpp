@@ -18,14 +18,16 @@ void AUDIO_DISPLAY::update() {
                     getDiagHeader(),
                     true,
                     IC_DISPLAY::IC_SYMBOL::UP_ARROW,
-                    IC_DISPLAY::IC_SYMBOL::DOWN_ARROW
+                    IC_DISPLAY::IC_SYMBOL::DOWN_ARROW,
+                    1
                 );
             } else {
                 display->initPage(IC_DISPLAY::AUDIO,
                     "",
                     true,
                     IC_DISPLAY::IC_SYMBOL::SKIP_TRACK,
-                    IC_DISPLAY::IC_SYMBOL::PREV_TRACK
+                    IC_DISPLAY::IC_SYMBOL::PREV_TRACK,
+                    1
                 );
                 if (!scrollingRequired) {
                     if (isPlaying) {
@@ -98,8 +100,7 @@ void AUDIO_DISPLAY::setTrackName(const char* name) {
 
 void AUDIO_DISPLAY::createHeader() {
     if (strlen(trackName) == 0) {
-        //if (isInPage) display->setHeader(IC_DISPLAY::AUDIO, STARTUP_HEADER, true);
-        if (isInPage) display->setHeader(IC_DISPLAY::AUDIO, "Oil pressure", true);
+        if (isInPage) display->setHeader(IC_DISPLAY::AUDIO, STARTUP_HEADER, true);
         if (isInPage) display->setBody(IC_DISPLAY::AUDIO, STARTUP_BODY, true);
         return;
     }
@@ -122,8 +123,12 @@ const char * AUDIO_DISPLAY::getDiagHeader() {
             return DIAG_MODE_HEADER;
         case 1:
             return DIAG_HEADER_ATF;
+        case 2:
+            return DIAG_HEADER_TORQUE_CONVERTER;
+        case 3:
+            return DIAG_HEADER_GEARING;
         default:
-            return "";
+            return DIAG_ERROR_HEAD;
     }
 }
 
@@ -132,21 +137,27 @@ const char * AUDIO_DISPLAY::getDiagBody() {
         case 0:
             return DIAG_MODE_BODY;
         case 1:
-            return "60C";
+            return this->eng->getTransmissionTemp();
+        case 2:
+            return this->eng->getTorqueConverterStatus();
+        case 3:
+            return this->eng->getGearing();
         default:
-            return "";
+            return DIAG_ERROR_BODY;
     }
 }
 
 bool AUDIO_DISPLAY::getDiagModeEnabled() { return inDiagMode; }
 
 
-void AUDIO_DISPLAY::enableDiagMode() {
+void AUDIO_DISPLAY::enableDiagMode(ENGINE_DATA *e) {
     if (inDiagMode == false) {
         inDiagMode = true;
         isInPage = false;
     }
+    this->eng = e;
 }
+
 void AUDIO_DISPLAY::disableDiagMode() {
     if (inDiagMode == true) {
         inDiagMode = false;

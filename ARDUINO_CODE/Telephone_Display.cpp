@@ -10,12 +10,14 @@ void TELEPHONE_DISPLAY::update() {
         if (!isInPage) { // Not in page so init it now (first)
             DPRINTLN("INIT PHONE");
             display->initPage(IC_DISPLAY::TELEPHONE,
-                "Long message",
+                "Long",
                 true,
                 IC_DISPLAY::IC_SYMBOL::NONE,
-                IC_DISPLAY::IC_SYMBOL::NONE
+                IC_DISPLAY::IC_SYMBOL::NONE,
+                2
             );
-            display->setBody(IC_DISPLAY::TELEPHONE, "Someone is calling me!", true);
+            const char* z[] = {"~A~B~C~D~E~F~G~H~I~J~K~L"};
+            display->setBodyTel(1, z);
             isInPage = true;
         } else {
             if (millis() - lastUpdateHeader >= UPDATE_FREQ_HEADER) {

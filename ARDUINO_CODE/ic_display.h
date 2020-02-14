@@ -98,7 +98,7 @@ class IC_DISPLAY {
          * To be only used by the Telephone page! (Audio page only can have 1 line of text)
          * Sends data about up to 4 lines of text to be displayed on the IC
          */
-        void setBodyTel(const char* line1,const char* line2,const char* line3, const char* line4);
+        void setBodyTel(uint8_t numStrs, const char* lines[]);
         
         /**
          * Sends Package 24 to display to tell it how to format the page.
@@ -109,7 +109,7 @@ class IC_DISPLAY {
          * @param upper_Symbol Symbol above body text
          * @param lower_Symbol Symbol below body text
          */
-        void initPage(PAGE p, const char* header, bool should_center, IC_SYMBOL upper_Symbol, IC_SYMBOL lower_Symbol);
+        void initPage(PAGE p, const char* header, bool should_center, IC_SYMBOL upper_Symbol, IC_SYMBOL lower_Symbol, uint8_t numLines);
 
         void delay(int msec);
         /**

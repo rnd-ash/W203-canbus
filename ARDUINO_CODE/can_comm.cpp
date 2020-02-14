@@ -80,6 +80,8 @@ String *CANBUS_COMMUNICATOR::frame_to_string(can_frame *f, bool includeBinary) {
 
 void CANBUS_COMMUNICATOR::printFrame(can_frame *f) {
     frame_string = "";
+    frame_string += millis();
+    frame_string += ",";
     frame_string += f->can_id;
     frame_string += ",";
     frame_string += f->can_dlc;

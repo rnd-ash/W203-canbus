@@ -57,6 +57,43 @@ void IC_DISPLAY::setBody(PAGE p, const char* text, bool should_center = true) {
     sendBytes(0,0);
 }
 
+void IC_DISPLAY::setBodyTel(uint8_t numStrs, const char* lines[]){
+    uint8_t charCount = 0;
+    uint8_t strsToUse = 0;
+    for (uint8_t i = 0; i < numStrs; i++) {
+        charCount += strlen(lines[i]) + 2;
+        if (charCount < 55) {
+            strsToUse++;
+        }
+    }
+
+    if (strsToUse == 0) {
+        return;
+    }
+
+    DPRINTLN(F("-- Update body --"));
+    buffer_size = charCount + 5; // Not including CS bit
+    buffer[0] = TELEPHONE; // Page number
+    buffer[1] = 0x26; // Package 26 (Body text update)
+    buffer[2] = 0x01; 
+    buffer[3] = 0x00;
+    buffer[4] = strsToUse; // Number of strings (1 only)
+    uint8_t index = 5;
+    for (uint8_t i = 0; i < strsToUse; i++) {
+        buffer[index] = strlen(lines[i]) + 2;
+        buffer[index+1] = 0x10; // center text
+        index += 2;
+        for (uint8_t x = 0; x < strlen(lines[i]); x++) {
+            buffer[index] = lines[i][x];
+            index++;
+        }
+    }
+    buffer[buffer_size] = 0x00; // End of string
+    buffer[buffer_size+1] = getChecksum(buffer_size, buffer);
+    buffer_size+=2;
+    sendBytes(0,0);
+}
+
 void IC_DISPLAY::processIcResponse(can_frame *r) {
     // Some data relating to navigation sent to AGW
     if (r->can_id == 0x1D0 && r->data[0] == 0x06 && r->data[2] == 0x27) {
@@ -79,7 +116,7 @@ void IC_DISPLAY::processIcResponse(can_frame *r) {
 }
 
 
-void IC_DISPLAY::initPage(PAGE p, const char* header, bool should_center, IC_SYMBOL upper_Symbol, IC_SYMBOL lower_Symbol) {
+void IC_DISPLAY::initPage(PAGE p, const char* header, bool should_center, IC_SYMBOL upper_Symbol, IC_SYMBOL lower_Symbol, uint8_t numLines=1) {
     DPRINTLN(F("-- Init page --"));
     uint8_t str_len = min(strlen(header), 20);
     buffer_size = str_len + 17; // Not including CS bit
@@ -88,7 +125,7 @@ void IC_DISPLAY::initPage(PAGE p, const char* header, bool should_center, IC_SYM
     buffer[2] = 0x02;
     buffer[3] = 0x60;
     buffer[4] = 0x01;
-    buffer[5] = 0x01;
+    buffer[5] = numLines;
     buffer[6] = 0x00;
     buffer[7] = 0x00;
     buffer[8] = 0x00;

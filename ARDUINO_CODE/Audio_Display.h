@@ -2,7 +2,8 @@
 #define AUDIO_DISPLAY_H
 
 #include "ic_display.h"
-#define MAX_DIAG_PAGES 1
+#include "Engine.h"
+#define MAX_DIAG_PAGES 3
 
 const char * const PROGMEM STARTUP_HEADER = "No Connection";
 const char * const PROGMEM STARTUP_BODY = "Open App!";
@@ -11,13 +12,16 @@ const char * const PROGMEM PAUSED_HEADER = "Paused";
 const char * const PROGMEM PAUSED_BODY = "Press play";
 const char * const PROGMEM DIAG_MODE_HEADER = "Scroll";
 const char * const PROGMEM DIAG_MODE_BODY = "DAIG MODE";
-const char * const PROGMEM SPEED_HEADER = "Speed (MPH)";
 
 const char * const PROGMEM MEMORY_STR_1 = "FREE SRAM: ";
 const char * const PROGMEM MEMORY_STR_2 = " Bytes";
 
 const char * const PROGMEM DIAG_HEADER_ATF = "ATF Temp (C)";
+const char * const PROGMEM DIAG_HEADER_TORQUE_CONVERTER = "TC lockup";
+const char * const PROGMEM DIAG_HEADER_GEARING = "Tar/Act gear";
 
+const char * const PROGMEM DIAG_ERROR_HEAD = "INVALID";
+const char * const PROGMEM DIAG_ERROR_BODY = "ERROR";
 
 class AUDIO_DISPLAY {
     public:
@@ -27,12 +31,13 @@ class AUDIO_DISPLAY {
         void setDuration(int seconds);
         void setElapsed(int seconds);
         void setTrackName(const char* name);
-        void enableDiagMode();
+        void enableDiagMode(ENGINE_DATA *eng);
         void disableDiagMode();
         bool getDiagModeEnabled();
         void diagNextPage();
         void diagPrevPage();
     private:
+        ENGINE_DATA *eng;
         bool inDiagMode = false;
         uint8_t diagPage = 0;
         bool isInPage = true;

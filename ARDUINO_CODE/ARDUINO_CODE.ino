@@ -6,6 +6,7 @@
 #include "Lights.h"
 #include "wheel_controls.h"
 #include "Telephone_Display.h"
+#include "Engine.h"
 #include "defines.h"
 
 BLUETOOTH *bt;
@@ -16,6 +17,7 @@ AUDIO_DISPLAY *audio;
 TELEPHONE_DISPLAY *tel;
 LIGHT_CONTROLS *lights;
 WHEEL_CONTROLS *wheel_controls;
+ENGINE_DATA * eng;
 
 const char * const PROGMEM NEXT_TRACK_CMD = "N";
 const char * const PROGMEM PREV_TRACK_CMD = "P";
@@ -75,11 +77,14 @@ void handleFrameRead() {
 
     }
     can_frame *read = canC->read_frame();
-    #ifndef DEBUG 
     if (read->can_dlc != 0) {
+        if (eng != NULL) {
+            eng->readFrame(read);
+        } 
+        #ifndef DEBUG
         canC->printFrame(read);
+        #endif
     }
-    #endif
 }
 
 void handleKeyInputs(can_frame *f) {
@@ -98,6 +103,7 @@ void handleKeyInputs(can_frame *f) {
                     break;
                 case WHEEL_CONTROLS::TELEPHONE_HANGUP:
                     audio->disableDiagMode(); // Disable diag mode
+                    free(eng);
                     break;
                 default:
                     break;
@@ -113,7 +119,8 @@ void handleKeyInputs(can_frame *f) {
                     bt->write_message(PREV_TRACK_CMD);
                     break;
                 case WHEEL_CONTROLS::TELEPHONE_ANSWER:
-                    audio->enableDiagMode(); // Enable diag mode 
+                    eng = new ENGINE_DATA();
+                    audio->enableDiagMode(eng); // Enable diag mode 
                     break;
                 case WHEEL_CONTROLS::TELEPHONE_HANGUP:
                     break;
