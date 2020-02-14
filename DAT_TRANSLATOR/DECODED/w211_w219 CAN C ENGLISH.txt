@@ -1,0 +1,1002 @@
+ECU NAME: UNKNOWN, ID: 0x0000. MSG COUNT: 14
+	MSG NAME: V_FZG - Airspeed vehicle, OFFSET 4, LENGTH 12
+	MSG NAME: SUB_ID_VAL1 - Sub ID value 1, OFFSET 16, LENGTH 8
+	MSG NAME: SUB_ID_VAL2 - Sub ID value 2, OFFSET 24, LENGTH 8
+	MSG NAME: KM16 - mileage, OFFSET 32, LENGTH 16
+	MSG NAME: VEH_DIR_REVERSE - Vehicle direction reverse, OFFSET 48, LENGTH 1
+	MSG NAME: LRG_TARGET_AC - LRG target in use, OFFSET 49, LENGTH 1
+	MSG NAME: TRCK_OFF_SPD - turn off tracking by speed V> 260 km / h, OFFSET 50, LENGTH 1
+	MSG NAME: DTR_VH - DTR available, OFFSET 51, LENGTH 1
+	MSG NAME: FZG_STEHT - Vehicle standstill recognized, OFFSET 52, LENGTH 1
+	MSG NAME: SENS_GEDR - Mounting position rotated 180 °, OFFSET 53, LENGTH 1
+	MSG NAME: HOST_NOT_OK - not host OK, OFFSET 54, LENGTH 1
+	MSG NAME: MOT_LFT - The engine is running, OFFSET 55, LENGTH 1
+	MSG NAME: DIAGMODE - Longitudinal controller diagnostics mode, OFFSET 56, LENGTH 2
+	MSG NAME: SPUHR_KONF - track configuration, OFFSET 58, LENGTH 2
+ECU NAME: RDU_A2, ID: 0x0224. MSG COUNT: 6
+	MSG NAME: AY_S - Fahrzeugquerbeschleunig. the center of gravity (+ = left), OFFSET 0, LENGTH 8
+	MSG NAME: GIER_ROH - Raw signal yaw rate without adjustment / filtration (+ = left), OFFSET 8, LENGTH 16
+	MSG NAME: LRWS_ST - Status steering wheel angle sensor, OFFSET 24, LENGTH 2
+	MSG NAME: LRW - steering wheel angle, OFFSET 26, LENGTH 14
+	MSG NAME: ASC_AVL - Active Steering Control available, OFFSET 41, LENGTH 1
+	MSG NAME: VLRW - Steering wheel angle speed, OFFSET 42, LENGTH 14
+ECU NAME: RDU_A3, ID: 0x0228. MSG COUNT: 8
+	MSG NAME: DRTGVL - Rotation direction left front wheel, OFFSET 0, LENGTH 2
+	MSG NAME: DVL - Front left wheel speed, OFFSET 2, LENGTH 14
+	MSG NAME: DRTGVR - Direction of rotation right front wheel, OFFSET 16, LENGTH 2
+	MSG NAME: DVR - Front right wheel speed, OFFSET 18, LENGTH 14
+	MSG NAME: DRTGHL - Rotation direction left rear wheel, OFFSET 32, LENGTH 2
+	MSG NAME: DHL - Rear left wheel speed, OFFSET 34, LENGTH 14
+	MSG NAME: DRTGHR - Direction of rotation right rear wheel, OFFSET 48, LENGTH 2
+	MSG NAME: DHR - Rear right wheel speed, OFFSET 50, LENGTH 14
+ECU NAME: BS_200h, ID: 0x0200. MSG COUNT: 15
+	MSG NAME: BRE_KL - Brake defective lamp (EBV_KL at 463/461 / NCV2), OFFSET 0, LENGTH 1
+	MSG NAME: ESP_INFO_BL - ESP Info Lamp flashing light, OFFSET 2, LENGTH 1
+	MSG NAME: ESP_INFO_DL - ESP Info Lamp steady light, OFFSET 3, LENGTH 1
+	MSG NAME: ESP_KL - ESP faulty warning light, OFFSET 4, LENGTH 1
+	MSG NAME: ABS_KL - ABS warning light defective, OFFSET 5, LENGTH 1
+	MSG NAME: HAS_KL - Hand brake applied (control light), OFFSET 6, LENGTH 1
+	MSG NAME: BLS_PA - BLS parity (even parity), OFFSET 9, LENGTH 1
+	MSG NAME: BZ200h - message count, OFFSET 10, LENGTH 4
+	MSG NAME: BLS - Brake Light Switch, OFFSET 14, LENGTH 2
+	MSG NAME: DRTGVL - Rotation direction left front wheel, OFFSET 16, LENGTH 2
+	MSG NAME: DVL - Front left wheel speed, OFFSET 18, LENGTH 14
+	MSG NAME: DRTGVR - Direction of rotation right front wheel, OFFSET 32, LENGTH 2
+	MSG NAME: DVR - Front right wheel speed, OFFSET 34, LENGTH 14
+	MSG NAME: DRTGTM - Rotation direction left wheel for cruise control, OFFSET 48, LENGTH 2
+	MSG NAME: TM_DL - Wheel left for cruise control, OFFSET 50, LENGTH 14
+ECU NAME: BS_208h, ID: 0x0208. MSG COUNT: 16
+	MSG NAME: AKT_R_ESP - ESP / ART-wish: "Active downshift", OFFSET 0, LENGTH 1
+	MSG NAME: MINMAX_ART - Should speed requirement of ART, OFFSET 1, LENGTH 1
+	MSG NAME: GMAX_ESP - Target gear, upper limit, OFFSET 2, LENGTH 3
+	MSG NAME: GMIN_ESP - Target gear, lower limit, OFFSET 5, LENGTH 3
+	MSG NAME: DDYN_UNT - Suppression dynamic Vollastrückschaltung, OFFSET 8, LENGTH 1
+	MSG NAME: SZS - system state, OFFSET 9, LENGTH 2
+	MSG NAME: TM_AUS - Cruise control operation from, OFFSET 11, LENGTH 1
+	MSG NAME: SLV_ESP - Switching line shift ESP, OFFSET 12, LENGTH 4
+	MSG NAME: BRE_AKT_ESP - ESP brake intervention active, OFFSET 16, LENGTH 1
+	MSG NAME: ANFN - Insert "N": ESP request, OFFSET 17, LENGTH 2
+	MSG NAME: BRE_AKT_ART - ART-active brake intervention, OFFSET 19, LENGTH 1
+	MSG NAME: MBRE_ESP - Adjusted brake torque (BR240 factor of 1.8 larger), OFFSET 20, LENGTH 12
+	MSG NAME: DRTGHR - Direction of rotation right rear wheel, OFFSET 32, LENGTH 2
+	MSG NAME: DHR - Rear right wheel speed, OFFSET 34, LENGTH 14
+	MSG NAME: DRTGHL - Rotation direction left rear wheel, OFFSET 48, LENGTH 2
+	MSG NAME: DHL - Rear left wheel speed, OFFSET 50, LENGTH 14
+ECU NAME: ART_258h, ID: 0x0258. MSG COUNT: 26
+	MSG NAME: ART_DSPL_EIN - switch display on ART display, OFFSET 0, LENGTH 1
+	MSG NAME: S_OBJ - Detecting stationary object, OFFSET 1, LENGTH 1
+	MSG NAME: ART_WT - ART warning, OFFSET 2, LENGTH 1
+	MSG NAME: ART_INFO - ART Info Lamp, OFFSET 3, LENGTH 1
+	MSG NAME: ART_ERR - ART error code, OFFSET 4, LENGTH 4
+	MSG NAME: V_ART - set ART-speed, OFFSET 8, LENGTH 8
+	MSG NAME: ABST_R_OBJ - Distance relevant object, OFFSET 16, LENGTH 8
+	MSG NAME: SOLL_ABST - Driver's desired distance, OFFSET 24, LENGTH 8
+	MSG NAME: ART_DSPL_PGB - Display "winter tires limit reached" on the display, OFFSET 32, LENGTH 1
+	MSG NAME: ART_VFBR - Display "DTR OFF [0]" on the display, OFFSET 33, LENGTH 1
+	MSG NAME: ART_DSPL_LIM - Display "---" on the display, OFFSET 34, LENGTH 1
+	MSG NAME: ART_EIN - Adaptive cruise control switched on, OFFSET 35, LENGTH 1
+	MSG NAME: OBJ_ERK - Relevant object detected, OFFSET 36, LENGTH 1
+	MSG NAME: ART_SEG_EIN - Switch ART-segment display, OFFSET 37, LENGTH 1
+	MSG NAME: ART_DSPL_BL - flashing speed indicator, OFFSET 38, LENGTH 1
+	MSG NAME: TM_EIN_ART - ART-cruise control activated, OFFSET 39, LENGTH 1
+	MSG NAME: V_ZIEL - Speed ​​unrecognized target vehicle, OFFSET 40, LENGTH 8
+	MSG NAME: ART_DSPL_NEU - retrigger minimum display time on the display, OFFSET 48, LENGTH 1
+	MSG NAME: ART_UEBERSP - ART is dubbed by the driver, OFFSET 49, LENGTH 1
+	MSG NAME: ART_REAKT - Display of system availability to system error, OFFSET 50, LENGTH 1
+	MSG NAME: ART_ABW_AKT - ART-distance warning is switched on, OFFSET 51, LENGTH 1
+	MSG NAME: OBJ_AGB - Property Offer distance Assistant, OFFSET 52, LENGTH 1
+	MSG NAME: AAS_LED_BL - LED flash distance Assistant, OFFSET 53, LENGTH 1
+	MSG NAME: ASSIST_FKT_AKT - active function, OFFSET 54, LENGTH 2
+	MSG NAME: CAS_ERR_ANZ_V2 - CAS ad request, OFFSET 56, LENGTH 3
+	MSG NAME: ASSIST_ANZ_V2 - Assistance system display request, OFFSET 59, LENGTH 5
+ECU NAME: BS_270h, ID: 0x0270. MSG COUNT: 8
+	MSG NAME: RIZ_HL - Pulse ring counter left rear wheel (48 per revolution), OFFSET 0, LENGTH 8
+	MSG NAME: RIZ_HR - Pulse ring counter right rear wheel (48 per revolution), OFFSET 8, LENGTH 8
+	MSG NAME: PRW_WARN - Alerts Platt Roll Warner, OFFSET 16, LENGTH 4
+	MSG NAME: PRW_ST - Status Platt Roll Warner, OFFSET 21, LENGTH 3
+	MSG NAME: BZ270h - message count, OFFSET 48, LENGTH 4
+	MSG NAME: PRESF_PA - Presafe parity (even parity), OFFSET 56, LENGTH 1
+	MSG NAME: PRESF_STAT - Presafe status, OFFSET 59, LENGTH 4
+	MSG NAME: PRESF_ENBL - Enable Presafe, OFFSET 63, LENGTH 1
+ECU NAME: BS_300h, ID: 0x0300. MSG COUNT: 20
+	MSG NAME: DMPAR_ART - Engine torque request parity (even parity), OFFSET 0, LENGTH 1
+	MSG NAME: DMDYN_ART - Engine torque request Dynamic, OFFSET 1, LENGTH 1
+	MSG NAME: VOLLBRE - Emergency braking (ABS controls all 4 wheels), OFFSET 3, LENGTH 1
+	MSG NAME: ART_E - Enable ART, OFFSET 4, LENGTH 1
+	MSG NAME: LWS_INI_OK - Initialization steering angle sensor O.K., OFFSET 6, LENGTH 1
+	MSG NAME: LWS_INI_EIN - Initialization steering angle sensor possible, OFFSET 7, LENGTH 1
+	MSG NAME: MPAR_ESP - Engine torque request parity (even parity), OFFSET 8, LENGTH 1
+	MSG NAME: AMR_AKT_ESP - Drive torque control active, OFFSET 10, LENGTH 1
+	MSG NAME: T_Z - Cycle time, OFFSET 11, LENGTH 2
+	MSG NAME: SFB_PA - Driver brakes parity (even parity), OFFSET 13, LENGTH 1
+	MSG NAME: SFB - driver brakes, OFFSET 14, LENGTH 2
+	MSG NAME: DMTGL_ART - Motormomentenanf. Toggle 40ms + -10, OFFSET 16, LENGTH 1
+	MSG NAME: DMMIN_ART - Engine torque requirement Min, OFFSET 17, LENGTH 1
+	MSG NAME: DMMAX_ART - Engine torque requirement Max, OFFSET 18, LENGTH 1
+	MSG NAME: DM_ART - Geford. engine torque, OFFSET 19, LENGTH 13
+	MSG NAME: MTGL_ESP - Motormomentenanf. Toggle 40ms + -10, OFFSET 32, LENGTH 1
+	MSG NAME: MMIN_ESP - Engine torque requirement Min, OFFSET 33, LENGTH 1
+	MSG NAME: MMAX_ESP - Engine torque requirement Max, OFFSET 34, LENGTH 1
+	MSG NAME: M_ESP - Geford. engine torque, OFFSET 35, LENGTH 13
+	MSG NAME: GIER_ROH - Raw signal yaw rate without adjustment / filtration (+ = left), OFFSET 48, LENGTH 16
+ECU NAME: BS_328h, ID: 0x0328. MSG COUNT: 18
+	MSG NAME: AY_S - Fahrzeugquerbeschleunig. the center of gravity (+ = left), OFFSET 16, LENGTH 8
+	MSG NAME: EHB_BN_PA - EHB-board power parity (even parity), OFFSET 24, LENGTH 1
+	MSG NAME: EHB_BN_TGL - EHB_Bordnetz Toggle 40ms (each 2.Botschaft), OFFSET 25, LENGTH 1
+	MSG NAME: EHB_ERR - EHB Error info, OFFSET 26, LENGTH 3
+	MSG NAME: INF_RFE_FSG - FSG: EHB ASG in fallback, OFFSET 29, LENGTH 1
+	MSG NAME: EHB_PUMPE_LFT - EHB pump runs, OFFSET 30, LENGTH 1
+	MSG NAME: LTG_CHK_POS - Line monitoring possible, OFFSET 31, LENGTH 1
+	MSG NAME: EHB_BN - EHB-board power status, OFFSET 32, LENGTH 2
+	MSG NAME: EHB_BN_LL - Lift EHB-board power idle, OFFSET 34, LENGTH 1
+	MSG NAME: ESP_DSPL - ESP display messages, OFFSET 35, LENGTH 5
+	MSG NAME: BRE_AKT_E - Brake pressure control possible, OFFSET 40, LENGTH 1
+	MSG NAME: NOTBRE - Emergency braking (brake light flashing), OFFSET 41, LENGTH 1
+	MSG NAME: N_VRBT_SBCSH_AKT - SBC-S / H active ASG must not switch to "N", OFFSET 42, LENGTH 1
+	MSG NAME: SBCSH_AKT - Traffic Jam Assistant / hill holder active (only 211/230), OFFSET 43, LENGTH 1
+	MSG NAME: KPL_OEF - open clutch, OFFSET 44, LENGTH 1
+	MSG NAME: BZ328h - message count, OFFSET 45, LENGTH 3
+	MSG NAME: RIZ_VL - Pulse ring counter left front wheel (48 per revolution), OFFSET 48, LENGTH 8
+	MSG NAME: RIZ_VR - Pulse ring counter right front wheel (48 per revolution), OFFSET 56, LENGTH 8
+ECU NAME: D_RS_BS, ID: 0x0785. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: D_RS_EHB, ID: 0x079B. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_BS, ID: 0x0722. MSG COUNT: 1
+	MSG NAME: SD_RS - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_EHB, ID: 0x0733. MSG COUNT: 1
+	MSG NAME: SD_RS - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: BS_APPL2, ID: 0x0635. MSG COUNT: 1
+	MSG NAME: APPL2 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: BS_APPL4, ID: 0x064B. MSG COUNT: 1
+	MSG NAME: APPL4 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: PRW_MESS2, ID: 0x06A1. MSG COUNT: 1
+	MSG NAME: MESS2 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: DTR_A1, ID: 0x0254. MSG COUNT: 19
+	MSG NAME: SENS_VAR - sensor variant, OFFSET 0, LENGTH 8
+	MSG NAME: SENS_SW_JAHR - Sensor software Year, OFFSET 8, LENGTH 8
+	MSG NAME: SENS_SW_KW - Sensor software Week, OFFSET 16, LENGTH 8
+	MSG NAME: SENS_DEF - sensor defect, OFFSET 24, LENGTH 1
+	MSG NAME: SENS_DEJUST - sensor maladjusted, OFFSET 25, LENGTH 1
+	MSG NAME: SENS_TEMP_ERR - Sensor shutdown due to temperature, OFFSET 26, LENGTH 1
+	MSG NAME: SENS_EXT_ERR - Sensor disturbed externally, OFFSET 27, LENGTH 1
+	MSG NAME: SENS_TXRX_ERR - Sensor transmission / reception problems, OFFSET 28, LENGTH 1
+	MSG NAME: SENS_DIRTY - dirty sensor / sensor cover, OFFSET 29, LENGTH 1
+	MSG NAME: OBJ_NVERM - Object is not measured, OFFSET 30, LENGTH 1
+	MSG NAME: SENS_NINIT - uninitialized sensor, OFFSET 31, LENGTH 1
+	MSG NAME: UB_LOW - Undervoltage detected, OFFSET 34, LENGTH 1
+	MSG NAME: RX_SPUR_VALID - min IDs track status. read 2X (no liability values), OFFSET 35, LENGTH 1
+	MSG NAME: DTR_CAN_VALID - DTR CAN valid (Valid CAN Data), OFFSET 36, LENGTH 1
+	MSG NAME: DTR_RX_INVALID - RX invalid (timeout, parity, MC), OFFSET 37, LENGTH 1
+	MSG NAME: DTR_AC_LANECFG - Active lane configuration numeric, OFFSET 38, LENGTH 2
+	MSG NAME: DTR_LANE - DTR - track, OFFSET 40, LENGTH 16
+	MSG NAME: MSG_CNT_DTR_A1 - message count, OFFSET 56, LENGTH 4
+	MSG NAME: DTR_SENS_DMODE - DTR sensor diagnostics mode, OFFSET 62, LENGTH 2
+ECU NAME: DTR_A2, ID: 0x025C. MSG COUNT: 11
+	MSG NAME: CRC25CH - CRC checksum byte 2 - 8 according to SAE J1850, OFFSET 0, LENGTH 8
+	MSG NAME: REL_ABLAGE - DTR storage Relevant object, OFFSET 8, LENGTH 9
+	MSG NAME: REL_ABSTAND - DTR distance relevant object, OFFSET 17, LENGTH 11
+	MSG NAME: REL_V_REL - DTR relative velocity Relevant object, OFFSET 28, LENGTH 12
+	MSG NAME: REL_A_OBJ - DTR acceleration Relevant object, OFFSET 40, LENGTH 8
+	MSG NAME: CMS_VAL - Collision Mitigation System Obj. Valid, OFFSET 48, LENGTH 1
+	MSG NAME: REL_FAHRT_STEHT - DTR status object data (object driving to standing) Relevant object, OFFSET 49, LENGTH 1
+	MSG NAME: REL_STEHT - DTR status object data Relevant object, OFFSET 50, LENGTH 1
+	MSG NAME: REL_NEU - DTR status object data Relevant object, OFFSET 51, LENGTH 1
+	MSG NAME: REL_ZIELVLST - Target loss due numerically Relevant object, OFFSET 52, LENGTH 2
+	MSG NAME: REL_ABL_GRAD - DTR ABL GRAD Relevant object, OFFSET 54, LENGTH 10
+ECU NAME: DTR_A3, ID: 0x0260. MSG COUNT: 9
+	MSG NAME: OBJ2_ABLAGE - DTR storage object 2, OFFSET 8, LENGTH 9
+	MSG NAME: OBJ2_ABSTAND - DTR distance object 2, OFFSET 17, LENGTH 11
+	MSG NAME: OBJ2_V_REL - DTR relative speed of the object 2, OFFSET 28, LENGTH 12
+	MSG NAME: OBJ2_A_OBJ - DTR acceleration object 2, OFFSET 40, LENGTH 8
+	MSG NAME: OBJ2_FAHRT_STEHT - DTR status object data (object driving to standing) Object 2, OFFSET 49, LENGTH 1
+	MSG NAME: OBJ2_STEHT - DTR status object data object 2, OFFSET 50, LENGTH 1
+	MSG NAME: OBJ2_NEU - DTR status object data object 2, OFFSET 51, LENGTH 1
+	MSG NAME: OBJ2_ZIELVLST - Target loss due numerically object 2, OFFSET 52, LENGTH 2
+	MSG NAME: OBJ2_ABL_GRAD - DTR ABL GRAD object 2, OFFSET 54, LENGTH 10
+ECU NAME: DTR_A4, ID: 0x0264. MSG COUNT: 9
+	MSG NAME: OBJ3_ABLAGE - DTR storage object 3, OFFSET 8, LENGTH 9
+	MSG NAME: OBJ3_ABSTAND - DTR distance object 3, OFFSET 17, LENGTH 11
+	MSG NAME: OBJ3_V_REL - DTR relative speed of object 3, OFFSET 28, LENGTH 12
+	MSG NAME: OBJ3_A_OBJ - DTR acceleration object 3, OFFSET 40, LENGTH 8
+	MSG NAME: OBJ3_FAHRT_STEHT - DTR status object data (object driving to standing) Item 3, OFFSET 49, LENGTH 1
+	MSG NAME: OBJ3_STEHT - DTR status object data object 3, OFFSET 50, LENGTH 1
+	MSG NAME: OBJ3_NEU - DTR status object data object 3, OFFSET 51, LENGTH 1
+	MSG NAME: OBJ3_ZIELVLST - Target loss due numerically object 3, OFFSET 52, LENGTH 2
+	MSG NAME: OBJ3_ABL_GRAD - DTR ABL GRAD object 3, OFFSET 54, LENGTH 10
+ECU NAME: DTR_A5, ID: 0x026C. MSG COUNT: 9
+	MSG NAME: OBJ4_ABLAGE - DTR storage object 4, OFFSET 8, LENGTH 9
+	MSG NAME: OBJ4_ABSTAND - DTR distance object 4, OFFSET 17, LENGTH 11
+	MSG NAME: OBJ4_V_REL - DTR relative speed of the object 4, OFFSET 28, LENGTH 12
+	MSG NAME: OBJ4_A_OBJ - DTR acceleration object 4, OFFSET 40, LENGTH 8
+	MSG NAME: OBJ4_FAHRT_STEHT - DTR status object data (object driving to standing) object 4, OFFSET 49, LENGTH 1
+	MSG NAME: OBJ4_STEHT - DTR status object data object 4, OFFSET 50, LENGTH 1
+	MSG NAME: OBJ4_NEU - DTR status object data object 4, OFFSET 51, LENGTH 1
+	MSG NAME: OBJ4_ZIELVLST - Target loss due numerically object 4, OFFSET 52, LENGTH 2
+	MSG NAME: OBJ4_ABL_GRAD - DTR ABL GRAD object 4, OFFSET 54, LENGTH 10
+ECU NAME: D_RS_DTR, ID: 0x04A0. MSG COUNT: 1
+	MSG NAME: D_RS_DTR - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_DTR, ID: 0x05A0. MSG COUNT: 1
+	MSG NAME: SD_RS_DTR - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SG_APPL_DTR, ID: 0x0520. MSG COUNT: 1
+	MSG NAME: SG_APPL_DTR - Steuergerät an externe Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MESS_DTR1, ID: 0x06D6. MSG COUNT: 1
+	MSG NAME: MESS_DTR1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: MESS_DTR2, ID: 0x06DE. MSG COUNT: 1
+	MSG NAME: MESS_DTR2 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: MESS_DTR3, ID: 0x06E6. MSG COUNT: 1
+	MSG NAME: MESS_DTR3 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: MESS_DTR4, ID: 0x06EE. MSG COUNT: 1
+	MSG NAME: MESS_DTR4 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: RDU_A1, ID: 0x0220. MSG COUNT: 15
+	MSG NAME: SUB_ID - SUB-ID identifier, OFFSET 0, LENGTH 4
+	MSG NAME: V_FZG - Airspeed vehicle, OFFSET 4, LENGTH 12
+	MSG NAME: SUB_ID_VAL1 - Sub ID value 1, OFFSET 16, LENGTH 8
+	MSG NAME: SUB_ID_VAL2 - Sub ID value 2, OFFSET 24, LENGTH 8
+	MSG NAME: KM16 - mileage, OFFSET 32, LENGTH 16
+	MSG NAME: VEH_DIR_REVERSE - Vehicle direction reverse, OFFSET 48, LENGTH 1
+	MSG NAME: LRG_TARGET_AC - LRG target in use, OFFSET 49, LENGTH 1
+	MSG NAME: TRCK_OFF_SPD - turn off tracking by speed V> 260 km / h, OFFSET 50, LENGTH 1
+	MSG NAME: DTR_VH - DTR available, OFFSET 51, LENGTH 1
+	MSG NAME: FZG_STEHT - Vehicle standstill recognized, OFFSET 52, LENGTH 1
+	MSG NAME: SENS_GEDR - Mounting position rotated 180 °, OFFSET 53, LENGTH 1
+	MSG NAME: HOST_NOT_OK - not host OK, OFFSET 54, LENGTH 1
+	MSG NAME: MOT_LFT - The engine is running, OFFSET 55, LENGTH 1
+	MSG NAME: DIAGMODE - Longitudinal controller diagnostics mode, OFFSET 56, LENGTH 2
+	MSG NAME: SPUHR_KONF - track configuration, OFFSET 58, LENGTH 2
+ECU NAME: RDU_A2, ID: 0x0224. MSG COUNT: 6
+	MSG NAME: AY_S - Fahrzeugquerbeschleunig. the center of gravity (+ = left), OFFSET 0, LENGTH 8
+	MSG NAME: GIER_ROH - Raw signal yaw rate without adjustment / filtration (+ = left), OFFSET 8, LENGTH 16
+	MSG NAME: LRWS_ST - Status steering wheel angle sensor, OFFSET 24, LENGTH 2
+	MSG NAME: LRW - steering wheel angle, OFFSET 26, LENGTH 14
+	MSG NAME: ASC_AVL - Active Steering Control available, OFFSET 41, LENGTH 1
+	MSG NAME: VLRW - Steering wheel angle speed, OFFSET 42, LENGTH 14
+ECU NAME: RDU_A3, ID: 0x0228. MSG COUNT: 8
+	MSG NAME: DRTGVL - Rotation direction left front wheel, OFFSET 0, LENGTH 2
+	MSG NAME: DVL - Front left wheel speed, OFFSET 2, LENGTH 14
+	MSG NAME: DRTGVR - Direction of rotation right front wheel, OFFSET 16, LENGTH 2
+	MSG NAME: DVR - Front right wheel speed, OFFSET 18, LENGTH 14
+	MSG NAME: DRTGHL - Rotation direction left rear wheel, OFFSET 32, LENGTH 2
+	MSG NAME: DHL - Rear left wheel speed, OFFSET 34, LENGTH 14
+	MSG NAME: DRTGHR - Direction of rotation right rear wheel, OFFSET 48, LENGTH 2
+	MSG NAME: DHR - Rear right wheel speed, OFFSET 50, LENGTH 14
+ECU NAME: RDU_A4, ID: 0x022C. MSG COUNT: 7
+	MSG NAME: FAHRSP_RE - DTR External Track 1 Number of direction lanes Right, OFFSET 0, LENGTH 2
+	MSG NAME: FAHRSP_LI - DTR External Track 1 Number of direction lanes Links, OFFSET 2, LENGTH 2
+	MSG NAME: APPROX_VORSCHR - DTR External Track 1 Approximationsvorschrift, OFFSET 4, LENGTH 4
+	MSG NAME: ABST_PKT1 - DTR Ext lane 1 + Offset 1, OFFSET 16, LENGTH 8
+	MSG NAME: ABLG_PKT1 - DTR External Track 1 filing point 1, OFFSET 24, LENGTH 16
+	MSG NAME: ABST_PKT2 - DTR Ext lane 1 + Offset 2, OFFSET 40, LENGTH 8
+	MSG NAME: ABLG_PKT2 - DTR Ext lane 1 drop point 2, OFFSET 48, LENGTH 16
+ECU NAME: RDU_A5, ID: 0x022E. MSG COUNT: 4
+	MSG NAME: ABST_PKT3 - DTR Ext lane 2 + Offset 3, OFFSET 0, LENGTH 8
+	MSG NAME: ABLG_PKT3 - DTR external storage track 2 point 3, OFFSET 8, LENGTH 16
+	MSG NAME: ABST_PKT4 - DTR Ext lane 2 + Offset 4, OFFSET 24, LENGTH 8
+	MSG NAME: ABLG_PKT4 - DTR external storage track 2 point 4, OFFSET 32, LENGTH 16
+ECU NAME: ART_250h, ID: 0x0250. MSG COUNT: 16
+	MSG NAME: SLV_ART - Switching line shift ART, OFFSET 0, LENGTH 4
+	MSG NAME: ART_OK - ART fine, OFFSET 4, LENGTH 1
+	MSG NAME: ART_BRE - ART brakes, OFFSET 5, LENGTH 1
+	MSG NAME: BL_UNT - Brake light suppression, OFFSET 6, LENGTH 1
+	MSG NAME: DYN_UNT - Suppression dynamic Vollastrückschaltung, OFFSET 7, LENGTH 1
+	MSG NAME: MPAR_ART - Engine torque request parity (even parity), OFFSET 8, LENGTH 1
+	MSG NAME: MDYN_ART - Engine torque request Dynamic, OFFSET 9, LENGTH 1
+	MSG NAME: CAS_REG - City assistant controls, OFFSET 10, LENGTH 1
+	MSG NAME: LIM_REG - limiter regulates, OFFSET 17, LENGTH 1
+	MSG NAME: ART_REG - ART regulates, OFFSET 18, LENGTH 1
+	MSG NAME: M_ART - Geford. engine torque, OFFSET 19, LENGTH 13
+	MSG NAME: BZ250h - message count, OFFSET 32, LENGTH 4
+	MSG NAME: MBRE_ART - Braking torque (0000h: Passive value), OFFSET 36, LENGTH 12
+	MSG NAME: AKT_R_ART - ART-wish: "Active downshift", OFFSET 48, LENGTH 1
+	MSG NAME: GMAX_ART - Target gear, upper limit, OFFSET 50, LENGTH 3
+	MSG NAME: GMIN_ART - Target gear, lower limit, OFFSET 53, LENGTH 3
+ECU NAME: ART_258h, ID: 0x0258. MSG COUNT: 26
+	MSG NAME: ART_DSPL_EIN - switch display on ART display, OFFSET 0, LENGTH 1
+	MSG NAME: S_OBJ - Detecting stationary object, OFFSET 1, LENGTH 1
+	MSG NAME: ART_WT - ART warning, OFFSET 2, LENGTH 1
+	MSG NAME: ART_INFO - ART Info Lamp, OFFSET 3, LENGTH 1
+	MSG NAME: ART_ERR - ART error code, OFFSET 4, LENGTH 4
+	MSG NAME: V_ART - set ART-speed, OFFSET 8, LENGTH 8
+	MSG NAME: ABST_R_OBJ - Distance relevant object, OFFSET 16, LENGTH 8
+	MSG NAME: SOLL_ABST - Driver's desired distance, OFFSET 24, LENGTH 8
+	MSG NAME: ART_DSPL_PGB - Display "winter tires limit reached" on the display, OFFSET 32, LENGTH 1
+	MSG NAME: ART_VFBR - Display "DTR OFF [0]" on the display, OFFSET 33, LENGTH 1
+	MSG NAME: ART_DSPL_LIM - Display "---" on the display, OFFSET 34, LENGTH 1
+	MSG NAME: ART_EIN - Adaptive cruise control switched on, OFFSET 35, LENGTH 1
+	MSG NAME: OBJ_ERK - Relevant object detected, OFFSET 36, LENGTH 1
+	MSG NAME: ART_SEG_EIN - Switch ART-segment display, OFFSET 37, LENGTH 1
+	MSG NAME: ART_DSPL_BL - flashing speed indicator, OFFSET 38, LENGTH 1
+	MSG NAME: TM_EIN_ART - ART-cruise control activated, OFFSET 39, LENGTH 1
+	MSG NAME: V_ZIEL - Speed ​​unrecognized target vehicle, OFFSET 40, LENGTH 8
+	MSG NAME: ART_DSPL_NEU - retrigger minimum display time on the display, OFFSET 48, LENGTH 1
+	MSG NAME: ART_UEBERSP - ART is dubbed by the driver, OFFSET 49, LENGTH 1
+	MSG NAME: ART_REAKT - Display of system availability to system error, OFFSET 50, LENGTH 1
+	MSG NAME: ART_ABW_AKT - ART-distance warning is switched on, OFFSET 51, LENGTH 1
+	MSG NAME: OBJ_AGB - Property Offer distance Assistant, OFFSET 52, LENGTH 1
+	MSG NAME: AAS_LED_BL - LED flash distance Assistant, OFFSET 53, LENGTH 1
+	MSG NAME: ASSIST_FKT_AKT - active function, OFFSET 54, LENGTH 2
+	MSG NAME: CAS_ERR_ANZ_V2 - CAS ad request, OFFSET 56, LENGTH 3
+	MSG NAME: ASSIST_ANZ_V2 - Assistance system display request, OFFSET 59, LENGTH 5
+ECU NAME: D_RS_CAS, ID: 0x077B. MSG COUNT: 1
+	MSG NAME: D_RS_CAS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_CAS, ID: 0x072B. MSG COUNT: 1
+	MSG NAME: SD_RS_CAS - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SG_APPL_RDU, ID: 0x061D. MSG COUNT: 1
+	MSG NAME: SG_APPL_RDU - Steuergerät an externe Applikation, OFFSET 0, LENGTH 64
+ECU NAME: CNG_ANZ, ID: 0x0326. MSG COUNT: 14
+	MSG NAME: TANK_FS_GAS - Tank level natural gas, OFFSET 0, LENGTH 8
+	MSG NAME: BTRBSART_UMSCH_BEST - Confirmation mode switching, OFFSET 10, LENGTH 1
+	MSG NAME: BTRBSART - operating mode, OFFSET 11, LENGTH 1
+	MSG NAME: TANK_KL_GAS - Natural gas-tank lid open warning, OFFSET 14, LENGTH 1
+	MSG NAME: TFSM_GAS - Tank level minimum natural gas, OFFSET 15, LENGTH 1
+	MSG NAME: CNG_M8 - Report "", OFFSET 16, LENGTH 1
+	MSG NAME: CNG_M7 - Report "", OFFSET 17, LENGTH 1
+	MSG NAME: CNG_M6 - Report "", OFFSET 18, LENGTH 1
+	MSG NAME: CNG_M5 - Report "", OFFSET 19, LENGTH 1
+	MSG NAME: CNG_M4 - Message "prohibition mode gasoline due to a fault", OFFSET 20, LENGTH 1
+	MSG NAME: CNG_M3 - Message "prohibition mode fuel level low due to", OFFSET 21, LENGTH 1
+	MSG NAME: CNG_M2 - Message "prohibition mode natural gas due to a fault", OFFSET 22, LENGTH 1
+	MSG NAME: CNG_M1 - Message "prohibition mode for natural gas level too low", OFFSET 23, LENGTH 1
+	MSG NAME: P_CNG - High pressure CNG, OFFSET 24, LENGTH 8
+ECU NAME: MS_100h, ID: 0x0100. MSG COUNT: 1
+	MSG NAME: FBS - FBS-Botschaft an EZS (8 Byte), OFFSET 0, LENGTH 64
+ECU NAME: MS_101h, ID: 0x0101. MSG COUNT: 1
+	MSG NAME: MS_FBS - FBS-Botschaft an EZS (8 Byte), OFFSET 0, LENGTH 64
+ECU NAME: MS_210h, ID: 0x0210. MSG COUNT: 35
+	MSG NAME: KOMP_NOTAUS - Air compressor Emergency Shutdown, OFFSET 0, LENGTH 1
+	MSG NAME: SLV_MS - Switching line shift MS, OFFSET 1, LENGTH 4
+	MSG NAME: KRIECH_AUS - off KSG-creep, OFFSET 6, LENGTH 1
+	MSG NAME: ANF1 - MS-wish: "Approach 1.Gang", OFFSET 7, LENGTH 1
+	MSG NAME: AKT_R_MS - MS-wish: "Active downshift", OFFSET 8, LENGTH 1
+	MSG NAME: ZH_AUS_MS - off heater, OFFSET 9, LENGTH 1
+	MSG NAME: GMAX_MS - Target gear, upper limit, OFFSET 10, LENGTH 3
+	MSG NAME: GMIN_MS - Target gear, lower limit, OFFSET 13, LENGTH 3
+	MSG NAME: PW - pedal, OFFSET 16, LENGTH 8
+	MSG NAME: V_DSPL_NEU - retrigger minimum display time on the display, OFFSET 24, LENGTH 1
+	MSG NAME: LL_STBL - Idle is stable, OFFSET 25, LENGTH 1
+	MSG NAME: VGL_ST - Vorglühstatus, OFFSET 26, LENGTH 1
+	MSG NAME: MSS_DEF - Engine start / stop system defective, OFFSET 27, LENGTH 1
+	MSG NAME: MSS_KL - Engine start / stop system warning, OFFSET 28, LENGTH 1
+	MSG NAME: MSS_AKT - Engine start / stop system active, OFFSET 29, LENGTH 1
+	MSG NAME: KOMP_BAUS - turn air compressor: Acceleration, OFFSET 30, LENGTH 1
+	MSG NAME: CRASH_MS - Crash signal from motor control, OFFSET 31, LENGTH 1
+	MSG NAME: PWG_ERR - Error pedal sensor, OFFSET 32, LENGTH 1
+	MSG NAME: LL - Neutral, OFFSET 33, LENGTH 1
+	MSG NAME: KUEB_S_A - Beg. "Slip" lock-up clutch, OFFSET 34, LENGTH 1
+	MSG NAME: TM_REG - cruise control regulates, OFFSET 35, LENGTH 1
+	MSG NAME: V_MAX_EIN - Speed ​​limit switched, OFFSET 36, LENGTH 1
+	MSG NAME: KD_MS - Kick Down (changeover scenario open!), OFFSET 37, LENGTH 1
+	MSG NAME: NOTL - emergency operation, OFFSET 38, LENGTH 1
+	MSG NAME: V_MAX_SUM - Warning buzzer, OFFSET 39, LENGTH 1
+	MSG NAME: FBS_SE - FBS: Start Error, OFFSET 40, LENGTH 1
+	MSG NAME: V_DSPL_PGB - Display "winter tires limit reached" on the display, OFFSET 41, LENGTH 1
+	MSG NAME: TM_EIN - Cruise control switched on, OFFSET 42, LENGTH 1
+	MSG NAME: V_MAX_REG - Speed ​​controls, OFFSET 43, LENGTH 1
+	MSG NAME: V_DSPL_LIM - Display "limit?" on display, OFFSET 44, LENGTH 1
+	MSG NAME: V_DSPL_ERR - "Error" indicator on the display, OFFSET 45, LENGTH 1
+	MSG NAME: V_DSPL_BL - display flashes, OFFSET 46, LENGTH 1
+	MSG NAME: V_DSPL_EIN - Geschw.begrenzer- / cruise control display a, OFFSET 47, LENGTH 1
+	MSG NAME: FMMOTMAX - Factor for fill value. d. Max. Mom with remo.. A.druck, OFFSET 48, LENGTH 8
+	MSG NAME: V_MAX_TM - Set maximum or cruise control speed, OFFSET 56, LENGTH 8
+ECU NAME: MS_212h, ID: 0x0212. MSG COUNT: 11
+	MSG NAME: NMOTS - Engine idling target speed, OFFSET 0, LENGTH 16
+	MSG NAME: TM_MS - Series Cruise control is variant encodes, OFFSET 17, LENGTH 1
+	MSG NAME: M_ART_E - Enable torque requirement ART, OFFSET 18, LENGTH 1
+	MSG NAME: M_FV - Default moment driver, OFFSET 19, LENGTH 13
+	MSG NAME: SME_E - Enable Quick torque adjustment, OFFSET 33, LENGTH 1
+	MSG NAME: M_ESP_E - Enable torque request ESP, OFFSET 34, LENGTH 1
+	MSG NAME: M_FEV - Spare default torque driver, OFFSET 35, LENGTH 13
+	MSG NAME: CALID_CVN_E - Transmission CALID / CVN enable, OFFSET 48, LENGTH 1
+	MSG NAME: M_EGS_Q - Acknowledgment torque request EGS, OFFSET 49, LENGTH 1
+	MSG NAME: M_EGS_E - Enable torque request EGS, OFFSET 50, LENGTH 1
+	MSG NAME: M_ESPV - Default moment ESP, OFFSET 51, LENGTH 13
+ECU NAME: MS_268h, ID: 0x0268. MSG COUNT: 11
+	MSG NAME: IMIN_MS - Target speed, lower limit (fcvt), OFFSET 0, LENGTH 8
+	MSG NAME: IMAX_MS - Target speed, upper limit (fcvt), OFFSET 8, LENGTH 8
+	MSG NAME: KL_61_EIN - terminal 61, OFFSET 16, LENGTH 1
+	MSG NAME: OEL_INFO_169 - Oil Info, Reserved M266, OFFSET 17, LENGTH 1
+	MSG NAME: ASV_KKL_169 - Shut-off valve cooling circuit M266 ATL, OFFSET 18, LENGTH 1
+	MSG NAME: HZL_ST - status heating, OFFSET 22, LENGTH 2
+	MSG NAME: KID_MS - Request force in free "D" (fcvt), OFFSET 24, LENGTH 1
+	MSG NAME: LRS_MODE - Mode air control system, OFFSET 25, LENGTH 1
+	MSG NAME: LAST_GEN - Generator capacity utilization (for LIN generators!), OFFSET 26, LENGTH 6
+	MSG NAME: M_KOMP_MAX - Max. Air Compressor moment, OFFSET 32, LENGTH 8
+	MSG NAME: PW_F - Pedal value drivers (only 169), OFFSET 40, LENGTH 8
+ECU NAME: MS_2F3h, ID: 0x02F3. MSG COUNT: 2
+	MSG NAME: FSC_IST - Gear shift recommendation "Is", OFFSET 0, LENGTH 8
+	MSG NAME: FSC_SOLL - Gear shift recommendation "shall", OFFSET 40, LENGTH 8
+ECU NAME: MS_308h, ID: 0x0308. MSG COUNT: 27
+	MSG NAME: KPL - clutch is pressed, OFFSET 0, LENGTH 1
+	MSG NAME: KUEB_O_A - Beg. "Open" lock-up clutch, OFFSET 1, LENGTH 1
+	MSG NAME: N_MAX_BG - Speed ​​limiting function active, OFFSET 2, LENGTH 1
+	MSG NAME: SAST - Part fuel cut, OFFSET 3, LENGTH 1
+	MSG NAME: SASV - Fuel cut full, OFFSET 4, LENGTH 1
+	MSG NAME: KSF_KL - Fuel filter clogged warning light (only CR2 USA), OFFSET 5, LENGTH 1
+	MSG NAME: WKS_KL - Water in fuel warning light (only CR2 USA), OFFSET 6, LENGTH 1
+	MSG NAME: ZASBED - Zylinderabschaltbedingungen met, OFFSET 7, LENGTH 1
+	MSG NAME: NMOT - Engine speed, OFFSET 8, LENGTH 16
+	MSG NAME: ELHP_WARN - Alert Eco-steering pump, OFFSET 25, LENGTH 1
+	MSG NAME: EOH - Ethanol operation detected, OFFSET 26, LENGTH 1
+	MSG NAME: LUFI_KL - Air filter clogged pilot (diesel), OFFSET 27, LENGTH 1
+	MSG NAME: VGL_KL - preglow warning, OFFSET 28, LENGTH 1
+	MSG NAME: OEL_KL - Oil level / oil pressure warning light, OFFSET 29, LENGTH 1
+	MSG NAME: DIAG_KL - Diagnostic indicator (OBD II), OFFSET 30, LENGTH 1
+	MSG NAME: TANK_KL - Tank lid open warning, OFFSET 31, LENGTH 1
+	MSG NAME: UEHITZ - Engine oil temperature too high (overheating), OFFSET 32, LENGTH 1
+	MSG NAME: ZAS - cylinder deactivation, OFFSET 33, LENGTH 1
+	MSG NAME: ADR_KL - ADR pilot light (only commercial vehicles), OFFSET 34, LENGTH 1
+	MSG NAME: ADR_DEF_KL - ADR faulty indicator light (only commercial vehicles), OFFSET 35, LENGTH 1
+	MSG NAME: ANL_LFT - Cranking, OFFSET 36, LENGTH 1
+	MSG NAME: LUEFT_MOT_KL - Motor fan defective indicator light, OFFSET 37, LENGTH 1
+	MSG NAME: DBAA - Speed ​​limit display is active (0 for CR), OFFSET 38, LENGTH 1
+	MSG NAME: TEMP_KL - Cooling water temperature too high, OFFSET 39, LENGTH 1
+	MSG NAME: T_OEL - oil temperature, OFFSET 40, LENGTH 8
+	MSG NAME: OEL_FS - oil level, OFFSET 48, LENGTH 8
+	MSG NAME: OEL_QUAL - oil quality, OFFSET 56, LENGTH 8
+ECU NAME: MS_312h, ID: 0x0312. MSG COUNT: 4
+	MSG NAME: M_STA - Engine torque statically, OFFSET 3, LENGTH 13
+	MSG NAME: M_MAX_ATL - Engine torque maximum incl. Dyn. turbocharger share, OFFSET 19, LENGTH 13
+	MSG NAME: M_MAX - Engine torque maximum, OFFSET 35, LENGTH 13
+	MSG NAME: M_MIN - Motor torque minimum, OFFSET 51, LENGTH 13
+ECU NAME: AAD_580h, ID: 0x0580. MSG COUNT: 7
+	MSG NAME: FTK_BMI - Code acceleration type (> 100: dynamic), OFFSET 0, LENGTH 8
+	MSG NAME: FTK_LMI - Code type lateral acceleration (> 100: dynamic), OFFSET 8, LENGTH 8
+	MSG NAME: FTK_VMI - Code brake type (> 100: dynamic), OFFSET 16, LENGTH 8
+	MSG NAME: FTK_DPW - Max. Diff. Pedal angle value per maneuvers, OFFSET 32, LENGTH 8
+	MSG NAME: AADKB - Continuous driver observation, OFFSET 40, LENGTH 8
+	MSG NAME: AADKBDYN - Spontaneous dynamic request, OFFSET 48, LENGTH 1
+	MSG NAME: AADNT - nervousness, OFFSET 56, LENGTH 8
+ECU NAME: MS_608h, ID: 0x0608. MSG COUNT: 13
+	MSG NAME: T_MOT - Engine coolant temperature, OFFSET 0, LENGTH 8
+	MSG NAME: T_LUFT - intake, OFFSET 8, LENGTH 8
+	MSG NAME: FCOD_KAR - Vehicle code body, OFFSET 16, LENGTH 3
+	MSG NAME: FCOD_BR - Vehicle Code series, OFFSET 19, LENGTH 5
+	MSG NAME: FCOD_MOT6 - Motor vehicle code with 7-bit, bit 6, OFFSET 24, LENGTH 1
+	MSG NAME: GS_NVH - Transmission control No, OFFSET 25, LENGTH 1
+	MSG NAME: FCOD_MOT - Fzgcod.Motor 7Bit, Bit0-5 (Bit6 -> Signal FCOD_MOT6), OFFSET 26, LENGTH 6
+	MSG NAME: V_MAX_FIX - fixed speed, OFFSET 32, LENGTH 8
+	MSG NAME: VB - consumption, OFFSET 40, LENGTH 16
+	MSG NAME: ZWP_EIN_MS - Switch on auxiliary water pump, OFFSET 56, LENGTH 1
+	MSG NAME: PFW - particulate filter warning, OFFSET 57, LENGTH 2
+	MSG NAME: ZVB_EIN_MS - Turn on additional consumer, OFFSET 59, LENGTH 1
+	MSG NAME: PFKO - Particulate filter correction offset FMMOTMAX, OFFSET 60, LENGTH 4
+ECU NAME: D_RS_FSCM, ID: 0x0779. MSG COUNT: 1
+	MSG NAME: D_RS_FSCM - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: D_RS_MS, ID: 0x07E8. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_MS, ID: 0x0720. MSG COUNT: 1
+	MSG NAME: SD_RS - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SG_APPL_MS, ID: 0x0529. MSG COUNT: 1
+	MSG NAME: SG_APPL_MS - Steuergerät an externe Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MS_APPL2, ID: 0x0631. MSG COUNT: 1
+	MSG NAME: APPL2 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MS_APPL4, ID: 0x0633. MSG COUNT: 1
+	MSG NAME: APPL4 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MS_APPL5, ID: 0x0748. MSG COUNT: 1
+	MSG NAME: APPL5 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MS_APPL6, ID: 0x06A9. MSG COUNT: 1
+	MSG NAME: APPL6 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MS_APPL7, ID: 0x06AA. MSG COUNT: 1
+	MSG NAME: APPL7 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: EDC_MESS1, ID: 0x0670. MSG COUNT: 1
+	MSG NAME: MESS1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: EDC_MESS2, ID: 0x0671. MSG COUNT: 1
+	MSG NAME: MESS2 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: GS_218h, ID: 0x0218. MSG COUNT: 31
+	MSG NAME: MTGL_EGS - Motormomentenanf. Toggle 40ms + -10, OFFSET 0, LENGTH 1
+	MSG NAME: MMIN_EGS - Engine torque requirement Min, OFFSET 1, LENGTH 1
+	MSG NAME: MMAX_EGS - Engine torque requirement Max, OFFSET 2, LENGTH 1
+	MSG NAME: M_EGS - Geford. engine torque, OFFSET 3, LENGTH 13
+	MSG NAME: GZC - Target gear, OFFSET 16, LENGTH 4
+	MSG NAME: GIC - Actual gear, OFFSET 20, LENGTH 4
+	MSG NAME: K_S_B - Best. (Wandlerüberbrück.-) clutch "slipping", OFFSET 24, LENGTH 1
+	MSG NAME: K_O_B - Best. (Wandlerüberbrück.-) Clutch "open", OFFSET 25, LENGTH 1
+	MSG NAME: K_G_B - Best. (Wandlerüberbrück.-) clutch "closed", OFFSET 26, LENGTH 1
+	MSG NAME: G_G - off-road gear, OFFSET 27, LENGTH 1
+	MSG NAME: GSP_OK - Basic shift program O.K., OFFSET 28, LENGTH 1
+	MSG NAME: FW_HOCH - Driving resistance is high, OFFSET 29, LENGTH 1
+	MSG NAME: SCHALT - circuit, OFFSET 30, LENGTH 1
+	MSG NAME: HSM - Manual shift mode, OFFSET 31, LENGTH 1
+	MSG NAME: GET_OK - transmission ok, OFFSET 32, LENGTH 1
+	MSG NAME: KS - start bang, OFFSET 33, LENGTH 1
+	MSG NAME: ALF - start enabling, OFFSET 34, LENGTH 1
+	MSG NAME: GS_NOTL - GS in emergency operation, OFFSET 35, LENGTH 1
+	MSG NAME: UEHITZ_GET - Overtemperature gear, OFFSET 36, LENGTH 1
+	MSG NAME: KD - Kick down, OFFSET 37, LENGTH 1
+	MSG NAME: FPC_AAD - Driving program for AAD, OFFSET 38, LENGTH 2
+	MSG NAME: MPAR_EGS - Engine torque request parity (even parity), OFFSET 40, LENGTH 1
+	MSG NAME: DYN1_EGS - Engagement mode / drive torque control, OFFSET 41, LENGTH 1
+	MSG NAME: DYN0_AMR_EGS - Engagement mode / drive torque control, OFFSET 42, LENGTH 1
+	MSG NAME: K_LSTFR - Converter lockup clutch free of load, OFFSET 45, LENGTH 1
+	MSG NAME: MOT_NAUS_CNF - MOT_NAUS-Confirmbit, OFFSET 46, LENGTH 1
+	MSG NAME: MOT_NAUS - Motor Emergency Shutdown, OFFSET 47, LENGTH 1
+	MSG NAME: MKRIECH - Creep (FFh at EGS, CVT) or CALID / CVN, OFFSET 48, LENGTH 8
+	MSG NAME: FEHLPRF_ST - Status error checking, OFFSET 56, LENGTH 2
+	MSG NAME: CALID_CVN_AKT - CALID / CVN-transmission active, OFFSET 58, LENGTH 1
+	MSG NAME: FEHLER - Error number or counter for CALID / CVN transmission, OFFSET 59, LENGTH 5
+ECU NAME: GS_338h, ID: 0x0338. MSG COUNT: 2
+	MSG NAME: NAB - Transmission output speed (only 463/461, otherwise FFFFh), OFFSET 0, LENGTH 16
+	MSG NAME: NTURBINE - Turbine speed (EGS52-NAG, VGS NAG2), OFFSET 48, LENGTH 16
+ECU NAME: GS_418h, ID: 0x0418. MSG COUNT: 17
+	MSG NAME: FSC - driving position, OFFSET 0, LENGTH 8
+	MSG NAME: FPC - driving program, OFFSET 8, LENGTH 8
+	MSG NAME: T_GET - Transmission oil temperature, OFFSET 16, LENGTH 8
+	MSG NAME: ALLRAD - all wheel drive, OFFSET 24, LENGTH 1
+	MSG NAME: FRONT - Front-wheel drive [1], rear-wheel drive [0], OFFSET 25, LENGTH 1
+	MSG NAME: SCHALT - circuit, OFFSET 26, LENGTH 1
+	MSG NAME: CVT - Continuously variable transmission [1], step transmission [0], OFFSET 27, LENGTH 1
+	MSG NAME: MECH - Gear-mechanism variant, OFFSET 28, LENGTH 2
+	MSG NAME: ESV_BRE - Brake invest in power-, OFFSET 30, LENGTH 1
+	MSG NAME: KD - Kick down, OFFSET 31, LENGTH 1
+	MSG NAME: GZC - Target gear, OFFSET 32, LENGTH 4
+	MSG NAME: GIC - Actual gear, OFFSET 36, LENGTH 4
+	MSG NAME: M_VERL - Loss torque (FFh at KSG), OFFSET 40, LENGTH 8
+	MSG NAME: FMRADPAR - Factor wheel torque parity (even parity), OFFSET 48, LENGTH 1
+	MSG NAME: FMRADTGL - Factor wheel torque Toggle 40ms + -10, OFFSET 49, LENGTH 1
+	MSG NAME: WHST - Gear selector lever position (NAG, KSG, CVT), OFFSET 50, LENGTH 3
+	MSG NAME: FMRAD - Factor wheel torque (7FFh KSG), OFFSET 53, LENGTH 11
+ECU NAME: D_RS_GS, ID: 0x07E9. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_GS, ID: 0x0723. MSG COUNT: 1
+	MSG NAME: SD_RS_GS - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: GS_APPL1, ID: 0x051C. MSG COUNT: 1
+	MSG NAME: APPL1 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: GS_HSA, ID: 0x050A. MSG COUNT: 1
+	MSG NAME: HSA - Handsteuerung am Prüfstand, OFFSET 0, LENGTH 64
+ECU NAME: GS_HSB, ID: 0x050B. MSG COUNT: 1
+	MSG NAME: HSB - Handsteuerung am Prüfstand, OFFSET 0, LENGTH 64
+ECU NAME: GS_HSC, ID: 0x050C. MSG COUNT: 1
+	MSG NAME: HSC - Handsteuerung am Prüfstand, OFFSET 0, LENGTH 64
+ECU NAME: GS_HSD, ID: 0x050D. MSG COUNT: 1
+	MSG NAME: HSD - Handsteuerung am Prüfstand, OFFSET 0, LENGTH 64
+ECU NAME: GS_HSE, ID: 0x050E. MSG COUNT: 1
+	MSG NAME: HSE - Handsteuerung am Prüfstand, OFFSET 0, LENGTH 64
+ECU NAME: EWM_230h, ID: 0x0230. MSG COUNT: 5
+	MSG NAME: W_S - driving program, OFFSET 0, LENGTH 1
+	MSG NAME: FPT - Driving program button is pressed, OFFSET 1, LENGTH 1
+	MSG NAME: KD - Kick down, OFFSET 2, LENGTH 1
+	MSG NAME: SPERR - Blocking coil energized, OFFSET 3, LENGTH 1
+	MSG NAME: WHC - Gear selector lever position (NOS only), OFFSET 4, LENGTH 4
+ECU NAME: D_RS_EWM, ID: 0x0789. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_EWM, ID: 0x0724. MSG COUNT: 1
+	MSG NAME: SD_RS - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: EWM_MESS1, ID: 0x06F0. MSG COUNT: 1
+	MSG NAME: MESS1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: EWM_MESS2, ID: 0x06F1. MSG COUNT: 1
+	MSG NAME: MESS2 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: FBS_110h, ID: 0x0110. MSG COUNT: 1
+	MSG NAME: IFZ_ST - FBS-Botschaft an MS (8 Byte), OFFSET 0, LENGTH 64
+ECU NAME: FBS_111h, ID: 0x0111. MSG COUNT: 1
+	MSG NAME: FBS_MS - FBS-Botschaft an MS (8 Byte), OFFSET 0, LENGTH 64
+ECU NAME: FBS_112h, ID: 0x0112. MSG COUNT: 1
+	MSG NAME: FBS_GS - FBS-Botschaft an GS (8 Byte), OFFSET 0, LENGTH 64
+ECU NAME: FBS_114h, ID: 0x0114. MSG COUNT: 1
+	MSG NAME: FBS_EWM - FBS-Botschaft an EWM (8 Byte), OFFSET 0, LENGTH 64
+ECU NAME: EZS_240h, ID: 0x0240. MSG COUNT: 31
+	MSG NAME: KG_KL_AKT - Keyless Go terminal control active, OFFSET 8, LENGTH 1
+	MSG NAME: KG_ALB_OK - Keyles Go annealing conditions met, OFFSET 9, LENGTH 1
+	MSG NAME: LL_RLC - LHD / RHD, OFFSET 10, LENGTH 2
+	MSG NAME: RG_SCHALT - engaged reverse gear (manual transmission only), OFFSET 12, LENGTH 1
+	MSG NAME: BS_SL - Brake switch for Shift Lock, OFFSET 13, LENGTH 1
+	MSG NAME: KL_15 - terminal 15, OFFSET 14, LENGTH 1
+	MSG NAME: KL_50 - terminal 50, OFFSET 15, LENGTH 1
+	MSG NAME: SAM_PAS - SAM / x passive, x = B (230), V (211), F (240), OFFSET 24, LENGTH 1
+	MSG NAME: BLS_A - SAM / x: brake light switch output EHB ASG, x = B (230), V (211), F (240), OFFSET 25, LENGTH 1
+	MSG NAME: BN_SOCS - Wiring Warning: starter battery state of charge, OFFSET 26, LENGTH 1
+	MSG NAME: ASG_SPORT_BET - ASG Sport mode on / off operated (ST2_LED_DL when ABC available), OFFSET 27, LENGTH 1
+	MSG NAME: VSTAT_A - SAM / x: v-signal from the EHB ASG, x = B (230), V (211), F (240), OFFSET 28, LENGTH 1
+	MSG NAME: INF_RFE_SAM - SAM / x: EHB ASG in fallback mode, x = B (230), V (211,164,251), F (240), OFFSET 29, LENGTH 1
+	MSG NAME: CRASH_CNF - CRASH Confirmbit, OFFSET 30, LENGTH 1
+	MSG NAME: CRASH - Crash signal from airbag SG, OFFSET 31, LENGTH 1
+	MSG NAME: BN_NTLF - Wiring emergency: Prio1- and Prio2-consumers, Second battery supports, OFFSET 32, LENGTH 1
+	MSG NAME: ESP_BET - ESP operated on / off, OFFSET 33, LENGTH 2
+	MSG NAME: HAS_KL - Hand brake applied (control light), OFFSET 35, LENGTH 1
+	MSG NAME: KL_31B - Wiper outside parking position, OFFSET 36, LENGTH 1
+	MSG NAME: BLI_RE - Directional blinking right, OFFSET 38, LENGTH 1
+	MSG NAME: BLI_LI - Directional blinking left, OFFSET 39, LENGTH 1
+	MSG NAME: ST2_BET - LF / ABC 2-stage switch actuated, OFFSET 40, LENGTH 2
+	MSG NAME: ST3_BET - LF / ABC 3-position switch is actuated, OFFSET 42, LENGTH 2
+	MSG NAME: ART_ABW_BET - ART-distance warning actuated on / off, OFFSET 44, LENGTH 2
+	MSG NAME: ABL_EIN - switch on low beam, OFFSET 46, LENGTH 1
+	MSG NAME: KL54_RM - Terminal 54 Hardware enabled, OFFSET 47, LENGTH 1
+	MSG NAME: ART_ABSTAND - distance factor, OFFSET 48, LENGTH 8
+	MSG NAME: ART_VH - ART available, OFFSET 56, LENGTH 1
+	MSG NAME: GBL_AUS - E-extractor: basic ventilation from, OFFSET 57, LENGTH 1
+	MSG NAME: FZGVERSN - Series addicts vehicle version (only 220/215/230), OFFSET 59, LENGTH 3
+	MSG NAME: LDC - country code, OFFSET 62, LENGTH 2
+ECU NAME: EZS_MESS1, ID: 0x060E. MSG COUNT: 1
+	MSG NAME: MESS1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: VIN, ID: 0x06FA. MSG COUNT: 2
+	MSG NAME: VIN_MSG - VIN Control unit, OFFSET 6, LENGTH 2
+	MSG NAME: VIN_DATA - VIN data, OFFSET 8, LENGTH 56
+ECU NAME: ZGW_248h, ID: 0x0248. MSG COUNT: 31
+	MSG NAME: DIAG_X4_B - Start Xenon4 diagnostic procedure passenger side, OFFSET 0, LENGTH 1
+	MSG NAME: DIAG_X4_F - Start Xenon4 diagnostic procedure driver's side, OFFSET 1, LENGTH 1
+	MSG NAME: ABL_EIN - switch on low beam, OFFSET 3, LENGTH 1
+	MSG NAME: ST2_BET - LF / ABC 2-stage switch actuated, OFFSET 4, LENGTH 2
+	MSG NAME: ST3_BET - LF / ABC 3-position switch is actuated, OFFSET 6, LENGTH 2
+	MSG NAME: BN_SOCS - Wiring Warning: starter battery state of charge, OFFSET 8, LENGTH 1
+	MSG NAME: GWHST_P_SAM - Gear selector lever position "P" detected, OFFSET 9, LENGTH 1
+	MSG NAME: MOT_AUF - Bonnet is on, OFFSET 11, LENGTH 1
+	MSG NAME: AFL_ABL_EIN - AFL request: Switch low beam, OFFSET 12, LENGTH 1
+	MSG NAME: ZWP_LFT - Auxiliary water pump runs, OFFSET 13, LENGTH 1
+	MSG NAME: ANH_ERK2 - Towing recognized, OFFSET 14, LENGTH 2
+	MSG NAME: SAM_PAS - SAM / x passive, x = B (230), V (211), F (240), OFFSET 20, LENGTH 1
+	MSG NAME: INF_RFE_SAM - SAM / x: EHB ASG in fallback mode, x = B (230), V (211,164,251), F (240), OFFSET 21, LENGTH 1
+	MSG NAME: VSTAT_A - SAM / x: v-signal from the EHB ASG, x = B (230), V (211), F (240), OFFSET 22, LENGTH 1
+	MSG NAME: BLS_A - SAM / x: brake light switch output EHB ASG, x = B (230), V (211), F (240), OFFSET 23, LENGTH 1
+	MSG NAME: KL54_RM - Terminal 54 Hardware enabled, OFFSET 24, LENGTH 1
+	MSG NAME: BN_NTLF - Wiring emergency: Prio1- and Prio2-consumers, Second battery supports, OFFSET 25, LENGTH 1
+	MSG NAME: ESP_BET - ESP operated on / off, OFFSET 26, LENGTH 2
+	MSG NAME: HAS_KL - Hand brake applied (control light), OFFSET 28, LENGTH 1
+	MSG NAME: KL_31B - Wiper outside parking position, OFFSET 29, LENGTH 1
+	MSG NAME: BNS_AKT - Network control unit active, OFFSET 30, LENGTH 1
+	MSG NAME: MW_AKT_SAM - SBC added value: Overrun active, OFFSET 31, LENGTH 1
+	MSG NAME: GS_BF - buckle passenger, OFFSET 32, LENGTH 2
+	MSG NAME: GS_F - buckle driver, OFFSET 34, LENGTH 2
+	MSG NAME: OC_BF - Occupant classification passenger, OFFSET 37, LENGTH 3
+	MSG NAME: KOMBI_MW_OK - Combi is worth more capable, OFFSET 40, LENGTH 1
+	MSG NAME: PTS_BET - Parctronic completely on / off operated, OFFSET 42, LENGTH 2
+	MSG NAME: CRASH - Crash signal from airbag SG, OFFSET 45, LENGTH 1
+	MSG NAME: CRASH_CNF - CRASH Confirmbit, OFFSET 46, LENGTH 1
+	MSG NAME: X_CRASH - Any crash event, OFFSET 47, LENGTH 1
+	MSG NAME: ART_VH - ART available, OFFSET 56, LENGTH 1
+ECU NAME: ZGW_24Ch, ID: 0x024C. MSG COUNT: 2
+	MSG NAME: ABL_DEF_BF_R - Low beam defective passenger / right (depending on BR), OFFSET 38, LENGTH 1
+	MSG NAME: ABL_DEF_F_L - Low beam faulty driver / left (depending BR), OFFSET 39, LENGTH 1
+ECU NAME: KLA_40Eh, ID: 0x040E. MSG COUNT: 1
+	MSG NAME: HZL_ANF - Anforderung Heizleistung, OFFSET 0, LENGTH 8
+ECU NAME: KLA_410h, ID: 0x0410. MSG COUNT: 8
+	MSG NAME: ZH_EIN_OK - Heater switch allows, OFFSET 0, LENGTH 1
+	MSG NAME: LL_DZA - Idle speed increase for the cooling capacity increase, OFFSET 1, LENGTH 1
+	MSG NAME: KOMP_EIN - Air compressor switched, OFFSET 7, LENGTH 1
+	MSG NAME: P_KAELTE8 - Refrigerant pressure, OFFSET 8, LENGTH 8
+	MSG NAME: M_KOMP - Torque absorption chiller, OFFSET 16, LENGTH 8
+	MSG NAME: NLFTS - Motor fan set speed, OFFSET 24, LENGTH 8
+	MSG NAME: ZH_ANF - requirement Zuheizleistung, OFFSET 36, LENGTH 3
+	MSG NAME: T_AUSSEN_WM - Outside air temperature for heat management, OFFSET 40, LENGTH 8
+ECU NAME: DGR_65Bh, ID: 0x065B. MSG COUNT: 16
+	MSG NAME: SLV_DGR - Switching characteristic shift DGR, OFFSET 0, LENGTH 4
+	MSG NAME: DGR_OK - DGR fine, OFFSET 4, LENGTH 1
+	MSG NAME: DGR_BRE - DGR brakes, OFFSET 5, LENGTH 1
+	MSG NAME: DYN_UNT_DGR - Suppression dyn. Full load downshift, OFFSET 7, LENGTH 1
+	MSG NAME: MPAR_DGR - Torque requirement parity (even par.), OFFSET 8, LENGTH 1
+	MSG NAME: MDYN_DGR - Engine torque requirement dynamically, OFFSET 9, LENGTH 1
+	MSG NAME: MBREPAR_DGR - Brake torque requirement parity (even par.), OFFSET 11, LENGTH 1
+	MSG NAME: DGR_VF - Pre-filling of the brake system, OFFSET 12, LENGTH 1
+	MSG NAME: DGR_REG - DGR controls, OFFSET 18, LENGTH 1
+	MSG NAME: M_DGR - Demanded engine torque DGR, OFFSET 19, LENGTH 13
+	MSG NAME: BZ65Bh - Message count DGR, OFFSET 32, LENGTH 4
+	MSG NAME: MBRE_DGR - Braking torque DGR (000h: Passive value), OFFSET 36, LENGTH 12
+	MSG NAME: AKT_R_DGR - DGR desire "Active downshift", OFFSET 48, LENGTH 1
+	MSG NAME: GMAX_DGR - Target gear upper limit, OFFSET 50, LENGTH 3
+	MSG NAME: GMIN_DGR - Target gear lower limit, OFFSET 53, LENGTH 3
+	MSG NAME: CRC_DGR_65Bh - CRC checksum byte 1-7 to SAE J1850, OFFSET 56, LENGTH 8
+ECU NAME: CONFIG_6FFh, ID: 0x06FF. MSG COUNT: 13
+	MSG NAME: GBL_AUS - E-extractor: basic ventilation from, OFFSET 0, LENGTH 1
+	MSG NAME: LL_RLC - LHD / RHD, OFFSET 4, LENGTH 2
+	MSG NAME: LDC - country code, OFFSET 6, LENGTH 2
+	MSG NAME: GUARD_B6 - Special Protection Guard B6 / 7, OFFSET 14, LENGTH 1
+	MSG NAME: GUARD_B4 - Special Protection Guard B4, OFFSET 15, LENGTH 1
+	MSG NAME: VER_JAHR - year specification, OFFSET 17, LENGTH 5
+	MSG NAME: VER_AE - change year, OFFSET 22, LENGTH 2
+	MSG NAME: KLA_VH - Air conditioning available, OFFSET 50, LENGTH 1
+	MSG NAME: TM_BRE_VH - Braking cruise control available (in the SBC or RDU), OFFSET 51, LENGTH 1
+	MSG NAME: ART_VH - ART available, OFFSET 52, LENGTH 1
+	MSG NAME: AHK_VH - Trailer hitch available, OFFSET 53, LENGTH 1
+	MSG NAME: PAS_VH - Parking assistance available, OFFSET 54, LENGTH 1
+	MSG NAME: AAS_VH - Assistant distance available, OFFSET 55, LENGTH 1
+ECU NAME: APPL_SG_MS, ID: 0x074C. MSG COUNT: 1
+	MSG NAME: APPL_SG_MS - Externe Applikation zu Steuergerät, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_AFS_L, ID: 0x076A. MSG COUNT: 1
+	MSG NAME: D_RQ_AFS_L - KWP2000 Diagnose Request AFS links, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_AFS_R, ID: 0x0772. MSG COUNT: 1
+	MSG NAME: D_RQ_AFS_R - KWP2000 Diagnose Request AFS rechts, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_ART, ID: 0x078E. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_BS, ID: 0x0784. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_CAS, ID: 0x077A. MSG COUNT: 1
+	MSG NAME: D_RQ_CAS - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_DTR, ID: 0x0702. MSG COUNT: 1
+	MSG NAME: D_RQ_DTR - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_EHB, ID: 0x079A. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_EHB2, ID: 0x07B0. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_EWM, ID: 0x0788. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_FS, ID: 0x078C. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_FSCM, ID: 0x0778. MSG COUNT: 1
+	MSG NAME: D_RQ_FSCM - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_GS, ID: 0x07E1. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_ISM, ID: 0x06EA. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_KOMBI_C, ID: 0x0796. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_LWR, ID: 0x0794. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_MS, ID: 0x07E0. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_RGS_L, ID: 0x07B2. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_RGS_R, ID: 0x07B4. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: D_RQ_UP28, ID: 0x07A2. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: FS_APPL1, ID: 0x063C. MSG COUNT: 1
+	MSG NAME: APPL1 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: GS_APPL2, ID: 0x06E4. MSG COUNT: 1
+	MSG NAME: APPL2 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MS_APPL1, ID: 0x074A. MSG COUNT: 1
+	MSG NAME: APPL1 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MS_APPL3, ID: 0x06E0. MSG COUNT: 1
+	MSG NAME: APPL3 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: DG_RQ_GLOBAL, ID: 0x0440. MSG COUNT: 1
+	MSG NAME: DG_RQ_GLOBAL - Funktionaler Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: DG_RQ_OBD, ID: 0x07DF. MSG COUNT: 1
+	MSG NAME: D_RQ - KWP2000 Diagnose-Request, OFFSET 0, LENGTH 64
+ECU NAME: KOMBI_408h, ID: 0x0408. MSG COUNT: 19
+	MSG NAME: TANK_FS - tank level, OFFSET 0, LENGTH 8
+	MSG NAME: TF_AUF - Driver's door, OFFSET 8, LENGTH 1
+	MSG NAME: V_DSPL_AUS - Geschw.begrenzer- / cruise control display not possible, OFFSET 9, LENGTH 1
+	MSG NAME: TACHO_SYM - Tachoeichung, OFFSET 10, LENGTH 1
+	MSG NAME: V_MPH - mph instead km / h (variable Geschwindigkeitsbegr.), OFFSET 11, LENGTH 1
+	MSG NAME: KLA_VH - Air conditioning available, OFFSET 12, LENGTH 1
+	MSG NAME: VGL_KL_DEF - Preglow pilot defective, OFFSET 13, LENGTH 1
+	MSG NAME: TFSM - Tank level minimum, OFFSET 14, LENGTH 1
+	MSG NAME: KL_61E - Terminal 61 decoupled, OFFSET 15, LENGTH 1
+	MSG NAME: T_AUSSEN - Outside air temperature raw value, OFFSET 16, LENGTH 8
+	MSG NAME: KL_58D - Terminal 58 dimmed, OFFSET 24, LENGTH 8
+	MSG NAME: MAZ - Motorabstellzeit (is sent from terminal 15), OFFSET 32, LENGTH 8
+	MSG NAME: KM16 - mileage, OFFSET 40, LENGTH 16
+	MSG NAME: WRC3 - Winter tire speed Bit 3, OFFSET 56, LENGTH 1
+	MSG NAME: V_DSPL_AKT - Geschw.begrenzer- / cruise control display active, OFFSET 57, LENGTH 1
+	MSG NAME: SGT_VH - Segment tachometer available, OFFSET 58, LENGTH 1
+	MSG NAME: ZH_FREIG - enable auxiliary heaters, OFFSET 59, LENGTH 1
+	MSG NAME: RT_EIN - Roll test mode ESP switch, OFFSET 60, LENGTH 1
+	MSG NAME: WRC - Winter tire speed with 4 bits, OFFSET 61, LENGTH 3
+ECU NAME: KOMBI_412h, ID: 0x0412. MSG COUNT: 11
+	MSG NAME: AKU_WARN_AUS - Acoustic warning, OFFSET 0, LENGTH 1
+	MSG NAME: OPT_WARN_AUS - Optical warning, OFFSET 1, LENGTH 1
+	MSG NAME: ABST_S - distance unit, OFFSET 8, LENGTH 1
+	MSG NAME: IST_ABST - set distance, OFFSET 9, LENGTH 3
+	MSG NAME: V_ANZ - Displaying speed, OFFSET 12, LENGTH 12
+	MSG NAME: DRTGANZ - Wheel rotation to V_ANZ, OFFSET 24, LENGTH 2
+	MSG NAME: DANZ - Wheel speed calculated from V_ANZ, OFFSET 26, LENGTH 14
+	MSG NAME: BTRBSART_UMSCH - mode switching, OFFSET 40, LENGTH 1
+	MSG NAME: PTS_TON_AUS - Parktronic warning sound is off, OFFSET 45, LENGTH 1
+	MSG NAME: PRW_ANF - Requirement Platt Roll Warner, OFFSET 46, LENGTH 2
+	MSG NAME: MAZ_NEU - Motorabstellzeit, OFFSET 52, LENGTH 12
+ECU NAME: D_RS_KOMBI_C, ID: 0x0797. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: KOMBI_MESS1, ID: 0x0680. MSG COUNT: 1
+	MSG NAME: MESS1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: KOMBI_MESS2, ID: 0x0681. MSG COUNT: 1
+	MSG NAME: MESS2 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: LRW_236h, ID: 0x0236. MSG COUNT: 6
+	MSG NAME: LRW - steering wheel angle, OFFSET 2, LENGTH 14
+	MSG NAME: VLRW - Steering wheel angle speed, OFFSET 18, LENGTH 14
+	MSG NAME: BZ236h - message count, OFFSET 32, LENGTH 4
+	MSG NAME: LRWS_ID - Identification steering wheel angle sensor, OFFSET 36, LENGTH 2
+	MSG NAME: LRWS_ST - Status steering wheel angle sensor, OFFSET 38, LENGTH 2
+	MSG NAME: CRC236h - CRC checksum byte 1-7 to SAE J1850, OFFSET 56, LENGTH 8
+ECU NAME: MRM_238h, ID: 0x0238. MSG COUNT: 16
+	MSG NAME: WH_UP - Cruise control lever implausible, OFFSET 2, LENGTH 1
+	MSG NAME: VMAX_AKT - Operation variable speed limit, OFFSET 3, LENGTH 1
+	MSG NAME: S_MINUS_B - Cruise control lever: "Sit and delay Stufe0", OFFSET 4, LENGTH 1
+	MSG NAME: S_PLUS_B - Cruise control lever: "Sit and accelerating Stufe0", OFFSET 5, LENGTH 1
+	MSG NAME: WA - Cruise control lever: "resume", OFFSET 6, LENGTH 1
+	MSG NAME: AUS - Cruise control lever "off", OFFSET 7, LENGTH 1
+	MSG NAME: BLI_RE - Directional blinking right, OFFSET 8, LENGTH 1
+	MSG NAME: BLI_LI - Directional blinking left, OFFSET 9, LENGTH 1
+	MSG NAME: WH_PA - Cruise control lever parity (even parity), OFFSET 11, LENGTH 1
+	MSG NAME: BZ238h - message count, OFFSET 12, LENGTH 4
+	MSG NAME: LW_PA - Steering angle parity (even parity), OFFSET 16, LENGTH 1
+	MSG NAME: LW_OV - Steering angle sensor: Overflow, OFFSET 17, LENGTH 1
+	MSG NAME: LW_CF - Steering angle sensor: Code Error, OFFSET 18, LENGTH 1
+	MSG NAME: LW_INI - Steering angle sensor: not initialized, OFFSET 19, LENGTH 1
+	MSG NAME: LW_VZ - Steering angle sign, OFFSET 20, LENGTH 1
+	MSG NAME: LW - steering angle, OFFSET 21, LENGTH 11
+ECU NAME: FS_340h, ID: 0x0340. MSG COUNT: 16
+	MSG NAME: NEDG - Niveaueichung performed, OFFSET 1, LENGTH 1
+	MSG NAME: M2 - Message 2: "Level choice deleted", OFFSET 2, LENGTH 1
+	MSG NAME: M1 - Message 1: "Vehicle lifts" BR164 / 251: "highway> Offroad", BR164 Offroad: "highway> offroad1", OFFSET 3, LENGTH 1
+	MSG NAME: FM4 - Error 4: "Park vehicle", OFFSET 4, LENGTH 1
+	MSG NAME: FM3 - Error 3: "seek Workshop", OFFSET 5, LENGTH 1
+	MSG NAME: FM2 - Error 2: "wait a moment" (LF) / "steering fluid" (only ABC), OFFSET 6, LENGTH 1
+	MSG NAME: FM1 - Error 1: "Stop car too low", OFFSET 7, LENGTH 1
+	MSG NAME: BELAD - loading, OFFSET 9, LENGTH 2
+	MSG NAME: ST2_LED_DL - LED 2-stage switch continuous light, OFFSET 11, LENGTH 1
+	MSG NAME: ST3_LEDR_DL - Right LED 3-stage switch continuous light (164/251 upper LED), OFFSET 13, LENGTH 1
+	MSG NAME: ST3_LEDL_DL - Left LED 3-stage switch continuous light (164/251 lower LED), OFFSET 15, LENGTH 1
+	MSG NAME: FZGN_VL - Vehicle level front left, OFFSET 16, LENGTH 8
+	MSG NAME: FZGN_VR - Ride height, front right, OFFSET 24, LENGTH 8
+	MSG NAME: FZGN_HL - Vehicle level rear left, OFFSET 32, LENGTH 8
+	MSG NAME: FZGN_HR - Ride height, rear right, OFFSET 40, LENGTH 8
+	MSG NAME: FS_ID - Identification Suspension Control, OFFSET 56, LENGTH 3
+ECU NAME: D_RS_FS, ID: 0x078D. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: FS_APPL2, ID: 0x063D. MSG COUNT: 1
+	MSG NAME: APPL2 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: FS_MESS1, ID: 0x0650. MSG COUNT: 1
+	MSG NAME: MESS1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: FS_MESS2, ID: 0x0651. MSG COUNT: 1
+	MSG NAME: MESS2 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: LWR_530h, ID: 0x0530. MSG COUNT: 9
+	MSG NAME: LWR_M7 - Display message 7: "cornering currently unavailable", OFFSET 1, LENGTH 1
+	MSG NAME: LWR_M6 - Display message 6: "cornering right", OFFSET 2, LENGTH 1
+	MSG NAME: LWR_M5 - Display message 5: "cornering left", OFFSET 3, LENGTH 1
+	MSG NAME: LWR_M4 - Display message 4: "Headlights not available" (white / 5x flashing at 1Hz), OFFSET 4, LENGTH 1
+	MSG NAME: LWR_M3 - Display message 3: "Headlights not available" (white)., OFFSET 5, LENGTH 1
+	MSG NAME: LWR_M2 - Display Message 2: "Headlights, spare light activated!" (White), OFFSET 6, LENGTH 1
+	MSG NAME: LWR_M1 - Display Message 1: "Headlights defect Drive to workshop", OFFSET 7, LENGTH 1
+	MSG NAME: SUB_ABL_L - Substitution low beam left, OFFSET 8, LENGTH 1
+	MSG NAME: SUB_ABL_R - Substitution low beam right, OFFSET 9, LENGTH 1
+ECU NAME: D_RS_LWR, ID: 0x0795. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_LWR, ID: 0x0730. MSG COUNT: 1
+	MSG NAME: SD_RS - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: LWR_MESS1, ID: 0x0658. MSG COUNT: 1
+	MSG NAME: MESS1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: LWR_MESS2, ID: 0x0659. MSG COUNT: 1
+	MSG NAME: MESS2 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: LWR_MESS3, ID: 0x065A. MSG COUNT: 1
+	MSG NAME: MESS3 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: RGS_L_450h, ID: 0x0450. MSG COUNT: 3
+	MSG NAME: PRESF_L_TGL - Presafe toggle 40ms (1 / embassy), OFFSET 0, LENGTH 1
+	MSG NAME: PRESF_L_RGS_AKT - Rev. pretensioners left tightening cycle active, OFFSET 1, LENGTH 1
+	MSG NAME: PRESF_L_KI - Presafe adjustment combi message, OFFSET 14, LENGTH 2
+ECU NAME: D_RS_RGS_L, ID: 0x07B3. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: RGS_L_MESS1, ID: 0x0688. MSG COUNT: 1
+	MSG NAME: MESS1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: RGS_R_458h, ID: 0x0458. MSG COUNT: 3
+	MSG NAME: PRESF_R_TGL - Presafe toggle 40ms (1 / embassy), OFFSET 0, LENGTH 1
+	MSG NAME: PRESF_R_RGS_AKT - Rev. pretensioners right tightening cycle active, OFFSET 1, LENGTH 1
+	MSG NAME: PRESF_R_KI - Presafe adjustment combi message, OFFSET 14, LENGTH 2
+ECU NAME: D_RS_RGS_R, ID: 0x07B5. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: RGS_R_MESS1, ID: 0x068C. MSG COUNT: 1
+	MSG NAME: MESS1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: ARCADE_A2, ID: 0x0035. MSG COUNT: 3
+	MSG NAME: CONF_CRASH - Confirm bit for all crash events, toggling, OFFSET 0, LENGTH 1
+	MSG NAME: CRASH_F - Frontal Event 2, OFFSET 2, LENGTH 1
+	MSG NAME: CRASH_C - Frontal Event 5, OFFSET 5, LENGTH 1
+ECU NAME: BN14_A1, ID: 0x01F4. MSG COUNT: 1
+	MSG NAME: U_BAT12 - Istspannung an 12V-Batterie, OFFSET 16, LENGTH 8
+ECU NAME: GS_102h, ID: 0x0102. MSG COUNT: 1
+	MSG NAME: GS_FBS - FBS-Botschaft an EZS (8 Byte), OFFSET 0, LENGTH 64
+ECU NAME: EWM_104h, ID: 0x0104. MSG COUNT: 1
+	MSG NAME: EWM_FBS - FBS-Botschaft an EZS (8 Byte), OFFSET 0, LENGTH 64
+ECU NAME: BS_208h, ID: 0x0208. MSG COUNT: 1
+	MSG NAME: SZS_NEU - Systemzustand, OFFSET 9, LENGTH 2
+ECU NAME: GS_218h, ID: 0x0218. MSG COUNT: 1
+	MSG NAME: I_IST_GET - Ist-Übersetzung (nur bei FCVT, sonst Ist-/Zielgang), OFFSET 16, LENGTH 8
+ECU NAME: SBW_232h, ID: 0x0232. MSG COUNT: 6
+	MSG NAME: SID_SBW - sender ID, OFFSET 0, LENGTH 2
+	MSG NAME: LRT_PM3 - Steering wheel buttons "+" - operated "", OFFSET 5, LENGTH 3
+	MSG NAME: SBWB_ID - Shift-by-wire control element identification, OFFSET 8, LENGTH 2
+	MSG NAME: SBWB_ST_P - Shift-by-wire control element P button, OFFSET 10, LENGTH 2
+	MSG NAME: SBWB_ST_RND - Shift-by-wire control element status RND, OFFSET 12, LENGTH 4
+	MSG NAME: BZ232h - message count, OFFSET 16, LENGTH 4
+ECU NAME: MRM_238h, ID: 0x0238. MSG COUNT: 1
+	MSG NAME: ART_ABSTAND - Abstandsfaktor, OFFSET 32, LENGTH 8
+ECU NAME: ZGW_248h, ID: 0x0248. MSG COUNT: 1
+	MSG NAME: VG_MMI_S - MMI Verteilergetriebe, OFFSET 56, LENGTH 2
+ECU NAME: ABC_348h, ID: 0x0348. MSG COUNT: 3
+	MSG NAME: BZ348h - message count, OFFSET 48, LENGTH 3
+	MSG NAME: ESM_AKT - Advanced EHB-value function active, OFFSET 56, LENGTH 1
+	MSG NAME: ESM_AMP - Factor for amplitude expanded EHB-value function, OFFSET 57, LENGTH 7
+ECU NAME: AFS_L_371h, ID: 0x0371. MSG COUNT: 8
+	MSG NAME: AFS_L_M4 - Displm. AFS_L M4: "cornering left", OFFSET 4, LENGTH 1
+	MSG NAME: AFS_L_M3 - Displm. AFS_L M3: "Headlights defect Drive to workshop", OFFSET 5, LENGTH 1
+	MSG NAME: AFS_L_M2 - Displm. AFS_L M2 ". Headlights currently availabl n." (White 5x flashing 1Hz), OFFSET 6, LENGTH 1
+	MSG NAME: AFS_L_M1 - Displm. AFS_L M1 ". Headlights currently availabl n." (White), OFFSET 7, LENGTH 1
+	MSG NAME: ABL_L_AUS - Request low beam left, OFFSET 8, LENGTH 2
+	MSG NAME: ABL_L_ST - Status low beam left, OFFSET 22, LENGTH 2
+	MSG NAME: KL56B_ABL_L_SPG - Voltage to KL56B (low beam), OFFSET 24, LENGTH 8
+	MSG NAME: KL56A_FL_L_SPG - Voltage to KL56A (high beam), OFFSET 32, LENGTH 8
+ECU NAME: AFS_R_373h, ID: 0x0373. MSG COUNT: 5
+	MSG NAME: AFS_R_M4 - Display message AFS_R M4: "cornering right", OFFSET 4, LENGTH 1
+	MSG NAME: ABL_R_AUS - Requirement dipped right out, OFFSET 8, LENGTH 2
+	MSG NAME: ABL_R_ST - Status low beam right, OFFSET 22, LENGTH 2
+	MSG NAME: KL56B_ABL_R_SPG - Voltage to KL56B (low beam), OFFSET 24, LENGTH 8
+	MSG NAME: KL56A_FL_R_SPG - Voltage to KL56A (high beam), OFFSET 32, LENGTH 8
+ECU NAME: PSM_3B4h, ID: 0x03B4. MSG COUNT: 12
+	MSG NAME: PSM_ADR_PAR - Working speed control - parity, OFFSET 0, LENGTH 1
+	MSG NAME: PSM_ADR_TGL - Working speed control - toggle, OFFSET 1, LENGTH 1
+	MSG NAME: PSM_ADR_AKT - Working speed control active, OFFSET 2, LENGTH 1
+	MSG NAME: PSM_N_SOLL - Target engine speed ADR, OFFSET 8, LENGTH 16
+	MSG NAME: PSM_MOM_PAR - Torque limit - parity, OFFSET 24, LENGTH 1
+	MSG NAME: PSM_MOM_TGL - Torque limit - toggle, OFFSET 25, LENGTH 1
+	MSG NAME: PSM_MOM_AKT - Torque limit active, OFFSET 26, LENGTH 1
+	MSG NAME: PSM_MOM_SOLL - Maximum engine torque, OFFSET 27, LENGTH 13
+	MSG NAME: PSM_DZ_PAR - Speed ​​limit - parity, OFFSET 40, LENGTH 1
+	MSG NAME: PSM_DZ_TGL - Speed ​​limit - toggle, OFFSET 41, LENGTH 1
+	MSG NAME: PSM_DZ_AKT - Speed ​​limit active, OFFSET 42, LENGTH 1
+	MSG NAME: PSM_DZ_MAX - maximum speed, OFFSET 48, LENGTH 16
+ECU NAME: PSM_3B8h, ID: 0x03B8. MSG COUNT: 9
+	MSG NAME: PSM_V_PAR - Speed ​​limit - parity, OFFSET 0, LENGTH 1
+	MSG NAME: PSM_V_TGL - Speed ​​limit - toggle, OFFSET 1, LENGTH 1
+	MSG NAME: PSM_V_AKT - Speed ​​limit active, OFFSET 2, LENGTH 1
+	MSG NAME: PSM_V_SOLL - speed limit, OFFSET 8, LENGTH 8
+	MSG NAME: PSM_DZ_PAR - Speed ​​limit - parity, OFFSET 16, LENGTH 1
+	MSG NAME: PSM_DZ_TGL - Speed ​​limit - toggle, OFFSET 17, LENGTH 1
+	MSG NAME: PSM_FERN_START - Remote engine start active, OFFSET 18, LENGTH 1
+	MSG NAME: PSM_FERN_STOP - Remote engine stop active, OFFSET 19, LENGTH 1
+	MSG NAME: PSM_FPM_SP - Lock accelerator pedal module, OFFSET 20, LENGTH 1
+ECU NAME: KLA_410h, ID: 0x0410. MSG COUNT: 1
+	MSG NAME: M_KOMP_NEU - Klima-Kompressormoment neu, OFFSET 16, LENGTH 8
+ECU NAME: KOMBI_414h, ID: 0x0414. MSG COUNT: 1
+	MSG NAME: T_AUSSEN_K - gefilterte Außentemperatur Kombi, OFFSET 0, LENGTH 8
+ECU NAME: VG_428h, ID: 0x0428. MSG COUNT: 8
+	MSG NAME: SH_IMP - Switching conditions are not met (shift impossible), OFFSET 0, LENGTH 1
+	MSG NAME: VG_LOL - Off-road gear Info lamp (low lamp), OFFSET 1, LENGTH 1
+	MSG NAME: VG_ERR - Error VG (ECU failure detected), OFFSET 2, LENGTH 1
+	MSG NAME: SH_ABTD - Switching Operation aborted (shift aborted), OFFSET 4, LENGTH 1
+	MSG NAME: VG_GANG - Current speed transfer case, OFFSET 5, LENGTH 3
+	MSG NAME: ANFNPAR_VG - VG - request "N" Loading parity (even parity), OFFSET 12, LENGTH 1
+	MSG NAME: ANFNTGL_VG - VG - beg. "N" Insert Toggle 20ms (1 / embassy), OFFSET 13, LENGTH 1
+	MSG NAME: ANFN_VG - Insert request "N" - VG, OFFSET 14, LENGTH 2
+ECU NAME: BS_65Ch, ID: 0x065C. MSG COUNT: 13
+	MSG NAME: LL_STBL_DGR - Idle is stable DGR, OFFSET 0, LENGTH 1
+	MSG NAME: LL_DGR - Idle DGR, OFFSET 1, LENGTH 1
+	MSG NAME: DGR_ENBL - Enable DGR, OFFSET 2, LENGTH 1
+	MSG NAME: M_MIN_DGR - Motor torque minimum DGR, OFFSET 3, LENGTH 13
+	MSG NAME: NMOT_DGR - Engine speed DGR, OFFSET 16, LENGTH 16
+	MSG NAME: BZ65Ch - Message count DGR, OFFSET 32, LENGTH 4
+	MSG NAME: GIC_DGR - Is Gang DGR, OFFSET 36, LENGTH 4
+	MSG NAME: FMRADPAR_DGR - Factor wheel torque parity (even parity) DGR, OFFSET 40, LENGTH 1
+	MSG NAME: FMRADTGL_DGR - Factor wheel torque Toggle 40ms + -10 DGR, OFFSET 41, LENGTH 1
+	MSG NAME: HAS_KL_DGR - Hand brake applied (control light) DGR, OFFSET 42, LENGTH 1
+	MSG NAME: SFB_DGR - Driver brakes DGR, OFFSET 43, LENGTH 2
+	MSG NAME: FMRAD_DGR - Factor wheel torque (7FFh KSG) DGR, OFFSET 45, LENGTH 11
+	MSG NAME: CRC_DGR_65Ch - CRC checksum byte 1-7 to SAE J1850, OFFSET 56, LENGTH 8
+ECU NAME: D_RS_AFS_L, ID: 0x04AD. MSG COUNT: 1
+	MSG NAME: D_RS_AFS_L - KWP2000 Diagnose Response AFL links, OFFSET 0, LENGTH 64
+ECU NAME: D_RS_AFS_R, ID: 0x04AE. MSG COUNT: 1
+	MSG NAME: D_RS_AFS_R - KWP2000 Diagnose Response AFS rechts, OFFSET 0, LENGTH 64
+ECU NAME: D_RS_ART, ID: 0x078F. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: D_RS_EHB2, ID: 0x07B1. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: D_RS_ISM, ID: 0x049D. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: D_RS_UP28, ID: 0x07A3. MSG COUNT: 1
+	MSG NAME: D_RS - KWP2000 Diagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_ART, ID: 0x0727. MSG COUNT: 1
+	MSG NAME: SD_RS - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: SD_RS_MRM, ID: 0x0729. MSG COUNT: 1
+	MSG NAME: SD_RS_MRM - Systemdiagnose-Response, OFFSET 0, LENGTH 64
+ECU NAME: APPL_SG_DTR, ID: 0x0704. MSG COUNT: 1
+	MSG NAME: APPL_SG_DTR - Externe Applikation zu Steuergerät, OFFSET 0, LENGTH 64
+ECU NAME: APPL_SG_RDU, ID: 0x061C. MSG COUNT: 1
+	MSG NAME: APPL_SG_RDU - Externe Applikation zu Steuergerät, OFFSET 0, LENGTH 64
+ECU NAME: BS_APPL1, ID: 0x0634. MSG COUNT: 1
+	MSG NAME: APPL1 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: BS_APPL3, ID: 0x064A. MSG COUNT: 1
+	MSG NAME: APPL3 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MS_APPL1, ID: 0x0630. MSG COUNT: 1
+	MSG NAME: APPL1 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: MS_APPL3, ID: 0x0632. MSG COUNT: 1
+	MSG NAME: APPL3 - Applikation, OFFSET 0, LENGTH 64
+ECU NAME: EZS_MESS2, ID: 0x060F. MSG COUNT: 1
+	MSG NAME: MESS2 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: PRW_MESS1, ID: 0x06A0. MSG COUNT: 1
+	MSG NAME: MESS1 - Messwerte, OFFSET 0, LENGTH 64
+ECU NAME: GS_HS1, ID: 0x0501. MSG COUNT: 1
+	MSG NAME: HS1 - Handsteuerung am Prüfstand, OFFSET 0, LENGTH 64
+ECU NAME: GS_HS2, ID: 0x0502. MSG COUNT: 1
+	MSG NAME: HS2 - Handsteuerung am Prüfstand, OFFSET 0, LENGTH 64
+ECU NAME: GS_HS3, ID: 0x0503. MSG COUNT: 1
+	MSG NAME: HS3 - Handsteuerung am Prüfstand, OFFSET 0, LENGTH 64
+ECU NAME: GS_HS4, ID: 0x0504. MSG COUNT: 1
+	MSG NAME: HS4 - Handsteuerung am Prüfstand, OFFSET 0, LENGTH 64
+ECU NAME: GS_HS5, ID: 0x0505. MSG COUNT: 1
+	MSG NAME: HS5 - , OFFSET 0, LENGTH 64
+ECU NAME: GS_HS6, ID: 0x0506. MSG COUNT: 1
+	MSG NAME: HS6 - , OFFSET 0, LENGTH 64
