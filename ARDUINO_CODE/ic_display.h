@@ -15,6 +15,14 @@
 // Width in pixels of display in the IC
 #define DISPLAY_WIDTH_PX 56
 
+
+// IC FORMATTING
+#define IC_TEXT_FMT_CENTER_JUSTIFICATION 0b00000000 // Center justification
+#define IC_TEXT_FMT_LEFT_JUSTIFICATION 0b00001000 // Left justification
+#define IC_TEXT_FMT_RIGHT_JUSTIFICATION 0b00010000 // Right justification
+#define IC_TEXT_FMT_FLASHING 0b00100000 // Flashing text
+#define IC_TEXT_FMT_HIGHLIGHTED 0b01000000 // Highlighted text
+
 /**
  * Class responsible for sending packets to the instrument
  * cluster to display custom text.
@@ -89,10 +97,10 @@ class IC_DISPLAY {
          * 
          * @param p Destination page for the Body text
          * @param text Text to display on the display
-         * @param should_center Set to true if text should be centered on the display (Default)
+         * @param fmt Format byte. This should be set by bitwise & IC_TEXT_FMT bytes.
          * if false, then text is left justified.
          */
-        void setBody(PAGE p, const char* text, bool should_center);
+        void setBody(PAGE p, const char* text, uint8_t fmt);
 
         /**
          * To be only used by the Telephone page! (Audio page only can have 1 line of text)

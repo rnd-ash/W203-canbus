@@ -13,6 +13,8 @@
             ],
             "compilerPath": "/usr/bin/avr-gcc -mmcu=atmega328p",
             "intelliSenseMode": "gcc-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
             "defines": [
                 "USBCON",
                 "ARDUINO_AVR_UNO",

@@ -31,9 +31,9 @@ void AUDIO_DISPLAY::update() {
                 );
                 if (!scrollingRequired) {
                     if (isPlaying) {
-                        display->setBody(IC_DISPLAY::AUDIO, trackName, true);
+                        display->setBody(IC_DISPLAY::AUDIO, trackName, IC_TEXT_FMT_CENTER_JUSTIFICATION);
                     } else {
-                        display->setBody(IC_DISPLAY::AUDIO, PAUSED_BODY, true);
+                        display->setBody(IC_DISPLAY::AUDIO, PAUSED_BODY, IC_TEXT_FMT_CENTER_JUSTIFICATION & IC_TEXT_FMT_FLASHING);
                     }
                 }
             }
@@ -41,14 +41,14 @@ void AUDIO_DISPLAY::update() {
         }
         if (inDiagMode) {
             if (millis() - lastUpdateBody >= DIAG_MODE_UPDATE_FREQ) {
-                if (isInPage) display->setBody(IC_DISPLAY::AUDIO, getDiagBody(), true);
+                if (isInPage) display->setBody(IC_DISPLAY::AUDIO, getDiagBody(), IC_TEXT_FMT_CENTER_JUSTIFICATION);
                 lastUpdateBody = millis();
             }
         } else {
             if (millis() - lastUpdateHeader >= UPDATE_FREQ_HEADER) {
                 DPRINTLN(MEMORY_STR_1+String(freeRam())+MEMORY_STR_2);
-                if (isPlaying) elapsedSeconds++;
                 createHeader();
+                if (isPlaying) elapsedSeconds++;
                 lastUpdateHeader = millis();
             }
             if (millis() - lastUpdateBody >= UPDATE_FREQ_SCROLL_BODY && scrollingRequired && isPlaying) {
@@ -60,7 +60,7 @@ void AUDIO_DISPLAY::update() {
                 trackName[len-1] = first;
 
                 // Rotate text
-                if (isInPage) display->setBody(IC_DISPLAY::AUDIO, trackName, true);
+                if (isInPage) display->setBody(IC_DISPLAY::AUDIO, trackName, IC_TEXT_FMT_LEFT_JUSTIFICATION);
                 lastUpdateBody = millis();
             }
         }
@@ -94,16 +94,16 @@ void AUDIO_DISPLAY::setTrackName(const char* name) {
         trackName[len+1] = SPACE;
         trackName[len+2] = SPACE;
         trackName[len+3] = SPACE;
-        if (isInPage) display->setBody(IC_DISPLAY::AUDIO, trackName, false);
+        if (isInPage) display->setBody(IC_DISPLAY::AUDIO, trackName, IC_TEXT_FMT_LEFT_JUSTIFICATION);
     } else {
-        if (isInPage) display->setBody(IC_DISPLAY::AUDIO, trackName, true);
+        if (isInPage) display->setBody(IC_DISPLAY::AUDIO, trackName, IC_TEXT_FMT_CENTER_JUSTIFICATION);
     }   
 }
 
 void AUDIO_DISPLAY::createHeader() {
     if (strlen(trackName) == 0) {
         if (isInPage) display->setHeader(IC_DISPLAY::AUDIO, STARTUP_HEADER, true);
-        if (isInPage) display->setBody(IC_DISPLAY::AUDIO, STARTUP_BODY, true);
+        if (isInPage) display->setBody(IC_DISPLAY::AUDIO, STARTUP_BODY, IC_TEXT_FMT_FLASHING & IC_TEXT_FMT_CENTER_JUSTIFICATION);
         return;
     }
     if (isPlaying) {
@@ -114,7 +114,7 @@ void AUDIO_DISPLAY::createHeader() {
         sprintf(headerText, "%d:%02d/%d:%02d", elapsed_mins, elapsed_secs, total_mins, total_secs);
     } else {
         strcpy(headerText, PAUSED_HEADER);
-        display->setBody(IC_DISPLAY::AUDIO, PAUSED_BODY, true);
+        display->setBody(IC_DISPLAY::AUDIO, PAUSED_BODY, IC_TEXT_FMT_CENTER_JUSTIFICATION & IC_TEXT_FMT_FLASHING);
     }
     if (isInPage) display->setHeader(IC_DISPLAY::AUDIO, headerText, false);
 }
@@ -174,7 +174,7 @@ void AUDIO_DISPLAY::diagNextPage() {
         diagPage++;
     }
     display->setHeader(IC_DISPLAY::AUDIO, getDiagHeader(), true);
-    display->setBody(IC_DISPLAY::AUDIO, getDiagBody(), true);
+    display->setBody(IC_DISPLAY::AUDIO, getDiagBody(), IC_TEXT_FMT_CENTER_JUSTIFICATION);
 }
 
 void AUDIO_DISPLAY::diagPrevPage() {
@@ -184,5 +184,5 @@ void AUDIO_DISPLAY::diagPrevPage() {
         diagPage--;
     }
     display->setHeader(IC_DISPLAY::AUDIO, getDiagHeader(), true);
-    display->setBody(IC_DISPLAY::AUDIO, getDiagBody(), true);
+    display->setBody(IC_DISPLAY::AUDIO, getDiagBody(), IC_TEXT_FMT_CENTER_JUSTIFICATION);
 }

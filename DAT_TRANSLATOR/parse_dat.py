@@ -157,16 +157,21 @@ class can_frame_data:
         return self.__num_msgs__
 
     def translate(self, lang: str):
-        
-        to_translate = []
-        for i in self.__msgs__:
-            to_translate.append(i.get_desc().encode('utf8').decode('utf8'))
-        translated_text = translator.translate(to_translate, src="DE", dest="EN")
-        for pos, line in enumerate(translated_text):
-            try:
-                self.__msgs__[pos].set_translated_text(line.text)
-            except IndexError:
-                continue
+        if len(self.__msgs__) == 1:
+            return
+        to_translate = ""
+        try:
+            for i in self.__msgs__:
+                to_translate += i.get_desc().encode('utf8').decode('utf8') + "\n"
+            translated_text = translator.translate(to_translate, src="DE", dest="EN").text
+            for pos, line in enumerate(translated_text.split("\n")):
+                try:
+                    self.__msgs__[pos].set_translated_text(line)
+                except IndexError:
+                    continue
+        except Exception:
+            print("Error translating {0}".format(self.__ecu_name__))
+            pass
         
 
 
@@ -188,7 +193,7 @@ print("Found {0} can frames. Decoding".format(len(can_frames)))
 for f in can_frames:
     x = can_frame_data(f)
     x.parse_frame()
-    x.translate('en')
+    #x.translate('en')
     print("ECU NAME: {0}, ID: {1}. MSG COUNT: {2}".format(x.get_name(), "0x%04X" % x.get_id(), x.get_num_msgs()))
     write.write("ECU NAME: {0}, ID: {1}. MSG COUNT: {2}\n".format(x.get_name(), "0x%04X" % x.get_id(), x.get_num_msgs()))
     for i in x.get_msgs():

@@ -36,8 +36,7 @@ void IC_DISPLAY::setHeader(PAGE p, const char* text, bool should_center) {
     buffer_size+=2;
     sendBytes(0,0);
 }
-
-void IC_DISPLAY::setBody(PAGE p, const char* text, bool should_center = true) {
+void IC_DISPLAY::setBody(PAGE p, const char* text, uint8_t fmt = IC_TEXT_FMT_CENTER_JUSTIFICATION) {
     DPRINTLN(F("-- Update body --"));
     uint8_t str_len = min(strlen(text), 32);
     buffer_size = str_len + 7; // Not including CS bit
@@ -47,7 +46,7 @@ void IC_DISPLAY::setBody(PAGE p, const char* text, bool should_center = true) {
     buffer[3] = 0x00;
     buffer[4] = 0x01; // Number of strings (1 only)
     buffer[5] = str_len + 2;
-    buffer[6] = should_center ? 0x10 : 0x00; // Text justification
+    buffer[6] = fmt;
     for (uint8_t i = 0; i < str_len; i++) {
         buffer[i+7] = text[i];
     }
@@ -81,7 +80,11 @@ void IC_DISPLAY::setBodyTel(uint8_t numStrs, const char* lines[]){
     uint8_t index = 5;
     for (uint8_t i = 0; i < strsToUse; i++) {
         buffer[index] = strlen(lines[i]) + 2;
-        buffer[index+1] = 0x10; // center text
+        if (i == 0) {
+            buffer[index+1] = 0b00100000; // center text
+        } else if (i == 1) {
+            buffer[index+1] = 0b01000000;
+        }
         index += 2;
         for (uint8_t x = 0; x < strlen(lines[i]); x++) {
             buffer[index] = lines[i][x];
