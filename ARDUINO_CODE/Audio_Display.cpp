@@ -71,7 +71,9 @@ void AUDIO_DISPLAY::update() {
 
 void AUDIO_DISPLAY::setPlayState(bool isPlaying) {
     this->isPlaying = isPlaying;
-    createHeader();
+    if (!inDiagMode) {
+        createHeader();
+    }
 }
 
 void AUDIO_DISPLAY::setDuration(int seconds) {
