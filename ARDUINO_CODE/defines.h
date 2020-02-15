@@ -12,7 +12,7 @@
 // Audio page settings
 #define UPDATE_FREQ_HEADER 1000
 #define UPDATE_FREQ_SCROLL_BODY 175
-#define DIAG_MODE_UPDATE_FREQ 500
+#define DIAG_MODE_UPDATE_FREQ 250
 
 // Steering wheel button press detections
 #define WHEEL_BUTTON_LONG_PRESS_MS 1000 // If button is held down for this long then its registered as a long tap
