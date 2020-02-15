@@ -53,7 +53,7 @@ const char* ENGINE_DATA::getGearing() {
         return ENGINE_OFF;
     }
     if (this->actualGear == 0x00 || this->targetGear == 0x00) {
-        return UNKNOWN_VAL;
+        return GEAR_NEUTRAL;
     } else if (this->targetGear == 11 || this->actualGear == 11) {
         return GEAR_REVERSE;
     } else if (this->targetGear == 12 || this->actualGear == 12) {
@@ -62,8 +62,13 @@ const char* ENGINE_DATA::getGearing() {
         return GEAR_PARK;
     } else {
         memset(buffer, 0x00, sizeof(buffer));
-        // Target gear / Actual gear
-        sprintf(buffer, "%d -> %d", targetGear, actualGear);
+        if (targetGear == actualGear) {
+            sprintf(buffer, "%d", actualGear);
+        } else if (targetGear > actualGear){
+            sprintf(buffer, "%d -> %d", actualGear, targetGear);
+        } else {
+            sprintf(buffer, "%d <- %d", targetGear, actualGear);
+        }
         return buffer;
     }
 }

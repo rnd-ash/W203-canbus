@@ -16,6 +16,7 @@ const char * const PROGMEM TORQUE_C_OPEN = "Open";
 const char * const PROGMEM TORQUE_C_CLOSED = "Closed";
 
 const char * const PROGMEM GEAR_PARK = "Park";
+const char * const PROGMEM GEAR_NEUTRAL = "Neutral";
 const char * const PROGMEM GEAR_REVERSE = "Reverse";
 const char * const PROGMEM GEAR_REVERSE_2 = "Reverse 2";
 class ENGINE_DATA{
