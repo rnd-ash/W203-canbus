@@ -36,6 +36,7 @@ void IC_DISPLAY::setHeader(PAGE p, const char* text, bool should_center) {
     buffer_size+=2;
     sendBytes(0,0);
 }
+
 void IC_DISPLAY::setBody(PAGE p, const char* text, uint8_t fmt = IC_TEXT_FMT_CENTER_JUSTIFICATION) {
     DPRINTLN(F("-- Update body --"));
     uint8_t str_len = min(strlen(text), 32);
@@ -119,7 +120,7 @@ void IC_DISPLAY::processIcResponse(can_frame *r) {
 }
 
 
-void IC_DISPLAY::initPage(PAGE p, const char* header, bool should_center, IC_SYMBOL upper_Symbol, IC_SYMBOL lower_Symbol, uint8_t numLines=1) {
+void IC_DISPLAY::initPage(PAGE p, const char* header, bool should_center, uint8_t upper_Symbol, uint8_t lower_Symbol, uint8_t numLines=1) {
     DPRINTLN(F("-- Init page --"));
     uint8_t str_len = min(strlen(header), 20);
     buffer_size = str_len + 17; // Not including CS bit

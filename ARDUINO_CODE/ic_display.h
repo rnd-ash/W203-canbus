@@ -18,10 +18,21 @@
 
 // IC FORMATTING
 #define IC_TEXT_FMT_CENTER_JUSTIFICATION 0b00000000 // Center justification
-#define IC_TEXT_FMT_LEFT_JUSTIFICATION 0b00001000 // Left justification
-#define IC_TEXT_FMT_RIGHT_JUSTIFICATION 0b00010000 // Right justification
-#define IC_TEXT_FMT_FLASHING 0b00100000 // Flashing text
-#define IC_TEXT_FMT_HIGHLIGHTED 0b01000000 // Highlighted text
+#define IC_TEXT_FMT_LEFT_JUSTIFICATION   0b00001000 // Left justification
+#define IC_TEXT_FMT_RIGHT_JUSTIFICATION  0b00010000 // Right justification
+#define IC_TEXT_FMT_FLASHING             0b00100000 // Flashing text
+#define IC_TEXT_FMT_HIGHLIGHTED          0b01000000 // Highlighted text
+
+// IC Symbols (Audio Page only)
+#define IC_SYMB_NONE       0b00000000 
+#define IC_SYMB_SKIP_TRACK 0b00000001 // |>>
+#define IC_SYMB_PREV_TRACK 0b00000010 // <<|
+#define IC_SYMB_FAST_FWD   0b00000011 // >>
+#define IC_SYMB_FAST_REV   0b00000100 // <<
+#define IC_SYMB_PLAY       0b00000101 // ▶️
+#define IC_SYMB_REWIND     0b00000110 // ◀
+#define IC_SYMB_UP_ARROW   0b00001001 // ↑
+#define IC_SYMB_DOWN_ARROW 0b00001010 // ↓
 
 /**
  * Class responsible for sending packets to the instrument
@@ -59,21 +70,6 @@ class IC_DISPLAY {
          * Used to store the current page on the IC being active
          */
         static PAGE current_page;
-
-        /**
-         * Symbols that can be sent to the IC display
-         */
-        enum IC_SYMBOL {
-           NONE = 0x00,
-           SKIP_TRACK = 0x01, // |>>
-           PREV_TRACK = 0x02, // <<|
-           FAST_FWD   = 0x03, // >>
-           FAST_REV   = 0x04, // <<
-           PLAY       = 0x05, // ▶️
-           REWIND     = 0x06, // ◀
-           UP_ARROW   = 0x09, // ↑
-           DOWN_ARROW = 0x0A  // ↓
-        };
 
         IC_DISPLAY(CANBUS_COMMUNICATOR *can);
 
@@ -114,10 +110,10 @@ class IC_DISPLAY {
          * @param p Page to initialise. Audio / Telephone
          * @param header Header text to set on init.
          * @param should_center Should the header text be centered?
-         * @param upper_Symbol Symbol above body text
-         * @param lower_Symbol Symbol below body text
+         * @param upper_Symbol Symbol above body text (IC_SYMB)
+         * @param lower_Symbol Symbol below body text (IC_SYMB)
          */
-        void initPage(PAGE p, const char* header, bool should_center, IC_SYMBOL upper_Symbol, IC_SYMBOL lower_Symbol, uint8_t numLines);
+        void initPage(PAGE p, const char* header, bool should_center, uint8_t upper_Symbol, uint8_t lower_Symbol, uint8_t numLines);
 
         void delay(int msec);
         /**

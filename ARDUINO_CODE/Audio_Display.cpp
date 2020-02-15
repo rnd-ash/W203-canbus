@@ -17,16 +17,16 @@ void AUDIO_DISPLAY::update() {
                 display->initPage(IC_DISPLAY::AUDIO,
                     getDiagHeader(),
                     true,
-                    IC_DISPLAY::IC_SYMBOL::UP_ARROW,
-                    IC_DISPLAY::IC_SYMBOL::DOWN_ARROW,
+                    IC_SYMB_UP_ARROW,
+                    IC_SYMB_DOWN_ARROW,
                     1
                 );
             } else {
                 display->initPage(IC_DISPLAY::AUDIO,
                     "",
                     true,
-                    IC_DISPLAY::IC_SYMBOL::SKIP_TRACK,
-                    IC_DISPLAY::IC_SYMBOL::PREV_TRACK,
+                    IC_SYMB_SKIP_TRACK,
+                    IC_SYMB_PREV_TRACK,
                     1
                 );
                 if (!scrollingRequired) {

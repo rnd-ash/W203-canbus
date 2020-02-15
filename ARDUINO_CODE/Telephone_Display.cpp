@@ -12,8 +12,8 @@ void TELEPHONE_DISPLAY::update() {
             display->initPage(IC_DISPLAY::TELEPHONE,
                 "TESTING MSG",
                 true,
-                IC_DISPLAY::IC_SYMBOL::NONE,
-                IC_DISPLAY::IC_SYMBOL::NONE,
+                IC_SYMB_NONE,
+                IC_SYMB_NONE,
                 2
             );
             const char* z[] = {"FLASHING", "HIGHLIGHT"};
