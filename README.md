@@ -1,6 +1,9 @@
 # Mercedes canbus project for older W203/W209/W211 cars
 A proof of concept application using an Arduino and Android phone to add extra features to these older Mercedes cars by tapping into their systems via canbus.
 
+# DEMO VIDEOS
+Can be accessed via [this link](https://www.youtube.com/playlist?list=PLxrw-4Vt7xtt3VkDx_Z35n4SdYG9C3N7i)
+
 ## Project status
 So far, the project has grown well out of proportion and has ended up being a way to modernise the W203 slightly. The arduino now requires a HC-06 bluetooth module, which then connects to the android application running on an android device. This now serves to give 'hands free music control' to the car, the steering wheel button presses in the AUX Page are now relayed to the phone in order to change tracks. The phone also then tells the Arduino via bluetooth what track is playing. The arduino will then send can frames to the IC Cluster to display the current track playing.
 
