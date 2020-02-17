@@ -1,23 +1,23 @@
 #include "can_comm.h"
 
-CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_CLOCK clock, CAN_NET c) {
+CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_CLOCK clock, char c) {
     this->mcp = new MCP2515(cs_pin);
     this->mcp->reset();
     this->mcp->setBitrate(speed, clock);
     this->mcp->setNormalMode();
     frame_string.reserve(140);
     this->pin = cs_pin;
-    this->busID = c == CAN_C ? 'C' : 'B';
+    this->busID = c;
 }
 
-CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_NET c) {
+CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, char c) {
     this->mcp = new MCP2515(cs_pin);
     this->mcp->reset();
     this->mcp->setBitrate(speed);
     this->mcp->setNormalMode();
     frame_string.reserve(140);
     this->pin = cs_pin;
-    this->busID = c == CAN_C ? 'C' : 'B';
+    this->busID = c;
 }
 
 void CANBUS_COMMUNICATOR::sendToBus(can_frame *send) {

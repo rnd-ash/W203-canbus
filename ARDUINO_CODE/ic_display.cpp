@@ -5,7 +5,7 @@ IC_DISPLAY::IC_DISPLAY(CANBUS_COMMUNICATOR *can) {
     canB = can;
 }
 
-IC_DISPLAY::PAGE IC_DISPLAY::current_page = IC_DISPLAY::AUDIO;
+uint8_t IC_DISPLAY::current_page = IC_PAGE_OTHER;
 
 bool IC_DISPLAY::can_fit_body_text(const char *text) {
     int length = 0;
@@ -21,13 +21,13 @@ uint8_t IC_DISPLAY::getChecksum(uint8_t len, uint8_t* payload) {
     return cs;
 }
 
-void IC_DISPLAY::setHeader(PAGE p, const char* text, bool should_center) {
+void IC_DISPLAY::setHeader(uint8_t p, const char* text, uint8_t fmt) {
     DPRINTLN(F("-- Update header --"));
     uint8_t str_len = min(strlen(text), 20);
     buffer_size = str_len + 3;
     buffer[0] = p; // Page number
     buffer[1] = 0x29; // Package 29 (Header text update)
-    buffer[2] = should_center ? 0x10 : 0x00; // Text justification
+    buffer[2] = fmt; // Text justification
     for (uint8_t i = 0; i < str_len; i++) {
         buffer[i+3] = text[i];
     }
@@ -37,7 +37,7 @@ void IC_DISPLAY::setHeader(PAGE p, const char* text, bool should_center) {
     sendBytes(0,0);
 }
 
-void IC_DISPLAY::setBody(PAGE p, const char* text, uint8_t fmt = IC_TEXT_FMT_CENTER_JUSTIFICATION) {
+void IC_DISPLAY::setBody(uint8_t p, const char* text, uint8_t fmt = IC_TEXT_FMT_CENTER_JUSTIFICATION) {
     DPRINTLN(F("-- Update body --"));
     uint8_t str_len = min(strlen(text), 32);
     buffer_size = str_len + 7; // Not including CS bit
@@ -73,7 +73,7 @@ void IC_DISPLAY::setBodyTel(uint8_t numStrs, const char* lines[]){
 
     DPRINTLN(F("-- Update body --"));
     buffer_size = charCount + 5; // Not including CS bit
-    buffer[0] = TELEPHONE; // Page number
+    buffer[0] = IC_PAGE_TELEPHONE; // Page number
     buffer[1] = 0x26; // Package 26 (Body text update)
     buffer[2] = 0x01; 
     buffer[3] = 0x00;
@@ -81,11 +81,7 @@ void IC_DISPLAY::setBodyTel(uint8_t numStrs, const char* lines[]){
     uint8_t index = 5;
     for (uint8_t i = 0; i < strsToUse; i++) {
         buffer[index] = strlen(lines[i]) + 2;
-        if (i == 0) {
-            buffer[index+1] = 0b00100000; // center text
-        } else if (i == 1) {
-            buffer[index+1] = 0b01000000;
-        }
+        buffer[index+1] = 0b00000000;
         index += 2;
         for (uint8_t x = 0; x < strlen(lines[i]); x++) {
             buffer[index] = lines[i][x];
@@ -103,24 +99,24 @@ void IC_DISPLAY::processIcResponse(can_frame *r) {
     if (r->can_id == 0x1D0 && r->data[0] == 0x06 && r->data[2] == 0x27) {
         // Audio Page
         if (r->data[1] == 0x03 && r->data[6] == 0xC4) { // Move in
-            current_page = AUDIO;
+            current_page = IC_PAGE_AUDIO;
         }
         else if (r->data[1] == 0x03 && r->data[6] == 0xC3) { // Move out
-            current_page = OTHER;
+            current_page = IC_PAGE_OTHER;
         }
 
         // Telephone page
         if (r->data[1] == 0x05 && r->data[6] == 0xC2) { // Move in
-            current_page = TELEPHONE;
+            current_page = IC_PAGE_TELEPHONE;
         }
         else if (r->data[1] == 0x05 && r->data[6] == 0xC1) { // Move out
-            current_page = OTHER;
+            current_page = IC_PAGE_OTHER;
         }
     }
 }
 
 
-void IC_DISPLAY::initPage(PAGE p, const char* header, bool should_center, uint8_t upper_Symbol, uint8_t lower_Symbol, uint8_t numLines=1) {
+void IC_DISPLAY::initPage(uint8_t p, const char* header, bool should_center, uint8_t upper_Symbol, uint8_t lower_Symbol, uint8_t numLines=1) {
     DPRINTLN(F("-- Init page --"));
     uint8_t str_len = min(strlen(header), 20);
     buffer_size = str_len + 17; // Not including CS bit

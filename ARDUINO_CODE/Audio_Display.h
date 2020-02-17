@@ -3,7 +3,7 @@
 
 #include "ic_display.h"
 #include "Engine.h"
-#define MAX_DIAG_PAGES 3
+#define MAX_DIAG_PAGES 7
 
 const char * const PROGMEM STARTUP_HEADER = "No Connection";
 const char * const PROGMEM STARTUP_BODY = "Open App!";
@@ -19,6 +19,10 @@ const char * const PROGMEM MEMORY_STR_2 = " Bytes";
 const char * const PROGMEM DIAG_HEADER_ATF = "ATF Temp (C)";
 const char * const PROGMEM DIAG_HEADER_TORQUE_CONVERTER = "TC lockup";
 const char * const PROGMEM DIAG_HEADER_GEARING = "Tar/Act gear";
+const char * const PROGMEM DIAG_HEADER_COOLANT_TEMP = "Eng Temp";
+const char * const PROGMEM DIAG_HEADER_INTAKE_TEMP = "Intake Temp";
+const char * const PROGMEM DIAG_HEADER_CONSUMPTION = "MPG (live)";
+const char * const PROGMEM DIAG_HEADER_OIL_TEMP = "Oil Temp";
 
 const char * const PROGMEM DIAG_ERROR_HEAD = "INVALID";
 const char * const PROGMEM DIAG_ERROR_BODY = "ERROR";

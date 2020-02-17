@@ -4,6 +4,22 @@
 #include "can_comm.h"
 #include "defines.h"
 
+
+// Standard button presses directly from wheel
+#define BUTTON_NONE 0x00
+#define BUTTON_ARROW_UP 0x01
+#define BUTTON_ARROW_DOWN 0x02
+#define BUTTON_TEL_ANS 0x40
+#define BUTTON_TEL_DEC 0x80
+#define BUTTON_VOL_UP 0x10
+#define BUTTON_VOL_DOWN 0x20
+
+// Additional buttons via software (detecting long presses)
+#define BUTTON_ARROW_UP_LONG 0x05
+#define BUTTON_ARROW_DOWN_LONG 0x06
+#define BUTTON_TEL_ANS_LONG 0x41
+#define BUTTON_TEL_DEC_LONG 0x81
+
 /**
  * Used to decode information from KOMBI_A5 regarding steering wheel button pressses.
  * 
@@ -32,29 +48,17 @@
  * (0x41) Phone answer long press
  * (0x81) Phone end long press 
  */
+
+
+
 class WHEEL_CONTROLS {
 public:
-    enum WHEEL_KEY {
-        NONE = 0x00,
-        ARROW_UP = 0x01,
-        ARROW_DOWN = 0x02,
-        TELEPHONE_ANSWER = 0x40,
-        TELEPHONE_HANGUP = 0x80,
-        VOLUME_UP = 0x10,
-        VOLUME_DOWN = 0x20,
-
-        // Additional long presses (Custom)
-        ARROW_UP_LONG = 0x05,
-        ARROW_DOWN_LONG = 0x06,
-        TELEPHONE_ANSWER_LONG = 0x41,
-        TELEPHONE_HANGUP_LONG = 0x81
-    };
-
-    WHEEL_KEY getPressed(can_frame *f);
+    WHEEL_CONTROLS();
+    uint8_t getPressed(can_frame *f);
 private:
-    WHEEL_KEY get_key(can_frame *f);
+    uint8_t get_key(can_frame *f);
     unsigned long lastPressTimeMS = 0;
-    WHEEL_KEY last_registered = WHEEL_KEY::NONE;
+    uint8_t last_registered;
 
 };
 

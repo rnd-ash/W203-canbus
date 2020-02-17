@@ -29,8 +29,8 @@ void setup() {
     Serial.begin(115200);
     SPI.begin();
     bt = new BLUETOOTH(6, 7);
-    canC = new CANBUS_COMMUNICATOR(9, CAN_500KBPS, MCP_8MHZ ,CANBUS_COMMUNICATOR::CAN_C);
-    canB = new CANBUS_COMMUNICATOR(10, CAN_83K3BPS, CANBUS_COMMUNICATOR::CAN_B);
+    canC = new CANBUS_COMMUNICATOR(9, CAN_500KBPS, MCP_8MHZ ,CAN_C_DEF);
+    canB = new CANBUS_COMMUNICATOR(10, CAN_83K3BPS, CAN_B_DEF);
     ic = new IC_DISPLAY(canB);
     audio = new AUDIO_DISPLAY(ic);
     tel = new TELEPHONE_DISPLAY(ic);
@@ -89,19 +89,17 @@ void handleFrameRead() {
 
 void handleKeyInputs(can_frame *f) {
     // User is in audio page
-    if (ic->current_page == IC_DISPLAY::AUDIO) {
+    if (ic->current_page == 0x03) {
         // Diag mode is currently being shown
         if (audio->getDiagModeEnabled()) {
             switch(wheel_controls->getPressed(f)) {
-                case WHEEL_CONTROLS::ARROW_UP:
+                case BUTTON_ARROW_UP:
                     audio->diagNextPage();
                     break;
-                case WHEEL_CONTROLS::ARROW_DOWN:
+                case BUTTON_ARROW_DOWN:
                     audio->diagPrevPage();
                     break;
-                case WHEEL_CONTROLS::TELEPHONE_ANSWER:
-                    break;
-                case WHEEL_CONTROLS::TELEPHONE_HANGUP:
+                case BUTTON_TEL_DEC:
                     audio->disableDiagMode(); // Disable diag mode
                     free(eng);
                     break;
@@ -112,17 +110,15 @@ void handleKeyInputs(can_frame *f) {
         // Normal music screen is being shown
         else {
             switch(wheel_controls->getPressed(f)) {
-                case WHEEL_CONTROLS::ARROW_UP:
+                case BUTTON_ARROW_UP:
                     bt->write_message(NEXT_TRACK_CMD);
                     break;
-                case WHEEL_CONTROLS::ARROW_DOWN:
+                case BUTTON_ARROW_DOWN:
                     bt->write_message(PREV_TRACK_CMD);
                     break;
-                case WHEEL_CONTROLS::TELEPHONE_ANSWER:
+                case BUTTON_TEL_ANS:
                     eng = new ENGINE_DATA();
                     audio->enableDiagMode(eng); // Enable diag mode 
-                    break;
-                case WHEEL_CONTROLS::TELEPHONE_HANGUP:
                     break;
                 default:
                     break;
@@ -130,16 +126,16 @@ void handleKeyInputs(can_frame *f) {
         }
     } 
     // Telephone screen
-    else if (ic->current_page == IC_DISPLAY::TELEPHONE) {
+    else if (ic->current_page == 0x05) {
 
     }
     // Other screen - Here the Arrows / Page buttons are used so we can only use the telephone buttons 
     else {
         switch(wheel_controls->getPressed(f)) {
-            case WHEEL_CONTROLS::TELEPHONE_ANSWER:
+            case BUTTON_TEL_ANS:
                 bt->write_message(NEXT_TRACK_CMD); // Use telephone Answer button to seek track
                 break;
-            case WHEEL_CONTROLS::TELEPHONE_HANGUP:
+            case BUTTON_TEL_DEC:
                 bt->write_message(PREV_TRACK_CMD); // Use telephone decline button to repeat track
                 break;
             default:

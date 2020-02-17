@@ -12,7 +12,7 @@
                 "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.2/cores/arduino/Arduino.h"
             ],
             "compilerPath": "/usr/bin/avr-gcc -mmcu=atmega328p",
-            "intelliSenseMode": "gcc-x64",
+            "intelliSenseMode": "clang-x64",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "defines": [

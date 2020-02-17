@@ -6,29 +6,27 @@
 #include "can.h"
 #include "mcp2515.h"
 #include "wiring_private.h"
+
+#define CAN_C_DEF 'C'
+#define CAN_B_DEF 'B'
 /**
  * Class to handle reading and writing to Canbus
  */
 class CANBUS_COMMUNICATOR {
     public:
 
-        enum CAN_NET {
-            CAN_B,
-            CAN_C
-        };
-
         /**
          * Clock default is 16Mhz
          * @param cs_pin CS Pin of MCP2515 module
          * @param speed Speed of Canbus
          */
-        CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_NET c);
+        CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, char c);
         /**
          * @param cs_pin CS Pin of MCP2515 module
          * @param speed Speed of Canbus
          * @param clock (Default 16Mhz) Clock frequency of MCP2515 module
          */
-        CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_CLOCK clock, CAN_NET c);
+        CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_CLOCK clock, char c);
         /**
          * Sends frame to bus
          */

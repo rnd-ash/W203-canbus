@@ -17,9 +17,9 @@
 
 
 // IC FORMATTING
-#define IC_TEXT_FMT_CENTER_JUSTIFICATION 0b00000000 // Center justification
-#define IC_TEXT_FMT_LEFT_JUSTIFICATION   0b00001000 // Left justification
-#define IC_TEXT_FMT_RIGHT_JUSTIFICATION  0b00010000 // Right justification
+#define IC_TEXT_FMT_LEFT_JUSTIFICATION   0b00000000 // Center justification
+#define IC_TEXT_FMT_RIGHT_JUSTIFICATION  0b00001000 // Left justification
+#define IC_TEXT_FMT_CENTER_JUSTIFICATION 0b00010000 // Right justification
 #define IC_TEXT_FMT_FLASHING             0b00100000 // Flashing text
 #define IC_TEXT_FMT_HIGHLIGHTED          0b01000000 // Highlighted text
 
@@ -33,6 +33,12 @@
 #define IC_SYMB_REWIND     0b00000110 // ◀
 #define IC_SYMB_UP_ARROW   0b00001001 // ↑
 #define IC_SYMB_DOWN_ARROW 0b00001010 // ↓
+
+
+// IC pages from Can messages
+#define IC_PAGE_AUDIO 0x03
+#define IC_PAGE_TELEPHONE 0x05
+#define IC_PAGE_OTHER 0x00
 
 /**
  * Class responsible for sending packets to the instrument
@@ -55,21 +61,13 @@
  */
 class IC_DISPLAY {
     public:
-        /**
-         * possible pages to send text to
-         */
-        enum PAGE {
-            AUDIO = 0x03,
-            TELEPHONE = 0x05,
-            OTHER = 0x00
-        };
 
         void update();
 
         /**
          * Used to store the current page on the IC being active
          */
-        static PAGE current_page;
+        static uint8_t current_page;
 
         IC_DISPLAY(CANBUS_COMMUNICATOR *can);
 
@@ -84,9 +82,10 @@ class IC_DISPLAY {
          * 
          * @param p Page to send header text to Audio / Telephone
          * @param text Header text to display on page
-         * @param should_center Should the header text be centered?
+         * @param fmt Format byte. This should be set by bitwise & IC_TEXT_FMT bytes.
+         * if false, then text is left justified.
          */
-        void setHeader(PAGE p, const char* text, bool should_center);
+        void setHeader(uint8_t p, const char* text, uint8_t fmt);
 
         /**
          * Sends the body text to the instrument cluster using package 26
@@ -96,7 +95,7 @@ class IC_DISPLAY {
          * @param fmt Format byte. This should be set by bitwise & IC_TEXT_FMT bytes.
          * if false, then text is left justified.
          */
-        void setBody(PAGE p, const char* text, uint8_t fmt);
+        void setBody(uint8_t p, const char* text, uint8_t fmt);
 
         /**
          * To be only used by the Telephone page! (Audio page only can have 1 line of text)
@@ -113,7 +112,7 @@ class IC_DISPLAY {
          * @param upper_Symbol Symbol above body text (IC_SYMB)
          * @param lower_Symbol Symbol below body text (IC_SYMB)
          */
-        void initPage(PAGE p, const char* header, bool should_center, uint8_t upper_Symbol, uint8_t lower_Symbol, uint8_t numLines);
+        void initPage(uint8_t p, const char* header, bool should_center, uint8_t upper_Symbol, uint8_t lower_Symbol, uint8_t numLines);
 
         void delay(int msec);
         /**
