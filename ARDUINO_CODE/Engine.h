@@ -21,6 +21,9 @@ const char * const PROGMEM GEAR_NEUTRAL = "Neutral";
 const char * const PROGMEM GEAR_REVERSE = "Reverse";
 const char * const PROGMEM GEAR_REVERSE_2 = "Reverse 2";
 
+const char * const PROGMEM FUEL_CONSUMP_INF = "Inf";
+const char * const PROGMEM FUEL_CONSUMP_0 = "0.00";
+
 class ENGINE_DATA{
 
     public:
@@ -34,16 +37,22 @@ class ENGINE_DATA{
         const char* getConsumption();
         const char* getOilTemp();
     private:
+        int samples_uls = 0;
+        int samples_spd = 0;
         char buffer[20] = {0x00};
         boolean engineOn = false;
         uint8_t transmission_temp = 0xFF;
+        uint8_t speed_km = 0;
         uint8_t torque_converter_state = 0xFF;
         uint8_t targetGear = 0xFF;
         uint8_t actualGear = 0xFF;
         uint8_t coolant_temp = 0xFF;
         uint8_t intake_temp = 0xFF;
         uint8_t oil_temp = 0xFF;
-        float consumption = 0xFF;
+        float engine_torque = 0xFF;
+        unsigned long lastMpgTime = 0;
+        long consumption = 0xFFFF;
+        bool returnValidMPG = false;
 };
 
 #endif

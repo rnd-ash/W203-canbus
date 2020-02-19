@@ -11,17 +11,17 @@ const char * const PROGMEM STARTUP_BODY = "Open App!";
 const char * const PROGMEM PAUSED_HEADER = "Paused";
 const char * const PROGMEM PAUSED_BODY = "Press play";
 const char * const PROGMEM DIAG_MODE_HEADER = "Scroll";
-const char * const PROGMEM DIAG_MODE_BODY = "DAIG MODE";
+const char * const PROGMEM DIAG_MODE_BODY = "DIAG MODE";
 
 const char * const PROGMEM MEMORY_STR_1 = "FREE SRAM: ";
 const char * const PROGMEM MEMORY_STR_2 = " Bytes";
 
-const char * const PROGMEM DIAG_HEADER_ATF = "ATF Temp (C)";
+const char * const PROGMEM DIAG_HEADER_ATF = "ATF Temp";
 const char * const PROGMEM DIAG_HEADER_TORQUE_CONVERTER = "TC lockup";
 const char * const PROGMEM DIAG_HEADER_GEARING = "Tar/Act gear";
 const char * const PROGMEM DIAG_HEADER_COOLANT_TEMP = "Eng Temp";
 const char * const PROGMEM DIAG_HEADER_INTAKE_TEMP = "Intake Temp";
-const char * const PROGMEM DIAG_HEADER_CONSUMPTION = "MPG (live)";
+const char * const PROGMEM DIAG_HEADER_CONSUMPTION = "Fuel usage";
 const char * const PROGMEM DIAG_HEADER_OIL_TEMP = "Oil Temp";
 
 const char * const PROGMEM DIAG_ERROR_HEAD = "INVALID";

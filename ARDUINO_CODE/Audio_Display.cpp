@@ -96,16 +96,18 @@ void AUDIO_DISPLAY::setTrackName(const char* name) {
     memset(trackName, 0x00, sizeof(trackName));
     strcpy(trackName, name);
     scrollingRequired = !display->can_fit_body_text(trackName);
-    if (scrollingRequired) {
-        uint8_t len = strlen(trackName);
-        trackName[len] = SPACE;
-        trackName[len+1] = SPACE;
-        trackName[len+2] = SPACE;
-        trackName[len+3] = SPACE;
-        if (isInPage) display->setBody(IC_PAGE_AUDIO, trackName, IC_TEXT_FMT_LEFT_JUSTIFICATION);
-    } else {
-        if (isInPage) display->setBody(IC_PAGE_AUDIO, trackName, IC_TEXT_FMT_CENTER_JUSTIFICATION);
-    }   
+    if (!inDiagMode) {
+        if (scrollingRequired) {
+            uint8_t len = strlen(trackName);
+            trackName[len] = SPACE;
+            trackName[len+1] = SPACE;
+            trackName[len+2] = SPACE;
+            trackName[len+3] = SPACE;
+            if (isInPage) display->setBody(IC_PAGE_AUDIO, trackName, IC_TEXT_FMT_LEFT_JUSTIFICATION);
+        } else {
+            if (isInPage) display->setBody(IC_PAGE_AUDIO, trackName, IC_TEXT_FMT_CENTER_JUSTIFICATION);
+        }   
+    }
 }
 
 void AUDIO_DISPLAY::createHeader() {
