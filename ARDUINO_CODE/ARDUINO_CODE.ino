@@ -1,3 +1,6 @@
+#pragma GCC optimize("-O3")
+#pragma GCC optimize("-j4")
+
 #include "can_comm.h"
 #include "defines.h"
 #include "ic_display.h"
@@ -28,9 +31,13 @@ const char * const PROGMEM SKIDDING_DIS = "D";
 void setup() {
     Serial.begin(115200);
     SPI.begin();
+    #ifdef ARDUINO_MEGA
+    bt = new BLUETOOTH();
+    #else
     bt = new BLUETOOTH(6, 7);
-    canC = new CANBUS_COMMUNICATOR(9, CAN_500KBPS, MCP_8MHZ ,CAN_C_DEF);
-    canB = new CANBUS_COMMUNICATOR(10, CAN_83K3BPS, CAN_B_DEF);
+    #endif
+    canC = new CANBUS_COMMUNICATOR(5, CAN_500KBPS, CAN_C_DEF);
+    canB = new CANBUS_COMMUNICATOR(4, CAN_83K3BPS, CAN_B_DEF);
     ic = new IC_DISPLAY(canB);
     audio = new AUDIO_DISPLAY(ic);
     tel = new TELEPHONE_DISPLAY(ic);
@@ -71,19 +78,17 @@ void HandleBluetoothRequest() {
 void handleFrameRead() {
     can_frame *readB = canB->read_frame();
     if (readB->can_dlc != 0) {
-        //canB->printFrame(readB);
         ic->processIcResponse(readB);
         handleKeyInputs(readB);
-
+        if (readB->can_id == 0x000C) {
+            eng->readFrame(readB);
+        }
     }
     can_frame *read = canC->read_frame();
     if (read->can_dlc != 0) {
         if (eng != NULL) {
             eng->readFrame(read);
         } 
-        #ifndef DEBUG
-        canC->printFrame(read);
-        #endif
     }
 }
 

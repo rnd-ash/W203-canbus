@@ -14,15 +14,20 @@ CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, char c
     this->mcp = new MCP2515(cs_pin);
     this->mcp->reset();
     this->mcp->setBitrate(speed);
-    this->mcp->setNormalMode();
+    if (c == 'C') {
+        this->mcp->setListenOnlyMode();
+    } else {
+        this->mcp->setNormalMode();
+    }
     frame_string.reserve(140);
     this->pin = cs_pin;
     this->busID = c;
 }
 
 void CANBUS_COMMUNICATOR::sendToBus(can_frame *send) {
+    digitalWrite(this->pin, LOW);
+    mcp->sendMessage(send);
     digitalWrite(this->pin, HIGH);
-    MCP2515::ERROR x = mcp->sendMessage(send);
 }
 
 can_frame *CANBUS_COMMUNICATOR::read_frame() {

@@ -7,6 +7,10 @@
   #define DPRINTLN(...)
 #endif
 
+// comment out if you own a Arduino uno! or other smaller board
+#define ARDUINO_MEGA
+
+
 #define SYSTEM_SRAM_SIZE 2048
 
 // Audio page settings
