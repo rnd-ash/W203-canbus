@@ -17,14 +17,17 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
     var isConnected = false
     val readSerialBT = Thread() {
         Log.i("BT", "Reader thread started!")
-        var buffer = ""
         while(true) {
-            if (isConnected) {
-                when (readString()) {
-                    "N" -> CarCommunicator.nextSong()
-                    "P" -> CarCommunicator.previousSong()
-                    "X" -> CarCommunicator.invokeAssistant()
-                    "Z" -> CarCommunicator.killAssistant()
+            val x = readString()
+            if (isConnected && x.isNotEmpty()) {
+                Log.i("BT", "Received bytes: ${printBytes(x)}")
+                when (x[0].toInt()) {
+                    0x00 -> CarCommunicator.nextSong()
+                    0x01 -> CarCommunicator.previousSong()
+                    0x03 -> {
+                        Log.i("BT", "Requesting carrier")
+                        sendBytes(byteArrayOf('C'.toByte()) + MainActivity.carrierName.toByteArray(Charsets.US_ASCII))
+                    }
                 }
             }
             try {
@@ -34,24 +37,25 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
             }
         }
     }
+    private fun printBytes(a : ByteArray) : String {
+        var x = ""
+        a.forEach { x += String.format("%02X ", it.toInt()) }
+        return x
+    }
 
     private lateinit var bluetoothSocket : BluetoothSocketWrapper
     private var uuid : UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-    private var buffer = ""
-    private fun readString() : String {
-        while (bluetoothSocket.getInputStream().available() > 0) {
-            val char = bluetoothSocket.getInputStream().read().toChar()
-            if (char == '\r') {
-                Log.d("BT", "Read message $buffer")
-                val tmp = buffer
-                buffer = ""
-                return tmp
-            } else {
-                buffer += char
+    private fun readString() : ByteArray {
+        var ret = ByteArray(0)
+        try {
+            while (bluetoothSocket.getInputStream().available() > 0) {
+                ret += bluetoothSocket.getInputStream().read().toByte()
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        return buffer
+        return ret
     }
 
     fun sendString(msg: String) {
@@ -60,7 +64,7 @@ class BluetoothComm(private var device: BluetoothDevice, private var secure: Boo
     }
 
     fun sendBytes(bytes: ByteArray) {
-        Log.d("BT", "Sending Bytes: '$bytes'")
+        Log.d("BT", "Sending Bytes: '${printBytes(bytes)}'")
         sendMsg(bytes);
     }
 

@@ -10,38 +10,62 @@
 #include "wheel_controls.h"
 #include "Telephone_Display.h"
 #include "Engine.h"
+#include "Music.h"
 #include "defines.h"
+#include "DiagMode.h"
 
 BLUETOOTH *bt;
 IC_DISPLAY *ic;
 CANBUS_COMMUNICATOR *canB;
 CANBUS_COMMUNICATOR *canC;
 AUDIO_DISPLAY *audio;
-TELEPHONE_DISPLAY *tel;
+//TELEPHONE_DISPLAY *tel;
 LIGHT_CONTROLS *lights;
 WHEEL_CONTROLS *wheel_controls;
 ENGINE_DATA * eng;
+DIAG_MODE* diag;
+MUSIC* musicdata;
 
-const char * const PROGMEM NEXT_TRACK_CMD = "N";
-const char * const PROGMEM PREV_TRACK_CMD = "P";
-const char * const PROGMEM SKIDDING_ACT = "S";
-const char * const PROGMEM SKIDDING_DIS = "D";
+const char NEXT_TRACK_CMD[1] = {0x00};
+const char PREV_TRACK_CMD[1] = {0x01};
 
+
+// --  DEBUG DATA FOR FREE MEMEORY -- //
+#ifdef DEBUG
+int freeRam () {
+  extern int __heap_start, *__brkval;
+  int v;
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+}
+
+unsigned long lastMemTime = millis();
+
+const char * const PROGMEM MEMORY_STR_1 = "FREE SRAM: ";
+const char * const PROGMEM MEMORY_STR_2 = " Bytes";
+#endif
+// --  DEBUG DATA FOR FREE MEMEORY -- //
+
+bool showDiagMode = false;
 
 void setup() {
+    digitalWrite(4, HIGH);
+    digitalWrite(5, HIGH);
     Serial.begin(115200);
     SPI.begin();
+    canC = new CANBUS_COMMUNICATOR(4, CAN_500KBPS, CAN_C_DEF);
+    delay(10);
+    canB = new CANBUS_COMMUNICATOR(5, CAN_83K3BPS, CAN_B_DEF);
     #ifdef ARDUINO_MEGA
     bt = new BLUETOOTH();
     #else
     bt = new BLUETOOTH(6, 7);
     #endif
-    canC = new CANBUS_COMMUNICATOR(5, CAN_500KBPS, CAN_C_DEF);
-    canB = new CANBUS_COMMUNICATOR(4, CAN_83K3BPS, CAN_B_DEF);
     ic = new IC_DISPLAY(canB);
     audio = new AUDIO_DISPLAY(ic);
-    tel = new TELEPHONE_DISPLAY(ic);
+    musicdata = new MUSIC(audio);
+    //tel = new TELEPHONE_DISPLAY(ic, bt);
     wheel_controls = new WHEEL_CONTROLS();
+    Serial.println("Ready!");
 }
 
 void HandleBluetoothRequest() {
@@ -50,18 +74,19 @@ void HandleBluetoothRequest() {
     if (len > 0) {
         if (ptr[0] == 'M') { // Music data message
             if (ptr[2] == 'X' && len == 3) {
-                audio->setPlayState(false);
+                musicdata->pause();
             } else if (ptr[2] == 'P' && len == 3) {
-                audio->setPlayState(true);
+               musicdata->play();
             } else if (ptr[1] == '-') {
-                audio->setTrackName(ptr+2);
+                musicdata->setTrackName(ptr+2);
             } else if (ptr[1] == ' ') {
-                audio->setDuration((byte) ptr[2] * 256 + (byte) ptr[3]);
+                musicdata->setDurationSec((byte) ptr[2] * 256 + (byte) ptr[3]);
             } else if (ptr[1] == '_') {
-                audio->setElapsed((byte) ptr[2] * 256 + (byte) ptr[3]);
+                musicdata->setElapsedSec((byte) ptr[2] * 256 + (byte) ptr[3]);
             }
         } else if (ptr[0] == '!') { // Disconnect message
-            audio->setPlayState(false);
+            musicdata->pause();
+            musicdata->setTrackName(NULL);
         } else if (ptr[0] == 'F') {
             lights = new LIGHT_CONTROLS(canB);
             for (uint8_t i = 0; i < 10; i++) {
@@ -71,6 +96,8 @@ void HandleBluetoothRequest() {
                 delay(100);
             }
             free(lights);
+        } else if (ptr[0] = 'C') {
+            //tel->setCarrier(ptr+1);
         }
     }
 }
@@ -96,17 +123,18 @@ void handleKeyInputs(can_frame *f) {
     // User is in audio page
     if (ic->current_page == 0x03) {
         // Diag mode is currently being shown
-        if (audio->getDiagModeEnabled()) {
+        if (showDiagMode) {
             switch(wheel_controls->getPressed(f)) {
                 case BUTTON_ARROW_UP:
-                    audio->diagNextPage();
+                    diag->nextDiagPage();
                     break;
                 case BUTTON_ARROW_DOWN:
-                    audio->diagPrevPage();
+                    diag->prevDiagPage();
                     break;
                 case BUTTON_TEL_DEC:
-                    audio->disableDiagMode(); // Disable diag mode
+                    showDiagMode = false;
                     free(eng);
+                    free(diag);
                     break;
                 default:
                     break;
@@ -116,14 +144,15 @@ void handleKeyInputs(can_frame *f) {
         else {
             switch(wheel_controls->getPressed(f)) {
                 case BUTTON_ARROW_UP:
-                    bt->write_message(NEXT_TRACK_CMD);
+                    bt->write_message(NEXT_TRACK_CMD, 1);
                     break;
                 case BUTTON_ARROW_DOWN:
-                    bt->write_message(PREV_TRACK_CMD);
+                    bt->write_message(PREV_TRACK_CMD, 1);
                     break;
                 case BUTTON_TEL_ANS:
                     eng = new ENGINE_DATA();
-                    audio->enableDiagMode(eng); // Enable diag mode 
+                    diag = new DIAG_MODE(audio, eng);
+                    showDiagMode = true; 
                     break;
                 default:
                     break;
@@ -138,10 +167,10 @@ void handleKeyInputs(can_frame *f) {
     else {
         switch(wheel_controls->getPressed(f)) {
             case BUTTON_TEL_ANS:
-                bt->write_message(NEXT_TRACK_CMD); // Use telephone Answer button to seek track
+                bt->write_message(NEXT_TRACK_CMD, 1); // Use telephone Answer button to seek track
                 break;
             case BUTTON_TEL_DEC:
-                bt->write_message(PREV_TRACK_CMD); // Use telephone decline button to repeat track
+                bt->write_message(PREV_TRACK_CMD, 1); // Use telephone decline button to repeat track
                 break;
             default:
                 break;
@@ -149,10 +178,21 @@ void handleKeyInputs(can_frame *f) {
     }
 }
 
-
 void loop() {
     HandleBluetoothRequest();
     audio->update();
-    tel->update();
+    musicdata->update();
+    if (showDiagMode) {
+        diag->updateUI();
+    } else {
+        musicdata->updateUI();
+    }
+
     handleFrameRead();
+    #ifdef DEBUG
+    if (millis() - lastMemTime > 2000) {
+        lastMemTime = millis();
+        DPRINTLN(MEMORY_STR_1+String(freeRam())+MEMORY_STR_2);
+    }
+    #endif
 }

@@ -1,27 +1,35 @@
 #include "can_comm.h"
 
 CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_CLOCK clock, char c) {
+    digitalWrite(cs_pin, LOW);
     this->mcp = new MCP2515(cs_pin);
     this->mcp->reset();
-    this->mcp->setBitrate(speed, clock);
+    if(this->mcp->setBitrate(speed) != MCP2515::ERROR_OK) {
+        Serial.println("ERROR SETTING UP CANBUS "+c);
+    } else {
+        Serial.println("Canbus Ready");
+    }
     this->mcp->setNormalMode();
     frame_string.reserve(140);
     this->pin = cs_pin;
     this->busID = c;
+    digitalWrite(this->pin, HIGH);
 }
 
 CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, char c) {
+    digitalWrite(cs_pin, LOW);
     this->mcp = new MCP2515(cs_pin);
     this->mcp->reset();
-    this->mcp->setBitrate(speed);
-    if (c == 'C') {
-        this->mcp->setListenOnlyMode();
+    if(this->mcp->setBitrate(speed) != MCP2515::ERROR_OK) {
+        Serial.println("ERROR SETTING UP CANBUS "+c);
     } else {
-        this->mcp->setNormalMode();
+        Serial.println("Canbus Ready");
     }
+    this->mcp->setNormalMode();
     frame_string.reserve(140);
     this->pin = cs_pin;
     this->busID = c;
+    digitalWrite(this->pin, HIGH);
 }
 
 void CANBUS_COMMUNICATOR::sendToBus(can_frame *send) {

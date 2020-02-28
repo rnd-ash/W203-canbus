@@ -112,9 +112,8 @@ class IC_DISPLAY {
          * @param upper_Symbol Symbol above body text (IC_SYMB)
          * @param lower_Symbol Symbol below body text (IC_SYMB)
          */
-        void initPage(uint8_t p, const char* header, bool should_center, uint8_t upper_Symbol, uint8_t lower_Symbol, uint8_t numLines);
+        void initPage(uint8_t p, const char* header, uint8_t fmt, uint8_t upper_Symbol, uint8_t lower_Symbol, uint8_t numLines);
 
-        void delay(int msec);
         /**
          * Processes an incomming can frame from the IC display
          * @param r Pointer to can frame with ID 0x1D0 that has been read from the bus
@@ -142,10 +141,13 @@ class IC_DISPLAY {
          */
         uint8_t getChecksum(uint8_t len, uint8_t* payload);
 
+        void wait(uint8_t msec);
+
         CANBUS_COMMUNICATOR *canB;
 };
 
 const char * const PROGMEM AGW_TO_IC_STR = "AGW >> IC: ";
+const char * const PROGMEM IC_TO_AGW_STR = "IC >> AGW: ";
 
 /**
  * Stores widths of charcters in table (plus 1 pixel gap between each char)

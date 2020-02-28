@@ -116,7 +116,7 @@ const char* ENGINE_DATA::getCoolantTemp() {
 }
 
 const char* ENGINE_DATA::getConsumption() {
-    if (millis() - lastMpgTime >= 1000) {
+    if (millis() - lastMpgTime >= 500) {
         float d = millis() - lastMpgTime;
         lastMpgTime = millis();
         sprintf(buffer, "%d ul/s", this->consumption / this->samples_uls);

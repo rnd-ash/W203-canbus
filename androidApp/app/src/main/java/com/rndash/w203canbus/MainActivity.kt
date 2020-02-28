@@ -11,31 +11,36 @@ import android.graphics.Color
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.KeyEvent
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.annotation.RequiresApi
-import java.lang.Exception
-import java.lang.NullPointerException
+import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 import kotlin.properties.Delegates
+
 
 class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var manager : AudioManager
         lateinit var ctx: Context
+        var carrierName = "Unknown"
     }
-
-    lateinit var textView: TextView
     lateinit var thread : Thread
     var artistName = ""
     lateinit var service : ConnectService
 
 
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        carrierName = (this.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).networkOperatorName
+        println(carrierName)
         var mPlayer = MediaPlayer.create(this, R.raw.xmas)
         val adapter = BluetoothAdapter.getDefaultAdapter()
         val dev = adapter.bondedDevices.first { it.name == "HC-06" }
@@ -44,8 +49,6 @@ class MainActivity : AppCompatActivity() {
         ctx = this.applicationContext
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        textView = findViewById(R.id.info)
 
         manager = this.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val playPauseBtn = findViewById<Button>(R.id.play)
@@ -170,20 +173,14 @@ class MainActivity : AppCompatActivity() {
                         'M',
                         0x5F, // underscore
                         byteArrayOf(
-                            (progress / 256).toInt().toByte(),
-                            (progress % 256).toInt().toByte()
+                            (progress / 256).toByte(),
+                            (progress % 256).toByte()
                         )
                     )
                     when (isPlaying) {
-                        true -> {
-                            ConnectService.ic.btManager.sendString("M:P")
-                            //ic.btManager.sendString("M")
-                        }
-                        false -> {
-                            ConnectService.ic.btManager.sendString("M:X")
-                        }
+                        true -> ConnectService.ic.btManager.sendString("M:P")
+                        false -> ConnectService.ic.btManager.sendString("M:X")
                     }
-                    textView.text = "Track: $trackName\nPlaying?: $isPlaying"
                 }
             } catch (e: UninitializedPropertyAccessException) {
                 Log.d("IT", "IC not initialised")
