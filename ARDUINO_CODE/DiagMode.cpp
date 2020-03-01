@@ -12,7 +12,7 @@ void DIAG_MODE::updateUI() {
     {
     case 1:
         display->setHeader("DIAG MODE", IC_TEXT_FMT_CENTER_JUSTIFICATION | IC_TEXT_FMT_FLASHING , 2000);
-        display->setBody("SCROLL", IC_TEXT_FMT_CENTER_JUSTIFICATION | IC_TEXT_FMT_FLASHING , 5000);
+        display->setBody("SCROLL", IC_TEXT_FMT_CENTER_JUSTIFICATION | IC_TEXT_FMT_FLASHING , 250);
         break;
     case 2:
         display->setHeader("Tar/Cur gear", IC_TEXT_FMT_LEFT_JUSTIFICATION, 2000);
@@ -38,6 +38,10 @@ void DIAG_MODE::updateUI() {
         display->setHeader("Fuel usage", IC_TEXT_FMT_LEFT_JUSTIFICATION, 2000);
         display->setBody(engine->getConsumption(), IC_TEXT_FMT_CENTER_JUSTIFICATION, 250);
         break;
+    case 8:
+        display->setHeader("MPG Live", IC_TEXT_FMT_LEFT_JUSTIFICATION, 2000);
+        display->setBody(engine->getMPG(), IC_TEXT_FMT_CENTER_JUSTIFICATION, 250);
+        break;
     default:
         break;
     }
@@ -45,9 +49,10 @@ void DIAG_MODE::updateUI() {
 
 void DIAG_MODE::nextDiagPage() {
     this->displayPage++;
-    if (this->displayPage == MAX_DIAG_PAGES) {
+    if (this->displayPage > MAX_DIAG_PAGES) {
         this->displayPage = 1;
     }
+    DPRINTLN(displayPage);
 }
 
 void DIAG_MODE::prevDiagPage() {

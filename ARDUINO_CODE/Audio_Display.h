@@ -3,7 +3,6 @@
 
 #include "ic_display.h"
 #include "Engine.h"
-#define MAX_DIAG_PAGES 7
 
 const char * const PROGMEM STARTUP_HEADER = "No Connection";
 const char * const PROGMEM STARTUP_BODY = "Open App!";

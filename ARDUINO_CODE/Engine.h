@@ -36,6 +36,7 @@ class ENGINE_DATA{
         const char* getCoolantTemp();
         const char* getConsumption();
         const char* getOilTemp();
+        const char* getMPG();
     private:
         int samples_uls = 0;
         int samples_spd = 0;

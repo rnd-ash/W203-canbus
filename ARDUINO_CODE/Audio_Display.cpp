@@ -44,8 +44,8 @@ void AUDIO_DISPLAY::setHeader(const char* text, uint8_t format, int refreshInter
 
         if (IC_DISPLAY::current_page == IC_PAGE_AUDIO) {
             display->setHeader(IC_PAGE_AUDIO, this->header, this->headFmt);
+            lastUpdateHeader = millis();
         }
-        lastUpdateHeader = millis();
     }
 }
 
@@ -63,13 +63,13 @@ void AUDIO_DISPLAY::setBody(const char* text, uint8_t format, int refreshInterva
             this->body[len + 1] = ' ';
             this->body[len + 2] = ' ';
             this->body[len + 3] = ' ';
-            this->bodyFmt = IC_TEXT_FMT_LEFT_JUSTIFICATION;
+            this->bodyFmt = IC_TEXT_FMT_LEFT_JUSTIFICATION; // Override for scrolling text
         }
 
         if (IC_DISPLAY::current_page == IC_PAGE_AUDIO) {
             display->setBody(IC_PAGE_AUDIO, this->body, this->bodyFmt);
+            lastUpdateBody = millis();
         }
-        lastUpdateBody = millis();
     }
 }
 

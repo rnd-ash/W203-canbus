@@ -116,27 +116,36 @@ const char* ENGINE_DATA::getCoolantTemp() {
 }
 
 const char* ENGINE_DATA::getConsumption() {
-    if (millis() - lastMpgTime >= 500) {
+    if (millis() - lastMpgTime >= 1000) {
         float d = millis() - lastMpgTime;
         lastMpgTime = millis();
         sprintf(buffer, "%d ul/s", this->consumption / this->samples_uls);
-        /*
-        if (this->speed_km != 0) {
-            char buf[6];
-            // Convert km/h to m/s
-            float ms = (float) (this->speed_km / this->samples_spd) / 3.6;
-            // How much fuel was used since last reading
-            float fuel_ml = (((float) (this->consumption / this->samples_uls)) * (d / 1000.0)) / 1000.0;
-            // Distance travelled in km since last reading
-            float dist_km = (ms / 1000.0) * (d / 1000.0);
+        this->consumption = 0;
+        this->samples_uls = 0;
+        this->samples_spd = 0;
+        this->speed_km = 0;
+    }
+    return buffer;
+}
 
-            // Litres per 1 km
-            float l_k = (1.0 / dist_km) * (1000.0 / fuel_ml);
-            float mpg = l_k * 2.35214583; 
-            dtostrf(mpg, 4, 2, buf);
-            sprintf(buffer, "%s mpg", buf);
+const char* ENGINE_DATA::getMPG() {
+    if (millis() - lastMpgTime >= 1000) {
+        lastMpgTime = millis();
+        if (this->speed_km == 0) {
+            sprintf(buffer, "0.0 MPG"); 
+        } else if (this->consumption == 0) {
+            sprintf(buffer, "Inf MPG");
+        } else {
+            float avgSpd = this->speed_km / this->samples_spd;
+            float avgFuelML = (this->consumption / this->samples_uls) / 1000.0;
+
+            float km_l =  avgSpd / ((3600.0 * avgFuelML) / 1000.0);
+            float mpg = km_l * 2.8248093627967;
+            char str[7];
+            dtostrf(mpg, 5, 1, str);
+            sprintf(buffer, "%s MPG", str);
         }
-        */
+
         this->consumption = 0;
         this->samples_uls = 0;
         this->samples_spd = 0;
