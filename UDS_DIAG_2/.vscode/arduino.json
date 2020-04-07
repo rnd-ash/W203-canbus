@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:uno",
+    "programmer": "AVR ISP",
+    "sketch": "ARDUINO_CODE.ino",
+    "port": "/dev/ttyUSB0"
+}

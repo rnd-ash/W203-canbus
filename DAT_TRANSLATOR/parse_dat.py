@@ -193,7 +193,7 @@ print("Found {0} can frames. Decoding".format(len(can_frames)))
 for f in can_frames:
     x = can_frame_data(f)
     x.parse_frame()
-    #x.translate('en')
+    x.translate('en')
     print("ECU NAME: {0}, ID: {1}. MSG COUNT: {2}".format(x.get_name(), "0x%04X" % x.get_id(), x.get_num_msgs()))
     write.write("ECU NAME: {0}, ID: {1}. MSG COUNT: {2}\n".format(x.get_name(), "0x%04X" % x.get_id(), x.get_num_msgs()))
     for i in x.get_msgs():

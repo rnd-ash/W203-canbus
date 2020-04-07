@@ -4,6 +4,7 @@
 #include <SPI.h>
 #include "can.h"
 
+
 /*
  *  Speed 8M
  */
@@ -292,10 +293,6 @@ class MCP2515
         static const uint8_t RXBnCTRL_RXM_MASK   = 0x60;
         static const uint8_t RXBnCTRL_RTR        = 0x08;
         static const uint8_t RXB0CTRL_BUKT       = 0x04;
-        static const uint8_t RXB0CTRL_FILHIT_MASK = 0x03;
-        static const uint8_t RXB1CTRL_FILHIT_MASK = 0x07;
-        static const uint8_t RXB0CTRL_FILHIT = 0x00;
-        static const uint8_t RXB1CTRL_FILHIT = 0x01;
 
         static const uint8_t MCP_SIDH = 0;
         static const uint8_t MCP_SIDL = 1;
@@ -446,9 +443,6 @@ class MCP2515
 
     private:
 
-        void startSPI();
-        void endSPI();
-
         ERROR setMode(const CANCTRL_REQOP_MODE mode);
 
         uint8_t readRegister(const REGISTER reg);
@@ -460,6 +454,8 @@ class MCP2515
         void prepareId(uint8_t *buffer, const bool ext, const uint32_t id);
     
     public:
+        void startSPI();
+        void endSPI();
         MCP2515(const uint8_t _CS);
         ERROR reset(void);
         ERROR setConfigMode();

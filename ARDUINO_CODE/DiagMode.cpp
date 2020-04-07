@@ -39,7 +39,11 @@ void DIAG_MODE::updateUI() {
         display->setBody(engine->getConsumption(), IC_TEXT_FMT_CENTER_JUSTIFICATION, 250);
         break;
     case 8:
-        display->setHeader("MPG Live", IC_TEXT_FMT_LEFT_JUSTIFICATION, 2000);
+        #ifdef REGION_UK
+            display->setHeader("MPG Live (UK)", IC_TEXT_FMT_LEFT_JUSTIFICATION, 2000);
+        #else
+            display->setHeader("MPG Live (US)", IC_TEXT_FMT_LEFT_JUSTIFICATION, 2000);
+        #endif
         display->setBody(engine->getMPG(), IC_TEXT_FMT_CENTER_JUSTIFICATION, 250);
         break;
     default:
@@ -52,7 +56,6 @@ void DIAG_MODE::nextDiagPage() {
     if (this->displayPage > MAX_DIAG_PAGES) {
         this->displayPage = 1;
     }
-    DPRINTLN(displayPage);
 }
 
 void DIAG_MODE::prevDiagPage() {
@@ -60,5 +63,4 @@ void DIAG_MODE::prevDiagPage() {
     if (this->displayPage == 0) {
         this->displayPage = MAX_DIAG_PAGES;
     }
-    DPRINTLN(displayPage);
 }

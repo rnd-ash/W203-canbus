@@ -7,26 +7,21 @@ ENGINE_DATA::ENGINE_DATA() {
 
 void ENGINE_DATA::readFrame(can_frame *f) {
     this->engineOn = true;
-    if (f->can_id == 0x0218) {
-        this->torque_converter_state = f->data[3] & 0b00000111;
-        this->engine_torque = ((f->data[0] & 0b11111000) << 8) | (f->data[1]);
-    } else if (f->can_id == 0x0418) {
+    if (f->can_id == 0x0418) {
         this->transmission_temp = uint8_t(f->data[2]) - 40;
         this->actualGear = (f->data[4]) & 0b00001111;
         this->targetGear = ((f->data[4]) & 0b11110000) >> 4;
     } else if (f->can_id == 0x608) {
         this->coolant_temp = uint8_t(f->data[0]);
         this->intake_temp = uint8_t(f->data[1]);
-        this->consumption += (int) (f->data[5] << 8) | (f->data[6]);
-        this->samples_uls++;
+        this->consumption = (int) (f->data[5] << 8) | (f->data[6]);
         if (this->consumption < 0) {
             this->consumption = 0;
         }
     } else if (f->can_id == 0x0308) {
         this->oil_temp = uint8_t(f->data[5]);
     } else if (f->can_id == 0x000C) {
-        speed_km += f->data[1];
-        this->samples_spd++;
+        speed_km = f->data[1];
     }
 }
 
@@ -39,25 +34,6 @@ const char* ENGINE_DATA::getTransmissionTemp() {
         memset(buffer, 0x00, sizeof(buffer));
         sprintf(buffer, "%d C", transmission_temp);
         return buffer;
-    }
-}
-
-const char* ENGINE_DATA::getTorqueConverterStatus() {
-    if (this->engineOn == false) {
-        return ENGINE_OFF;
-    }
-    switch (this->torque_converter_state)
-    {
-    case 0b00000000:
-        return TORQUE_C_IDLE;
-    case 0b00000011:
-        return TORQUE_C_OPEN;
-    case 0b00000001:
-        return TORQUE_C_SLIP;
-    case 0b00000111:
-        return TORQUE_C_CLOSED;
-    default:
-        return UNKNOWN_VAL;
     }
 }
 
@@ -119,11 +95,7 @@ const char* ENGINE_DATA::getConsumption() {
     if (millis() - lastMpgTime >= 1000) {
         float d = millis() - lastMpgTime;
         lastMpgTime = millis();
-        sprintf(buffer, "%d ul/s", this->consumption / this->samples_uls);
-        this->consumption = 0;
-        this->samples_uls = 0;
-        this->samples_spd = 0;
-        this->speed_km = 0;
+        sprintf(buffer, "%d ul/s", this->consumption);
     }
     return buffer;
 }
@@ -136,20 +108,17 @@ const char* ENGINE_DATA::getMPG() {
         } else if (this->consumption == 0) {
             sprintf(buffer, "Inf MPG");
         } else {
-            float avgSpd = this->speed_km / this->samples_spd;
-            float avgFuelML = (this->consumption / this->samples_uls) / 1000.0;
-
-            float km_l =  avgSpd / ((3600.0 * avgFuelML) / 1000.0);
-            float mpg = km_l * 2.8248093627967;
+            float l_per_hour = 3600.0 * (this->consumption / 1000000.0);
+            float km_l = this->speed_km / l_per_hour;
+            #ifdef REGION_UK
+                float mpg = km_l * 2.82481; // Miles per gallon (UK)
+            #else
+                float mpg = km_l * 2.35215; // Miles per gallon (US)
+            #endif
             char str[7];
             dtostrf(mpg, 5, 1, str);
             sprintf(buffer, "%s MPG", str);
         }
-
-        this->consumption = 0;
-        this->samples_uls = 0;
-        this->samples_spd = 0;
-        this->speed_km = 0;
     }
     return buffer;
 }

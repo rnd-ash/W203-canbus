@@ -1,7 +1,6 @@
 #include "can_comm.h"
 
 CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_CLOCK clock, char c) {
-    digitalWrite(cs_pin, LOW);
     this->mcp = new MCP2515(cs_pin);
     this->mcp->reset();
     if(this->mcp->setBitrate(speed) != MCP2515::ERROR_OK) {
@@ -11,13 +10,10 @@ CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, CAN_CL
     }
     this->mcp->setNormalMode();
     frame_string.reserve(140);
-    this->pin = cs_pin;
     this->busID = c;
-    digitalWrite(this->pin, HIGH);
 }
 
 CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, char c) {
-    digitalWrite(cs_pin, LOW);
     this->mcp = new MCP2515(cs_pin);
     this->mcp->reset();
     if(this->mcp->setBitrate(speed) != MCP2515::ERROR_OK) {
@@ -27,19 +23,14 @@ CANBUS_COMMUNICATOR::CANBUS_COMMUNICATOR(uint8_t cs_pin, CAN_SPEED speed, char c
     }
     this->mcp->setNormalMode();
     frame_string.reserve(140);
-    this->pin = cs_pin;
     this->busID = c;
-    digitalWrite(this->pin, HIGH);
 }
 
 void CANBUS_COMMUNICATOR::sendToBus(can_frame *send) {
-    digitalWrite(this->pin, LOW);
     mcp->sendMessage(send);
-    digitalWrite(this->pin, HIGH);
 }
 
 can_frame *CANBUS_COMMUNICATOR::read_frame() {
-    digitalWrite(this->pin, LOW);
     // Setup default Error frame
     read.can_id = 0x00;
     read.can_dlc = 0x00;
@@ -47,7 +38,6 @@ can_frame *CANBUS_COMMUNICATOR::read_frame() {
     // Try and read a frame from Bus. If frame cannot be read, then the read frame
     // Retains its data
     mcp->readMessage(&read);
-    digitalWrite(this->pin, HIGH);
     return &read;
 }
 

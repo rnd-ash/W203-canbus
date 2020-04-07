@@ -1,4 +1,4 @@
-#include "Arduino.h"
+ 
 #include "mcp2515.h"
 
 const struct MCP2515::TXBn_REGS MCP2515::TXB[MCP2515::N_TXBUFFERS] = {
@@ -23,11 +23,9 @@ MCP2515::MCP2515(const uint8_t _CS)
 
 void MCP2515::startSPI() {
     SPI.beginTransaction(SPISettings(SPI_CLOCK, MSBFIRST, SPI_MODE0));
-    digitalWrite(SPICS, LOW);
 }
 
 void MCP2515::endSPI() {
-    digitalWrite(SPICS, HIGH);
     SPI.endTransaction();
 }
 
@@ -35,50 +33,7 @@ MCP2515::ERROR MCP2515::reset(void)
 {
     startSPI();
     SPI.transfer(INSTRUCTION_RESET);
-    endSPI();
-
     delay(10);
-
-    uint8_t zeros[14];
-    memset(zeros, 0, sizeof(zeros));
-    setRegisters(MCP_TXB0CTRL, zeros, 14);
-    setRegisters(MCP_TXB1CTRL, zeros, 14);
-    setRegisters(MCP_TXB2CTRL, zeros, 14);
-
-    setRegister(MCP_RXB0CTRL, 0);
-    setRegister(MCP_RXB1CTRL, 0);
-
-    setRegister(MCP_CANINTE, CANINTF_RX0IF | CANINTF_RX1IF | CANINTF_ERRIF | CANINTF_MERRF);
-
-    // receives all valid messages using either Standard or Extended Identifiers that
-    // meet filter criteria. RXF0 is applied for RXB0, RXF1 is applied for RXB1
-    modifyRegister(MCP_RXB0CTRL,
-                   RXBnCTRL_RXM_MASK | RXB0CTRL_BUKT | RXB0CTRL_FILHIT_MASK,
-                   RXBnCTRL_RXM_STDEXT | RXB0CTRL_BUKT | RXB0CTRL_FILHIT);
-    modifyRegister(MCP_RXB1CTRL,
-                   RXBnCTRL_RXM_MASK | RXB1CTRL_FILHIT_MASK,
-                   RXBnCTRL_RXM_STDEXT | RXB1CTRL_FILHIT);
-
-    // clear filters and masks
-    // do not filter any standard frames for RXF0 used by RXB0
-    // do not filter any extended frames for RXF1 used by RXB1
-    RXF filters[] = {RXF0, RXF1, RXF2, RXF3, RXF4, RXF5};
-    for (int i=0; i<6; i++) {
-        bool ext = (i == 1);
-        ERROR result = setFilter(filters[i], ext, 0);
-        if (result != ERROR_OK) {
-            return result;
-        }
-    }
-
-    MASK masks[] = {MASK0, MASK1};
-    for (int i=0; i<2; i++) {
-        ERROR result = setFilterMask(masks[i], true, 0);
-        if (result != ERROR_OK) {
-            return result;
-        }
-    }
-
     return ERROR_OK;
 }
 
@@ -88,7 +43,6 @@ uint8_t MCP2515::readRegister(const REGISTER reg)
     SPI.transfer(INSTRUCTION_READ);
     SPI.transfer(reg);
     uint8_t ret = SPI.transfer(0x00);
-    endSPI();
 
     return ret;
 }
@@ -334,7 +288,6 @@ MCP2515::ERROR MCP2515::setBitrate(const CAN_SPEED canSpeed, CAN_CLOCK canClock)
             break;
 
             case (CAN_50KBPS):                                              //  50Kbps
-            cfg1 = MCP_16MHz_50kBPS_CFG1;
             cfg2 = MCP_16MHz_50kBPS_CFG2;
             cfg3 = MCP_16MHz_50kBPS_CFG3;
             break;
@@ -486,6 +439,9 @@ MCP2515::ERROR MCP2515::setBitrate(const CAN_SPEED canSpeed, CAN_CLOCK canClock)
 
 MCP2515::ERROR MCP2515::setClkOut(const CAN_CLKOUT divisor)
 {
+    ERROR res;
+    uint8_t cfg3;
+
     if (divisor == CLKOUT_DISABLE) {
 	/* Turn off CLKEN */
 	modifyRegister(MCP_CANCTRL, CANCTRL_CLKEN, 0x00);
@@ -578,10 +534,6 @@ MCP2515::ERROR MCP2515::setFilter(const RXF num, const bool ext, const uint32_t 
 
 MCP2515::ERROR MCP2515::sendMessage(const TXBn txbn, const struct can_frame *frame)
 {
-    if (frame->can_dlc > CAN_MAX_DLEN) {
-        return ERROR_FAILTX;
-    }
-
     const struct TXBn_REGS *txbuf = &TXB[txbn];
 
     uint8_t data[13];
@@ -600,10 +552,6 @@ MCP2515::ERROR MCP2515::sendMessage(const TXBn txbn, const struct can_frame *fra
 
     modifyRegister(txbuf->CTRL, TXB_TXREQ, TXB_TXREQ);
 
-    uint8_t ctrl = readRegister(txbuf->CTRL);
-    if ((ctrl & (TXB_ABTF | TXB_MLOA | TXB_TXERR)) != 0) {
-        return ERROR_FAILTX;
-    }
     return ERROR_OK;
 }
 
@@ -623,7 +571,7 @@ MCP2515::ERROR MCP2515::sendMessage(const struct can_frame *frame)
         }
     }
 
-    return ERROR_ALLTXBUSY;
+    return ERROR_FAILTX;
 }
 
 MCP2515::ERROR MCP2515::readMessage(const RXBn rxbn, struct can_frame *frame)

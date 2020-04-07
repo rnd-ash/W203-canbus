@@ -56,7 +56,6 @@ class CANBUS_COMMUNICATOR {
         String frame_string;
         can_frame read;
         MCP2515 *mcp;
-        uint8_t pin;
         char busID;
 };
     

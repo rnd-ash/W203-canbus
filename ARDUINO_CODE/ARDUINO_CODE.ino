@@ -47,13 +47,33 @@ const char * const PROGMEM MEMORY_STR_2 = " Bytes";
 
 bool showDiagMode = false;
 
+
+void doLightShow() {
+    for (int i = 0; i < 5; i++) {
+        lights->flash_indicator(LIGHT_CONTROLS::LEFT, 250);
+        delay(250);
+        lights->flash_indicator(LIGHT_CONTROLS::RIGHT, 250);
+        delay(250);
+    }
+    for (int i = 0; i < 4; i++) {
+        lights->flash_hazard(500);
+        delay(500);
+        lights->flash_lights(true, false, 500);
+        delay(500);
+        lights->flash_lights(false, true, 500);
+        delay(500);
+    }
+    lights->flash_lights(true, true, 2000);
+    lights->flash_hazard(2000);
+}
+
 void setup() {
-    digitalWrite(4, HIGH);
-    digitalWrite(5, HIGH);
+    pinMode(4, OUTPUT);
+    pinMode(5, OUTPUT);
     Serial.begin(115200);
     SPI.begin();
     canC = new CANBUS_COMMUNICATOR(4, CAN_500KBPS, CAN_C_DEF);
-    delay(10);
+    delay(100);
     canB = new CANBUS_COMMUNICATOR(5, CAN_83K3BPS, CAN_B_DEF);
     #ifdef ARDUINO_MEGA
     bt = new BLUETOOTH();
@@ -66,6 +86,7 @@ void setup() {
     //tel = new TELEPHONE_DISPLAY(ic, bt);
     wheel_controls = new WHEEL_CONTROLS();
     Serial.println("Ready!");
+    delay(900);
 }
 
 void HandleBluetoothRequest() {
@@ -89,12 +110,7 @@ void HandleBluetoothRequest() {
             musicdata->setTrackName(NULL);
         } else if (ptr[0] == 'F') {
             lights = new LIGHT_CONTROLS(canB);
-            for (uint8_t i = 0; i < 10; i++) {
-                lights->flash_lights(true, true, 200);
-                delay(50);
-                lights->flash_hazard(200);
-                delay(100);
-            }
+            doLightShow();
             free(lights);
         } else if (ptr[0] = 'C') {
             //tel->setCarrier(ptr+1);
