@@ -129,7 +129,7 @@ void handleFrameRead() {
     if (readB->can_dlc != 0) {
         ic->processIcResponse(readB);
         handleKeyInputs(readB);
-        if (readB->can_id == 0x000C) {
+        if (readB->can_id == 0x0002) {
             eng->readFrame(readB);
         }
     }

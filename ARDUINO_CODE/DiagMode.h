@@ -10,6 +10,7 @@
 
 #define MAX_DIAG_PAGES 8
 
+
 class DIAG_MODE {
 
     public:
