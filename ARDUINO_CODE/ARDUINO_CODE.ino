@@ -85,6 +85,12 @@ void setup() {
     musicdata = new MUSIC(audio);
     //tel = new TELEPHONE_DISPLAY(ic, bt);
     wheel_controls = new WHEEL_CONTROLS();
+
+    #ifdef ARDUINO_MEGA
+    eng = new ENGINE_DATA();
+    diag = new DIAG_MODE(audio, eng);
+    #endif
+
     Serial.println("Ready!");
     delay(900);
 }
@@ -149,8 +155,11 @@ void handleKeyInputs(can_frame *f) {
                     break;
                 case BUTTON_TEL_DEC:
                     showDiagMode = false;
+                    // Mega has enough RAM to keep these in memory, uno doesn't
+                    #ifndef ARDUINO_MEGA
                     free(eng);
                     free(diag);
+                    #endif
                     break;
                 default:
                     break;
@@ -166,8 +175,10 @@ void handleKeyInputs(can_frame *f) {
                     bt->write_message(PREV_TRACK_CMD, 1);
                     break;
                 case BUTTON_TEL_ANS:
+                    #ifndef ARDUINO_MEGA
                     eng = new ENGINE_DATA();
                     diag = new DIAG_MODE(audio, eng);
+                    #endif
                     showDiagMode = true; 
                     break;
                 default:
