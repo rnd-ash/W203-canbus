@@ -1,0 +1,233 @@
+ECU NAME: UNKNOWN, ID: 0x0000. MSG COUNT: 0
+ECU NAME: ISO11992_GPM13, ID: 0x5FEB. MSG COUNT: 6
+	MSG NAME: EngineRunning - , OFFSET 0, LENGTH 2
+	MSG NAME: EngineControlAllowed - -, OFFSET 2, LENGTH 2
+	MSG NAME: EngineTorqueMode - -, OFFSET 4, LENGTH 4
+	MSG NAME: DriversDemandEngine_PercTorque - -, OFFSET 8, LENGTH 8
+	MSG NAME: ActualEngine_PercTorque - (%) -, OFFSET 16, LENGTH 8
+	MSG NAME: PercentLoadAtCurrentSpeed - (%) -, OFFSET 40, LENGTH 8
+ECU NAME: ISO11992_EBS11, ID: 0xC9EB. MSG COUNT: 8
+	MSG NAME: ASREngineControlActive - -, OFFSET 0, LENGTH 2
+	MSG NAME: ASRBreakControlActive - -, OFFSET 2, LENGTH 2
+	MSG NAME: VehicleRetarderControlActive - -, OFFSET 4, LENGTH 2
+	MSG NAME: VehicleABSActive - -, OFFSET 6, LENGTH 2
+	MSG NAME: VehicleType_EBS11 - -, OFFSET 12, LENGTH 2
+	MSG NAME: BrakeLightSwitch - -, OFFSET 14, LENGTH 2
+	MSG NAME: ParkBrakeDemandValue - (%) (%) -, OFFSET 32, LENGTH 8
+	MSG NAME: RetarderDemandValue - -, OFFSET 40, LENGTH 8
+ECU NAME: ISO11992_GPM11, ID: 0xC9EB. MSG COUNT: 2
+	MSG NAME: VehicleType - , OFFSET 6, LENGTH 2
+	MSG NAME: AntiTheftDeviceReq - , OFFSET 14, LENGTH 2
+ECU NAME: ISO11992_RGE11, ID: 0xC9EB. MSG COUNT: 1
+	MSG NAME: DrivenAxleLoad - (kg) , OFFSET 16, LENGTH 16
+ECU NAME: GPM1H, ID: 0x70EB. MSG COUNT: 11
+	MSG NAME: AuxBit1_4 - , OFFSET 0, LENGTH 2
+	MSG NAME: AuxBit1_3 - , OFFSET 2, LENGTH 2
+	MSG NAME: AuxBit1_2 - , OFFSET 4, LENGTH 2
+	MSG NAME: AuxBit1_1 - , OFFSET 6, LENGTH 2
+	MSG NAME: AuxBit1_8 - , OFFSET 8, LENGTH 2
+	MSG NAME: AuxBit1_7 - , OFFSET 10, LENGTH 2
+	MSG NAME: AuxBit1_6 - , OFFSET 12, LENGTH 2
+	MSG NAME: AuxBit1_5 - , OFFSET 14, LENGTH 2
+	MSG NAME: AuxByte1_1 - , OFFSET 16, LENGTH 8
+	MSG NAME: AuxByte1_2 - , OFFSET 24, LENGTH 8
+	MSG NAME: AuxWord1_2 - , OFFSET 40, LENGTH 16
+ECU NAME: GPM1I, ID: 0x71EB. MSG COUNT: 11
+	MSG NAME: AuxBit2_4 - , OFFSET 0, LENGTH 2
+	MSG NAME: AuxBit2_3 - , OFFSET 2, LENGTH 2
+	MSG NAME: AuxBit2_2 - , OFFSET 4, LENGTH 2
+	MSG NAME: AuxBit2_1 - , OFFSET 6, LENGTH 2
+	MSG NAME: AuxBit2_8 - , OFFSET 8, LENGTH 2
+	MSG NAME: AuxBit2_7 - , OFFSET 10, LENGTH 2
+	MSG NAME: AuxBit2_6 - , OFFSET 12, LENGTH 2
+	MSG NAME: AuxBit2_5 - , OFFSET 14, LENGTH 2
+	MSG NAME: AuxByte2_1 - , OFFSET 16, LENGTH 8
+	MSG NAME: AuxByte2_2 - , OFFSET 24, LENGTH 8
+	MSG NAME: AuxWord2_2 - , OFFSET 40, LENGTH 16
+ECU NAME: GPM1J, ID: 0x72EB. MSG COUNT: 11
+	MSG NAME: AuxBit3_4 - , OFFSET 0, LENGTH 2
+	MSG NAME: AuxBit3_3 - , OFFSET 2, LENGTH 2
+	MSG NAME: AuxBit3_2 - , OFFSET 4, LENGTH 2
+	MSG NAME: AuxBit3_1 - , OFFSET 6, LENGTH 2
+	MSG NAME: AuxBit3_8 - , OFFSET 8, LENGTH 2
+	MSG NAME: AuxBit3_7 - , OFFSET 10, LENGTH 2
+	MSG NAME: AuxBit3_6 - , OFFSET 12, LENGTH 2
+	MSG NAME: AuxBit3_5 - , OFFSET 14, LENGTH 2
+	MSG NAME: AuxByte3_1 - , OFFSET 16, LENGTH 8
+	MSG NAME: AuxByte3_2 - , OFFSET 24, LENGTH 8
+	MSG NAME: AuxWord3_2 - , OFFSET 40, LENGTH 16
+ECU NAME: GPM1K, ID: 0x73EB. MSG COUNT: 11
+	MSG NAME: AuxBit4_4 - , OFFSET 0, LENGTH 2
+	MSG NAME: AuxBit4_3 - , OFFSET 2, LENGTH 2
+	MSG NAME: AuxBit4_2 - , OFFSET 4, LENGTH 2
+	MSG NAME: AuxBit4_1 - , OFFSET 6, LENGTH 2
+	MSG NAME: AuxBit4_8 - , OFFSET 8, LENGTH 2
+	MSG NAME: AuxBit4_7 - , OFFSET 10, LENGTH 2
+	MSG NAME: AuxBit4_6 - , OFFSET 12, LENGTH 2
+	MSG NAME: AuxBit4_5 - , OFFSET 14, LENGTH 2
+	MSG NAME: AuxByte4_1 - , OFFSET 16, LENGTH 8
+	MSG NAME: AuxByte4_2 - , OFFSET 24, LENGTH 8
+	MSG NAME: AuxWord4_2 - , OFFSET 40, LENGTH 16
+ECU NAME: Lamps, ID: 0x74EB. MSG COUNT: 29
+	MSG NAME: BFL_KL - Brake fluid level warning light, OFFSET 0, LENGTH 2
+	MSG NAME: WWS_KL - Wash water level too low pilot light, OFFSET 2, LENGTH 2
+	MSG NAME: KWS_KL - Cooling water level too low pilot light, OFFSET 4, LENGTH 2
+	MSG NAME: BBV_KL - Brake pad wear indicator, OFFSET 6, LENGTH 2
+	MSG NAME: ENR_KL - ENR indicator light, OFFSET 8, LENGTH 6
+	MSG NAME: SRS_KL - SRS warning light, OFFSET 14, LENGTH 2
+	MSG NAME: FL_DEF_L - High beam left defective, OFFSET 16, LENGTH 2
+	MSG NAME: ABL_DEF_L - Low beam left defective, OFFSET 18, LENGTH 2
+	MSG NAME: PL_DEF_VL - Front left parking light defective, OFFSET 20, LENGTH 2
+	MSG NAME: BLI_DEF_LI - Left indicator defective, OFFSET 22, LENGTH 2
+	MSG NAME: BL3_DEF - 3rd brake light is defective, OFFSET 24, LENGTH 2
+	MSG NAME: NSW_DEF_L - Left fog defective, OFFSET 26, LENGTH 2
+	MSG NAME: BL_DEF_L - Left brake light is defective, OFFSET 28, LENGTH 2
+	MSG NAME: SL_DEF_L - Bottom left defective, OFFSET 30, LENGTH 2
+	MSG NAME: FL_DEF_R - Right high beam defect, OFFSET 32, LENGTH 2
+	MSG NAME: ABL_DEF_R - Rear fog light, right defective, OFFSET 34, LENGTH 2
+	MSG NAME: PL_DEF_VR - front right parking light defek, OFFSET 36, LENGTH 2
+	MSG NAME: BLI_DEF_RE - Right indicator defective, OFFSET 38, LENGTH 2
+	MSG NAME: NSL_DEF - Rear fog light broken, OFFSET 40, LENGTH 2
+	MSG NAME: NSW_DEF_R - Right fog defective, OFFSET 42, LENGTH 2
+	MSG NAME: BL_DEF_R - Stoplight right defective, OFFSET 44, LENGTH 2
+	MSG NAME: SL_DEF_R - Bottom right defective, OFFSET 46, LENGTH 2
+	MSG NAME: SM_DEF_R - Seitenmarkierungsleuche right defective, OFFSET 48, LENGTH 2
+	MSG NAME: SM_DEF_L - Seitenmarkierungsleuche left defective, OFFSET 50, LENGTH 2
+	MSG NAME: ABST_DEF - A shielding device for bi-xenon defective, OFFSET 52, LENGTH 2
+	MSG NAME: UMR_DEF - Perimeter lighting is defective, OFFSET 54, LENGTH 2
+	MSG NAME: ZBL_DEF - Additional indicators broken, OFFSET 58, LENGTH 2
+	MSG NAME: KZL_DEF - Defective plate light, OFFSET 60, LENGTH 2
+	MSG NAME: RFL_DEF - Reversing light broken, OFFSET 62, LENGTH 2
+ECU NAME: FMSstandardinterface, ID: 0xD101. MSG COUNT: 8
+	MSG NAME: FMS_RESERVED_0 - Reserved for FMS standard 0, OFFSET 0, LENGTH 8
+	MSG NAME: SW_VERSION_1 - SW version supported Byte 1, OFFSET 8, LENGTH 8
+	MSG NAME: SW_VERSION_2 - SW version supported Byte 2, OFFSET 16, LENGTH 8
+	MSG NAME: SW_VERSION_3 - SW version supported byte 3, OFFSET 24, LENGTH 8
+	MSG NAME: SW_VERSION_4 - SW version supported Byte 4, OFFSET 32, LENGTH 8
+	MSG NAME: FMS_RESERVED_1 - Reserved for FMS Standard 1, OFFSET 40, LENGTH 8
+	MSG NAME: FMS_RESERVED_2 - Reserved for FMS standard 2, OFFSET 48, LENGTH 8
+	MSG NAME: FMS_RESERVED_3 - Reserved for FMS standard 3, OFFSET 56, LENGTH 8
+ECU NAME: ISO11992_GPM12, ID: 0x5DEB. MSG COUNT: 2
+	MSG NAME: EngineSpeedLowerLimit - (rpm) (Rpm), OFFSET 8, LENGTH 16
+	MSG NAME: MaxVehicleSpeedLimit - (km/h) (Km / h), OFFSET 32, LENGTH 8
+ECU NAME: ISO11992_GPM14, ID: 0x61EB. MSG COUNT: 9
+	MSG NAME: PercentClutchSlip - (%) (%) -, OFFSET 0, LENGTH 8
+	MSG NAME: CurrentGear - -, OFFSET 8, LENGTH 8
+	MSG NAME: FirstEngineMtdPTOFeedback - -, OFFSET 16, LENGTH 2
+	MSG NAME: ClutchIndptdPTOFeedback - -, OFFSET 18, LENGTH 2
+	MSG NAME: FirstClutchDpdtPTOFeedback - -, OFFSET 22, LENGTH 2
+	MSG NAME: PTOControlAllowed - -, OFFSET 28, LENGTH 2
+	MSG NAME: AccelPedalLowIdleSwitch - -, OFFSET 52, LENGTH 2
+	MSG NAME: StarterActive - -, OFFSET 54, LENGTH 2
+	MSG NAME: AccelPedalPosition - (%) (%) -, OFFSET 56, LENGTH 8
+ECU NAME: ISO11992_GPM15, ID: 0x63EB. MSG COUNT: 5
+	MSG NAME: EngineCoolantTemp - (°C) (° C) -, OFFSET 16, LENGTH 8
+	MSG NAME: EngineOilPressure - (kPa) (KPa) -, OFFSET 24, LENGTH 8
+	MSG NAME: FuelLevelWarning - -, OFFSET 33, LENGTH 2
+	MSG NAME: EngineOilPressureWarning - -, OFFSET 35, LENGTH 2
+	MSG NAME: EngineCoolantTempWarning - -, OFFSET 37, LENGTH 3
+ECU NAME: ISO11992_GPM16, ID: 0x65EB. MSG COUNT: 0
+ECU NAME: Service, ID: 0xC001. MSG COUNT: 1
+	MSG NAME: ServiceDistance - (km) -, OFFSET 0, LENGTH 16
+ECU NAME: HighResolutionVehicl, ID: 0xC101. MSG COUNT: 0
+ECU NAME: ISO11992_EBS12, ID: 0xC9EB. MSG COUNT: 1
+	MSG NAME: VehicleRetarderCtrlActive - , OFFSET 6, LENGTH 2
+ECU NAME: EngineHoursRevolutio, ID: 0xE501. MSG COUNT: 0
+ECU NAME: FuelConsumption, ID: 0xE901. MSG COUNT: 1
+	MSG NAME: TotalFuelUsed - (l) -, OFFSET 8, LENGTH 32
+ECU NAME: VehicleWeight, ID: 0xEA01. MSG COUNT: 2
+	MSG NAME: AxleLocation - -, OFFSET 0, LENGTH 4
+	MSG NAME: TireLocation - -, OFFSET 4, LENGTH 4
+ECU NAME: EngineTemperature, ID: 0xEE01. MSG COUNT: 1
+	MSG NAME: EngineCoolantTemperature - (°C) -, OFFSET 0, LENGTH 8
+ECU NAME: CCVS, ID: 0xF101. MSG COUNT: 5
+	MSG NAME: WheelBasedSpeed - (km/h) (Km / h) -, OFFSET 0, LENGTH 16
+	MSG NAME: ClutchSwitch - -, OFFSET 24, LENGTH 2
+	MSG NAME: BrakeSwitch - -, OFFSET 26, LENGTH 2
+	MSG NAME: CruiseControlActive - -, OFFSET 30, LENGTH 2
+	MSG NAME: PTO_State - -, OFFSET 51, LENGTH 5
+ECU NAME: DashDisplay, ID: 0xFC01. MSG COUNT: 1
+	MSG NAME: FuelLevel - (%) -, OFFSET 8, LENGTH 8
+ECU NAME: BAM_DT, ID: 0xFF01. MSG COUNT: 0
+ECU NAME: BAM_CM, ID: 0xFF01. MSG COUNT: 3
+	MSG NAME: TP_CM_Number - -, OFFSET 0, LENGTH 8
+	MSG NAME: TP_CM_TotalNrOfPackets - -, OFFSET 24, LENGTH 8
+	MSG NAME: TP_CM_Reserved - -, OFFSET 32, LENGTH 8
+ECU NAME: TP_TGW_ITM16, ID: 0x0366. MSG COUNT: 0
+ECU NAME: EEC2, ID: 0x0301. MSG COUNT: 1
+	MSG NAME: AcceleratorPedalPosition - (%) -, OFFSET 8, LENGTH 8
+ECU NAME: HYBRID_1_OUT, ID: 0x0602. MSG COUNT: 11
+	MSG NAME: AuxBit5_4 - , OFFSET 0, LENGTH 2
+	MSG NAME: AuxBit5_3 - , OFFSET 2, LENGTH 2
+	MSG NAME: AuxBit5_2 - , OFFSET 4, LENGTH 2
+	MSG NAME: AuxBit5_1 - , OFFSET 6, LENGTH 2
+	MSG NAME: AuxBit5_8 - , OFFSET 8, LENGTH 2
+	MSG NAME: AuxBit5_7 - , OFFSET 10, LENGTH 2
+	MSG NAME: AuxBit5_6 - , OFFSET 12, LENGTH 2
+	MSG NAME: AuxBit5_5 - , OFFSET 14, LENGTH 2
+	MSG NAME: AuxByte5_1 - , OFFSET 16, LENGTH 8
+	MSG NAME: AuxByte5_2 - , OFFSET 24, LENGTH 8
+	MSG NAME: AuxWord5_2 - , OFFSET 40, LENGTH 16
+ECU NAME: HYBRID_2_OUT, ID: 0x0603. MSG COUNT: 11
+	MSG NAME: AuxBit6_4 - , OFFSET 0, LENGTH 2
+	MSG NAME: AuxBit6_3 - , OFFSET 2, LENGTH 2
+	MSG NAME: AuxBit6_2 - , OFFSET 4, LENGTH 2
+	MSG NAME: AuxBit6_1 - , OFFSET 6, LENGTH 2
+	MSG NAME: AuxBit6_8 - , OFFSET 8, LENGTH 2
+	MSG NAME: AuxBit6_7 - , OFFSET 10, LENGTH 2
+	MSG NAME: AuxBit6_6 - , OFFSET 12, LENGTH 2
+	MSG NAME: AuxBit6_5 - , OFFSET 14, LENGTH 2
+	MSG NAME: AuxByte6_1 - , OFFSET 16, LENGTH 8
+	MSG NAME: AuxByte6_2 - , OFFSET 24, LENGTH 8
+	MSG NAME: AuxWord6_2 - , OFFSET 40, LENGTH 16
+ECU NAME: TCO1, ID: 0x6C01. MSG COUNT: 13
+	MSG NAME: DriveRecognize - -, OFFSET 0, LENGTH 2
+	MSG NAME: Driver2_WorkingState - -, OFFSET 2, LENGTH 3
+	MSG NAME: Driver1_WorkingState - -, OFFSET 5, LENGTH 3
+	MSG NAME: Overspeed - -, OFFSET 8, LENGTH 2
+	MSG NAME: Driver1_Card - -, OFFSET 10, LENGTH 2
+	MSG NAME: Driver1_TimeRelatedStates - -, OFFSET 12, LENGTH 4
+	MSG NAME: Driver2_Card - -, OFFSET 18, LENGTH 2
+	MSG NAME: Driver2_TimeRelatedStates - -, OFFSET 20, LENGTH 4
+	MSG NAME: DirectionIndicator - -, OFFSET 24, LENGTH 2
+	MSG NAME: TachographPerformance - -, OFFSET 26, LENGTH 2
+	MSG NAME: HandlingInformation - -, OFFSET 28, LENGTH 2
+	MSG NAME: SystemEvent - -, OFFSET 30, LENGTH 2
+	MSG NAME: TachographVehicleSpeed - (km/h) (Km / h) -, OFFSET 40, LENGTH 16
+ECU NAME: ISO11992_GPM23, ID: 0x60C9. MSG COUNT: 4
+	MSG NAME: ReqEngineSpeedUpperLim - (rpm) (Rpm) -, OFFSET 8, LENGTH 16
+	MSG NAME: ReqEngineSpeedLowerLim - (rpm) (Rpm) -, OFFSET 24, LENGTH 16
+	MSG NAME: ReqEngineTorqueLimit - -, OFFSET 48, LENGTH 8
+	MSG NAME: ReqEngineSpeedLimit - (km/h) (Km / h) -, OFFSET 56, LENGTH 8
+ECU NAME: ISO11992_GPM24, ID: 0x62C9. MSG COUNT: 8
+	MSG NAME: EngineStopSwitch - -, OFFSET 10, LENGTH 2
+	MSG NAME: EngineStartSwitch - -, OFFSET 12, LENGTH 2
+	MSG NAME: StarterLockoutSwitch - -, OFFSET 14, LENGTH 2
+	MSG NAME: FirstClutchDpdtPTOSwitch - -, OFFSET 16, LENGTH 2
+	MSG NAME: OperatingPanelActive - -, OFFSET 20, LENGTH 2
+	MSG NAME: RefusePackerStepSwitch - -, OFFSET 22, LENGTH 2
+	MSG NAME: FirstEngineMtdPTOSwitch - -, OFFSET 26, LENGTH 2
+	MSG NAME: ClutchIndpdtPTOSwitch - -, OFFSET 28, LENGTH 2
+ECU NAME: ISO11992_GPM2A, ID: 0x10C9. MSG COUNT: 10
+	MSG NAME: FixedEngineSpeed3 - -, OFFSET 0, LENGTH 2
+	MSG NAME: FixedEngineSpeed2 - -, OFFSET 2, LENGTH 2
+	MSG NAME: FixedEngineSpeed1 - , OFFSET 4, LENGTH 2
+	MSG NAME: PTOGovernorEngineSpeedModeSwitch - -, OFFSET 6, LENGTH 2
+	MSG NAME: EngineSpeedControlStates - -, OFFSET 13, LENGTH 3
+	MSG NAME: SpeedControlModeUpperLimit3 - -, OFFSET 18, LENGTH 2
+	MSG NAME: SpeedControlModeUpperLimit2 - -, OFFSET 20, LENGTH 2
+	MSG NAME: SpeedControlModeUpperLimit1 - -, OFFSET 22, LENGTH 2
+	MSG NAME: WarningBuzzer - -, OFFSET 30, LENGTH 2
+	MSG NAME: GoToNeutral - -, OFFSET 38, LENGTH 2
+ECU NAME: GPM2H, ID: 0x70C9. MSG COUNT: 11
+	MSG NAME: InBit1_4 - , OFFSET 0, LENGTH 2
+	MSG NAME: InBit1_3 - , OFFSET 2, LENGTH 2
+	MSG NAME: InBit1_2 - , OFFSET 4, LENGTH 2
+	MSG NAME: InBit1_1 - , OFFSET 6, LENGTH 2
+	MSG NAME: InBit1_8 - , OFFSET 8, LENGTH 2
+	MSG NAME: InBit1_7 - , OFFSET 10, LENGTH 2
+	MSG NAME: InBit1_6 - , OFFSET 12, LENGTH 2
+	MSG NAME: InBit1_5 - , OFFSET 14, LENGTH 2
+	MSG NAME: InByte1_1 - , OFFSET 16, LENGTH 8
+	MSG NAME: InByte1_2 - , OFFSET 24, LENGTH 8
+	MSG NAME: InWord1_2 - , OFFSET 40, LENGTH 16
