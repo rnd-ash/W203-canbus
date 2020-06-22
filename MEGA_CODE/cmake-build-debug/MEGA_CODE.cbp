@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="MEGA_CODE"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MEGA_CODE">
+				<Option output="/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/MEGA_CODE" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ashcon/code/W203-canbus/MEGA_CODE/."/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 MEGA_CODE"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MEGA_CODE/fast">
+				<Option output="/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/MEGA_CODE" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ashcon/code/W203-canbus/MEGA_CODE/."/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 MEGA_CODE/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Bluetooth.cpp">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Bluetooth.h">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Canbus.cpp">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Canbus.h">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/ICDisplay.cpp">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/ICDisplay.h">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Kombi.cpp">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Kombi.h">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Lights.cpp">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Lights.h">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/MEGA_CODE.ino">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Music.cpp">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/Music.h">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/helper.h">
+			<Option target="MEGA_CODE"/>
+		</Unit>
+		<Unit filename="/home/ashcon/code/W203-canbus/MEGA_CODE/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

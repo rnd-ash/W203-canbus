@@ -1,0 +1,3 @@
+/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ashcon/code/W203-canbus/MEGA_CODE/cmake-build-debug/CMakeFiles/MEGA_CODE.dir

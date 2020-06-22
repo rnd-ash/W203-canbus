@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/MEGA_CODE.dir/Bluetooth.cpp.o CMakeFiles/MEGA_CODE.dir/Canbus.cpp.o CMakeFiles/MEGA_CODE.dir/ICDisplay.cpp.o CMakeFiles/MEGA_CODE.dir/Kombi.cpp.o CMakeFiles/MEGA_CODE.dir/Lights.cpp.o CMakeFiles/MEGA_CODE.dir/Music.cpp.o  -o MEGA_CODE 

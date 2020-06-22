@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/ashcon/Arduino/libraries/**",
+                "/home/ashcon/.arduino15/packages/arduino/tools/**",
+                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.2/**"
+            ],
+            "forcedInclude": [
+                "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.2/cores/arduino/Arduino.h"
+            ],
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/avr-gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "defines": [
+                "USBCON",
+                "ARDUINO_AVR_UNO",
+                "ARDUINO_ARCH_AVR"
+            ]        
+        }
+    ],
+    "version": 4
+}
