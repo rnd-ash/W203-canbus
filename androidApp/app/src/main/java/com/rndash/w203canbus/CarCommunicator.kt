@@ -24,29 +24,47 @@ class CarCommunicator(private val device: BluetoothDevice, private val adapter: 
             val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
             MainActivity.manager.dispatchMediaKeyEvent(event)
         }
-
-        fun invokeAssistant() {
-            Log.d("CC", "Invoking assistant")
-            val intent = Intent()
-            MainActivity.ctx.startActivity(Intent(Intent.ACTION_VOICE_COMMAND).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        }
-
-        fun killAssistant() {
-            Log.d("CC", "Killing assistant")
-
-        }
     }
 
     var btManager = BluetoothComm(device, false, adapter)
 
-    fun ping() =  btManager.sendString("-")
-    fun sendBodyText(msg: String) = safeCommunication { btManager.sendString("B:$msg") }
 
-    fun sendTrackName(name: String) = safeCommunication { btManager.sendString("M-$name") }
-    fun sendHeaderText(msg: String) = safeCommunication{ btManager.sendString("H:$msg") }
-    fun sendByteArray(id: Char, sep: Byte, bytes: ByteArray) = safeCommunication {
-        btManager.sendBytes(byteArrayOf(id.toByte(), sep) + bytes)
+
+
+    // ----- Communication functions to BT -----
+    fun ping() =  btManager.sendPayload(BTPayload(BT_CMD_PING, byteArrayOf(0)));
+
+    fun sendBodyText(msg: String) = safeCommunication {
+        btManager.sendPayload(BTPayload(BT_CMD_TRACK_NAME, msg.toByteArray(Charsets.UTF_8)))
     }
+
+    fun sendTrackName(name: String) = safeCommunication {
+        btManager.sendPayload(BTPayload(BT_CMD_TRACK_NAME, name.toByteArray(Charsets.UTF_8)))
+    }
+
+    fun sendTrackDuration(durationSec: Int) = safeCommunication {
+        btManager.sendPayload(BTPayload(BT_CMD_TRACK_LEN, byteArrayOf(
+            (durationSec and 0xFF).toByte(),
+            ((durationSec shr 8) and 0xFF).toByte()
+        )))
+    }
+
+    fun sendTrackSeek(seekPos: Int) = safeCommunication {
+        btManager.sendPayload(BTPayload(BT_CMD_TRACK_SEEK, byteArrayOf(
+            (seekPos and 0xFF).toByte(),
+            ((seekPos shr 8) and 0xFF).toByte()
+        )))
+    }
+
+    fun sendPlayStatus(isPlaying: Boolean) = safeCommunication {
+        val b: Byte = if (isPlaying) BT_PLAY else BT_PAUSE
+        btManager.sendPayload(BTPayload(BT_CMD_MUSIC_CTRL, byteArrayOf(b)))
+    }
+
+
+
+
+
 
     private inline fun safeCommunication(x: () -> Unit) {
         if (btManager.isConnected) {

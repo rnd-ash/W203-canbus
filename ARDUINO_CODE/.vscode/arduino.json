@@ -1,7 +1,6 @@
 {
-    "board": "arduino:avr:mega",
+    "board": "arduino:avr:uno",
     "programmer": "AVR ISP",
     "sketch": "ARDUINO_CODE.ino",
-    "port": "/dev/ttyACM0",
-    "configuration": "cpu=atmega2560"
+    "port": "/dev/ttyACM0"
 }

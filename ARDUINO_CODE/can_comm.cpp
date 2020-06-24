@@ -80,6 +80,13 @@ String *CANBUS_COMMUNICATOR::frame_to_string(can_frame *f, bool includeBinary) {
     return &frame_string;
 }
 
+void CANBUS_COMMUNICATOR::wakeup() {
+    this->mcp->setNormalMode();
+}
+
+void CANBUS_COMMUNICATOR::setReadOnly() {
+    this->mcp->setListenOnlyMode();
+}
 
 void CANBUS_COMMUNICATOR::printFrame(can_frame *f) {
     frame_string = "";
@@ -115,3 +122,5 @@ void CANBUS_COMMUNICATOR::sendSerialFrame() {
         Serial.println("SENT");
     }
 }
+
+bool CAR_SLEEP = false;

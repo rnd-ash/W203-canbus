@@ -6,7 +6,7 @@ AUDIO_DISPLAY::AUDIO_DISPLAY(IC_DISPLAY *d) {
 }
 
 void AUDIO_DISPLAY::update() {
-    if (IC_DISPLAY::current_page == IC_PAGE_AUDIO) {
+    if (IC_DISPLAY::current_page == IC_PAGE_AUDIO && !CAR_SLEEP) { // only update if not asleep!
         if (!isInPage) {
             display->initPage(IC_PAGE_AUDIO, this->header, headFmt, topSymbol, bottomSymbol, 1);
         }

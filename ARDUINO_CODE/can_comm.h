@@ -32,6 +32,13 @@ class CANBUS_COMMUNICATOR {
          */
         void sendToBus(can_frame *send);
 
+        /**
+         * Wakes up MCP module
+         */
+        void wakeup();
+
+        void setReadOnly();
+
         void printFrame(can_frame *f);
         /**
          * Attempts to read a frame from canbus.
@@ -59,5 +66,5 @@ class CANBUS_COMMUNICATOR {
         char busID;
 };
     
-
+extern bool CAR_SLEEP;
 #endif

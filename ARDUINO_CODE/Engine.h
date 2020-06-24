@@ -31,9 +31,9 @@ class ENGINE_DATA{
         const char* getConsumption();
         const char* getOilTemp();
         const char* getMPG();
+        boolean engineOn = false;
     private:
         char buffer[20] = {0x00};
-        boolean engineOn = false;
         uint8_t transmission_temp = 0xFF;
         int speed_km = 0;
         uint8_t targetGear = 0xFF;

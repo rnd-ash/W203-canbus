@@ -16,7 +16,9 @@ class Music {
         void setPosition(int secs);
         void update();
         const char* getArtistName();
+        uint8_t getArtistNameLen();
         const char* getTrackName();
+        uint8_t getTrackNameLen();
         ~Music();
     private:
         void updateSeek(long elapsed);

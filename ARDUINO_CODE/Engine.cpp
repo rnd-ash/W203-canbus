@@ -6,6 +6,7 @@ ENGINE_DATA::ENGINE_DATA() {
 }
 
 void ENGINE_DATA::readFrame(can_frame *f) {
+    this->engineOn = true;
     if (f->can_id == 0x0418) {
         this->transmission_temp = uint8_t(f->data[2]) - 40;
         this->actualGear = (f->data[4]) & 0b00001111;
@@ -22,11 +23,6 @@ void ENGINE_DATA::readFrame(can_frame *f) {
     } else if (f->can_id == 0x000C) {
         speed_km = f->data[1];
     } 
-    // Can B Engine RPM is a good indication as to engine is on
-    // if value is 65565 then engine is off
-    else if (f->can_id == 0x0002) {
-        this->engineOn = !(f->data[3] == 0xFF && f->data[4] == 0xFF);
-    }
 }
 
 const char* ENGINE_DATA::getTransmissionTemp() {

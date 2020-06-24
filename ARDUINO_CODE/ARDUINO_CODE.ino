@@ -1,6 +1,7 @@
 #pragma GCC optimize("-O3")
 #pragma GCC optimize("-j4")
 
+#include <LowPower.h>
 #include "can_comm.h"
 #include "defines.h"
 #include "ic_display.h"
@@ -99,27 +100,14 @@ void HandleBluetoothRequest() {
     char* ptr = bt->read_message();
     uint8_t len = strlen(ptr);
     if (len > 0) {
-        if (ptr[0] == 'M') { // Music data message
-            if (ptr[2] == 'X' && len == 3) {
+        if (ptr[0] == 0x00) { // Music data message
+            musicdata->setTrackName(ptr+1);
+        } else if (ptr[0] == 0x01) {
+            if (ptr[1] == 0x00) {
                 musicdata->pause();
-            } else if (ptr[2] == 'P' && len == 3) {
+            } else if (ptr[1] == 0x01) {
                musicdata->play();
-            } else if (ptr[1] == '-') {
-                musicdata->setTrackName(ptr+2);
-            } else if (ptr[1] == ' ') {
-                musicdata->setDurationSec((byte) ptr[2] * 256 + (byte) ptr[3]);
-            } else if (ptr[1] == '_') {
-                musicdata->setElapsedSec((byte) ptr[2] * 256 + (byte) ptr[3]);
             }
-        } else if (ptr[0] == '!') { // Disconnect message
-            musicdata->pause();
-            musicdata->setTrackName(NULL);
-        } else if (ptr[0] == 'F') {
-            lights = new LIGHT_CONTROLS(canB);
-            doLightShow();
-            free(lights);
-        } else if (ptr[0] = 'C') {
-            //tel->setCarrier(ptr+1);
         }
     }
 }
@@ -129,15 +117,20 @@ void handleFrameRead() {
     if (readB->can_dlc != 0) {
         ic->processIcResponse(readB);
         handleKeyInputs(readB);
-        if (readB->can_id == 0x0002) {
+        if (readB->can_id == 0x0002 || readB->can_dlc == 0x000C) {
             eng->readFrame(readB);
+        } else if (readB->can_id == 0x0000) {
+            if ((readB->data[0] & 0b000000001) > 0) {
+                CAR_SLEEP = false;
+            } else {
+                CAR_SLEEP = true;
+            }
         }
+
     }
     can_frame *read = canC->read_frame();
     if (read->can_dlc != 0) {
-        if (eng != NULL) {
-            eng->readFrame(read);
-        } 
+        eng->readFrame(read);
     }
 }
 
@@ -206,20 +199,27 @@ void handleKeyInputs(can_frame *f) {
 }
 
 void loop() {
-    HandleBluetoothRequest();
-    audio->update();
-    musicdata->update();
-    if (showDiagMode) {
-        diag->updateUI();
-    } else {
-        musicdata->updateUI();
+    // Dont need to do any of this if we are asleep
+    if (!CAR_SLEEP) {
+        HandleBluetoothRequest();
+        audio->update();
+        musicdata->update();
+        if (showDiagMode) {
+            diag->updateUI();
+        } else {
+            musicdata->updateUI();
+        }
     }
-
     handleFrameRead();
+    if (CAR_SLEEP) {
+        delay(2000);
+    }
     #ifdef DEBUG
     if (millis() - lastMemTime > 2000) {
         lastMemTime = millis();
         DPRINTLN(MEMORY_STR_1+String(freeRam())+MEMORY_STR_2);
     }
     #endif
+
+
 }

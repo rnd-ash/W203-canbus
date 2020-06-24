@@ -11,68 +11,93 @@ import android.util.Log
 import java.lang.Exception
 import java.nio.charset.Charset
 
+
+// Bluetooth command ID's - Same as arduino
+
+// Bluetooth command ID's from app
+const val BT_CMD_TRACK_NAME : Byte = 0x00 // Track name provided
+const val BT_CMD_MUSIC_CTRL : Byte = 0x01 // Control status provided
+const val BT_CMD_TRACK_LEN : Byte =  0x02 // New track length provided
+const val BT_CMD_TRACK_SEEK : Byte = 0x03 // New track seek position provided
+const val BT_CMD_PING : Byte = 0xFF.toByte() // Ping to arduino
+
+// Music control args - From phone app
+const val  BT_PAUSE : Byte = 0x00
+const val  BT_PLAY : Byte = 0x01
+
+// Sent to phone on steering wheel command
+const val  BT_NEXT : Byte = 0x02
+const val  BT_PREV : Byte = 0x03
+
+data class BTPayload(val cmd: Byte, val args: ByteArray);
+
 class BluetoothComm(private var device: BluetoothDevice, private var secure: Boolean,
                     private var adapter: BluetoothAdapter) {
 
     var isConnected = false
     val readSerialBT = Thread() {
-        Log.i("BT", "Reader thread started!")
         while(true) {
-            val x = readString()
-            if (isConnected && x.isNotEmpty()) {
-                Log.i("BT", "Received bytes: ${printBytes(x)}")
-                when (x[0].toInt()) {
-                    0x00 -> CarCommunicator.nextSong()
-                    0x01 -> CarCommunicator.previousSong()
-                    0x03 -> {
-                        Log.i("BT", "Requesting carrier")
-                        sendBytes(byteArrayOf('C'.toByte()) + MainActivity.carrierName.toByteArray(Charsets.US_ASCII))
+            val x = readPayload()
+            if (isConnected && x != null) {
+                Log.i("BT", "Received payload: ${printPayload(x)}")
+                when (x.cmd) {
+                    BT_CMD_MUSIC_CTRL -> {
+                        when(x.args[0]) {
+                            BT_NEXT -> CarCommunicator.nextSong()
+                            BT_PREV -> CarCommunicator.previousSong()
+                        }
                     }
+
                 }
             }
             try {
-                Thread.sleep(50)
+                Thread.sleep(10)
             } catch (e: InterruptedException) {
                 break
             }
         }
     }
-    private fun printBytes(a : ByteArray) : String {
-        var x = ""
-        a.forEach { x += String.format("%02X ", it.toInt()) }
+    private fun printPayload(a : BTPayload) : String {
+        var x = "CMD: ["
+        x += String.format("%02X", a.cmd)
+        x += "] ARGS: ["
+        a.args.forEach { x += String.format("%02X ", it.toInt()) }
+        x += "]"
         return x
     }
 
     private lateinit var bluetoothSocket : BluetoothSocketWrapper
     private var uuid : UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-    private fun readString() : ByteArray {
-        var ret = ByteArray(0)
+    private var payloadSize = 0;
+    private fun readPayload() : BTPayload? {
         try {
-            while (bluetoothSocket.getInputStream().available() > 0) {
-                ret += bluetoothSocket.getInputStream().read().toByte()
+            if (bluetoothSocket.getInputStream().available() > 0) {
+                // New payload
+                if (payloadSize == 0) {
+                    payloadSize = bluetoothSocket.getInputStream().read();
+                }
+                if (bluetoothSocket.getInputStream().available() >= payloadSize) {
+                    val buffer = ByteArray(payloadSize)
+                    bluetoothSocket.getInputStream().read(buffer)
+                    payloadSize = 0 // Reset counter
+                    return BTPayload(buffer[0], buffer.drop(1).toByteArray())
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return ret
+        return null
     }
 
-    fun sendString(msg: String) {
-        val sendMsg = msg.toByteArray(Charsets.US_ASCII)
-        sendMsg(sendMsg)
-    }
-
-    fun sendBytes(bytes: ByteArray) {
-        Log.d("BT", "Sending Bytes: '${printBytes(bytes)}'")
-        sendMsg(bytes);
-    }
-
-    private fun sendMsg(bytes: ByteArray) {
-        val ba = byteArrayOf(bytes.size.toByte()) + bytes
+    fun sendPayload(p: BTPayload) {
         try {
-            bluetoothSocket.getOutputStream().write(ba)
-            bluetoothSocket.getOutputStream().flush()
+            Log.d("BT-SEND", "Sending Payload ${printPayload(p)}")
+            with(bluetoothSocket.getOutputStream()) {
+                write(1+p.args.size)
+                write(byteArrayOf(p.cmd) + p.args)
+                flush()
+            }
         } catch (e: IOException) {
             Log.e("BT", "Arduino disconnected!")
             if (isConnected) {

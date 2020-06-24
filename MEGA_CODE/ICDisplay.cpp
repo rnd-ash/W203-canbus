@@ -11,9 +11,13 @@ ICDisplay::ICDisplay(){
     this->isSending = false;
 };
 
-void ICDisplay::update() {
+void ICDisplay::enablePage() {
+    this->isInPage = true;
 }
 
+void ICDisplay::disablePage() {
+    this->isInPage = false;
+}
 
 void ICDisplay::sendToKombi() {
     // Time to send next frame
@@ -51,6 +55,7 @@ void ICDisplay::processIncommingFrame(can_frame *f) {
 }
 
 void ICDisplay::buildFrameBuffer(uint8_t* buffer, uint8_t bufferSize) {
+    if (!isInPage) { return; } // Don't send anything, we aren't the displayed page
     if (bufferSize > 55) {
         LOG_ERR(F_TC("Payload to big at %d bytes. Max is 55\n"), bufferSize);
         return;
@@ -73,6 +78,7 @@ void ICDisplay::buildFrameBuffer(uint8_t* buffer, uint8_t bufferSize) {
         int posInBuffer = 0;
         uint8_t startISO = 0x21; // Byte for ISO Sequencing, start at 0x21 and incriment by 1 at each frame
         frameBufferSize = ((bufferSize-7)/7)+2; // How many frames do we need for the payload?
+        delete frameBuffer; // Delete the old buffer - Prevent all our memory being used up!
         frameBuffer = new can_frame[frameBufferSize]; // Allocate buffer in memory
         frameBuffer[0] = can_frame{SEND_CID, 0x08, 0x10, bufferSize}; // Set first bytes in first frame
         memcpy(&frameBuffer[0].data[2], buffer, 6); // Copy first 6 bytes
@@ -100,9 +106,29 @@ void ICDisplay::buildFrameBuffer(uint8_t* buffer, uint8_t bufferSize) {
     }
 }
 
-void ICDisplay::updateHeader(uint8_t page, lineData* line) {
+/**
+ * Checks if the text for body of the display can fit
+ * W203 has display width of 56, and W211 is 66
+ */
+bool ICDisplay::bodyCanFit(lineData *d) {
+    uint8_t pixels_used = 0;
+    for (int i = 0; i < d->textLen; i++) {
+        pixels_used += pgm_read_byte_near(CHAR_WIDTHS_BODY + d->text[i]);
+    }
+    return pixels_used <= DISPLAY_WIDTH;
+}
+
+/**
+ * Sets the header text on the IC display
+ * @param page Page Identifier - 0x05 is Telephone page, 0x03 is Audio, 0x02 is GPS
+ */
+void ICDisplay::setHeader(uint8_t page, lineData* line) {
     uint8_t bufSize = 5+line->textLen;
-    uint8_t *buf = new uint8_t[bufSize]{page, 0x29, line->fmt_args};
+    uint8_t *buf = new uint8_t[bufSize]{
+        page, // Page ID 
+        0x29, // Header text packet ID
+        line->fmt_args // String format
+    };
     memcpy(&buf[3], line->text, line->textLen);
     buf[bufSize-2] = 0x00;
     this->putChecksum(buf, bufSize);
@@ -110,10 +136,23 @@ void ICDisplay::updateHeader(uint8_t page, lineData* line) {
     delete[] buf;
 }
 
+/**
+ * Sets the body text on the IC display
+ * @param page Page Identifier - 0x05 is Telephone page, 0x03 is Audio, 0x02 is GPS
+ */
 void ICDisplay::setBody(uint8_t page, lineData* line) {
-    uint8_t bufSize = 9+line->textLen;
-    uint8_t *buf = new uint8_t[bufSize]{page, 0x26, 0x01, 0x00, 0x01, line->textLen+2, line->fmt_args };
-    memcpy(&buf[7], line->text, line->textLen);
+    uint8_t displayLen = min(line->textLen, 10);
+    uint8_t bufSize = 9+displayLen;
+    uint8_t *buf = new uint8_t[bufSize]{
+        page, // Page number for body
+        0x26, // Body text packet ID
+        0x01, // ??
+        0x00, // ??
+        0x01,  // ??
+        displayLen+2, // Length of string+2 
+        line->fmt_args // String format
+    };
+    memcpy(&buf[7], line->text, displayLen);
     buf[bufSize-2] = 0x00;
     this->putChecksum(buf, bufSize);
     buildFrameBuffer(buf, bufSize);
@@ -176,4 +215,79 @@ void ICDisplay::initPage() {
 
 // -- Audio page stuff --
 
+void AudioDisplay::update() {
+    if (!music) { return; }
+    if (millis() - lastProgressUpdate > MUSIC_PROGRESS_UPDATE) {
+        lastProgressUpdate = millis();
+        if (music->isPlaying()) {
+            lineData d = {0x00};
+            d.fmt_args = IC_FMT_LEFT;
+            d.textLen = 12; // 99:99/99:99 <- Max value
+            char* buf = new char[12]{0x00};
+            sprintf(buf, "%d:%02d/%d:%02d", 
+                music->getPosition() / 60,
+                music->getPosition() % 60,
+                music->getDuration() / 60,
+                music->getDuration() % 60);
+            d.text = (uint8_t*)buf;
+            this->setHeader(0x03, &d);
+            delete buf;
+        } else {
+            // Paused music - Center text
+            lineData d = {0x00};
+            d.fmt_args = IC_FMT_CENTER;
+            d.textLen = 7; // Paused
+            d.text = (uint8_t*) PAUSED;
+            this->setHeader(0x03, &d);
+        }
+    }
+    if (millis() - lastTextUpdate > MUSIC_TEXT_UPDATE && trackNameScroll) {
+        lastTextUpdate = millis();
+        lineData d = {0x00};
+        d.fmt_args = IC_FMT_CENTER;
+        uint8_t tempBufSize = music->getTrackNameLen() + 3; // +3 as trackNameLen does not include the spaces
+        uint8_t *tempBuf = new uint8_t[tempBufSize]{' '}; // +3 is for the spaces, not for null termination, init with spaces by default
+        // Copy everything from the position we are in within the string to the 3 spaces at the end
+        memcpy(tempBuf, &music->getTrackName()[textStartPos], tempBufSize-textStartPos);
+        // If we are within the string, append the start of the string to the end
+        if (textStartPos > 0) {
+            memcpy(&tempBuf[tempBufSize-textStartPos], music->getTrackName(), textStartPos);
+        }
+        d.text = tempBuf;
+        d.textLen = tempBufSize;
+        this->setBody(0x03, &d);
+        delete tempBuf;
+        this->textStartPos++;
+        // Wrap around
+        if (this->textStartPos > music->getTrackNameLen()+3) { // Absolute limit reached, reset counter
+            this->textStartPos = 0;
+        }
+    } else if (millis() - lastTextUpdate > 1300 && !trackNameScroll) {
+        lastTextUpdate = millis();
+        lineData d = {0x00};
+        d.fmt_args = IC_FMT_CENTER;
+        d.text = (uint8_t*)music->getTrackName();
+        d.textLen = music->getTrackNameLen();
+        this->setBody(0x03, &d);
+    }
+}
+
+void AudioDisplay::setMusicData(Music *m) {
+    this->music = m;
+    this->textStartPos = 0;
+    // Check if body must scroll
+    lineData d = {0x00};
+    d.text = (uint8_t*)music->getTrackName();
+    d.textLen = music->getTrackNameLen();
+    this->trackNameScroll = !this->bodyCanFit(&d); // If not fit we must scroll text
+}
+
+void AudioDisplay::removeMusic() {
+    this->music = nullptr;
+}
+
 // -- Telephone page stuff --
+
+void TelDisplay::update() {
+
+}

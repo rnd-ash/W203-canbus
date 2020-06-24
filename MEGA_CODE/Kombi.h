@@ -65,7 +65,7 @@ public:
      * false if IC is using Metric
      */
     bool useImperial();
-    uint8_t vSpeedKmh = 0; // Vehicle speed in KMH
+    uint8_t vSpeedKmh = 0; // Vehicle speed in km/h
 private:
     /**
      * Processes can frame 0x000C (KOMBI_A1),

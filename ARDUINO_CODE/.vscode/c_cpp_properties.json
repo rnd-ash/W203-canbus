@@ -3,6 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
+                "/home/ashcon/Arduino/libraries/**",
                 "/home/ashcon/.arduino15/packages/arduino/tools/**",
                 "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.1/**",
                 "/home/ashcon/.arduino15/packages/arduino/hardware/avr/1.8.2/**"

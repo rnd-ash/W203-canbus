@@ -31,11 +31,21 @@ const char* Canbus::frameToString(can_frame *f) {
     // 7 chars for 'BYTES: '
     // 5 chars for ' ID: '
     // 1 char for null termination
-    // Total = 19
-    buffer = new char[(f->can_dlc*3)+19];
+    // 8 char for ASCII (1 char per byte)
+    // 2 spaces
+    // Total = 29
+    buffer = new char[(f->can_dlc*3)+19+10];
     counter += sprintf(buffer, "ID: 0x%04X BYTES: ", f->can_id);
     for (int i = 0; i < f->can_dlc; i++) {
         counter += sprintf(&buffer[counter], "%02X ", f->data[i]);
+    }
+    counter += sprintf(&buffer[counter], "  ");
+    for (int i = 0; i < f->can_dlc; i++) {
+        if (f->data[i] >= 20 && f->data[i] < 127) { // check if valid ascii
+            counter += sprintf(&buffer[counter], "%c", (char)f->data[i]);
+        } else {
+            counter += sprintf(&buffer[counter], "."); // This means invalid ascii
+        }
     }
     return buffer;
 }

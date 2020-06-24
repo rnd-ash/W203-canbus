@@ -55,6 +55,8 @@ void setup() {
   audioDisplay = new AudioDisplay();
   telDisplay = new TelDisplay();
   LOG_INFO(F_TC("Setup complete!\n"));
+  // By default, enable the audio page
+  audioDisplay->enablePage();
 }
 
 void nextTrack() {
@@ -114,6 +116,7 @@ void loop() {
     LOG_INFO(F_TC("Phone disconnected. Unloading music\n"));
     delete music;
     music = nullptr;
+    audioDisplay->removeMusic();
   }
   if (Bluetooth::getPayload(&btp)) {
     switch (btp.cmd)
@@ -121,8 +124,7 @@ void loop() {
     case BT_CMD_TRACK_NAME:
       delete music;
       music = new Music((char*)btp.args, btp.argSize);
-      lineData d = lineData{0x10, btp.argSize, btp.args};
-      audioDisplay->setBody(0x03, &d);
+      audioDisplay->setMusicData(music);
       break;
     case BT_CMD_TRACK_SEEK:
       if (music) music->setPosition(btp.args[0] | btp.args[1] << 8);
@@ -157,6 +159,27 @@ void loop() {
       keyInputOther();
       break;
   }
+  /*
+  if (kombi->getICPage() == KOMBI_PAGE_AUDIO) { // Only let audio page write to CAN
+    audioDisplay->enablePage();
+    telDisplay->disablePage();
+  } else if (kombi->getICPage() == KOMBI_PAGE_PHONE) { // Only let tele page write to CAN
+    audioDisplay->disablePage();
+    telDisplay->enablePage();
+  } else { // Disable both pages from writing to CAN
+    audioDisplay->disablePage();
+    telDisplay->disablePage();
+  }
+  */
+  // The update functions are still needed, even if we are not in the page
   audioDisplay->update();
+  telDisplay->update();
   if (music) music->update();
+
+  #ifdef DEBUG
+  if (millis() - lastMemTime >= 5000) {
+    lastMemTime = millis();
+    Serial.println(freeRam(), DEC);
+  }
+  #endif
 }

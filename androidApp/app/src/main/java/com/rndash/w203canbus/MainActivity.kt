@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var thread : Thread
     var artistName = ""
     lateinit var service : ConnectService
+    lateinit var music : Music
 
 
 
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         val adapter = BluetoothAdapter.getDefaultAdapter()
         val dev = adapter.bondedDevices.first { it.name == "HC-06" }
         ConnectService.ic = CarCommunicator(dev, adapter, this.applicationContext)
+        music = Music();
         startService(Intent(this.baseContext, ConnectService::class.java))
         ctx = this.applicationContext
         super.onCreate(savedInstanceState)
@@ -88,17 +90,18 @@ class MainActivity : AppCompatActivity() {
             manager.dispatchMediaKeyEvent(event)
             mPlayer = MediaPlayer.create(this, R.raw.xmas)
             mPlayer.start()
-            ConnectService.ic.sendByteArray('D',0x00, byteArrayOf())
+            ConnectService.ic
+            //ConnectService.ic.sendByteArray('D',0x00, byteArrayOf())
         }
 
         lightBtn.setOnClickListener {
             mPlayer.stop()
-            ConnectService.ic.sendByteArray('F',0x00, byteArrayOf())
+            //ConnectService.ic.sendByteArray('F',0x00, byteArrayOf())
         }
 
         hornBtn.setOnClickListener {
             mPlayer.stop()
-            ConnectService.ic.sendByteArray('G',0x00, byteArrayOf())
+            //ConnectService.ic.sendByteArray('G',0x00, byteArrayOf())
         }
 
         val iF = IntentFilter()
@@ -154,33 +157,11 @@ class MainActivity : AppCompatActivity() {
             try {
                 val intentAction = intent.action!!
                 if (intentAction.contains(".metadatachanged")) {
-                    println("meta changed")
-                    trackName = intent.getStringExtra("track")!!
-                    val trackDuration = (intent.getIntExtra("length", 0) / 1000).toInt()
-                    Log.d("TK", "Track is $trackDuration seconds long");
-                    ConnectService.ic.sendByteArray(
-                        'M',
-                        0x20,
-                        byteArrayOf(
-                            (trackDuration / 256).toInt().toByte(),
-                            (trackDuration % 256).toInt().toByte()
-                        )
-                    )
+                    music.trackName = intent.getStringExtra("track")!!
+                    music.trackLength = intent.getIntExtra("length", 0)
                 } else if (intentAction.contains(".playbackstatechanged")) {
-                    val isPlaying = intent.getBooleanExtra("playing", true)
-                    val progress = (intent.getLongExtra("position", 0) / 1000).toInt()
-                    ConnectService.ic.sendByteArray(
-                        'M',
-                        0x5F, // underscore
-                        byteArrayOf(
-                            (progress / 256).toByte(),
-                            (progress % 256).toByte()
-                        )
-                    )
-                    when (isPlaying) {
-                        true -> ConnectService.ic.btManager.sendString("M:P")
-                        false -> ConnectService.ic.btManager.sendString("M:X")
-                    }
+                    music.playStatus = intent.getBooleanExtra("playing", false)
+                    music.trackPosition = (intent.getLongExtra("position", 0)).toInt()
                 }
             } catch (e: UninitializedPropertyAccessException) {
                 Log.d("IT", "IC not initialised")
