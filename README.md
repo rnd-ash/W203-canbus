@@ -1,6 +1,11 @@
 # Mercedes canbus project for older W203/W209/W211 cars
 A proof of concept application using an Arduino and Android phone to add extra features to these older Mercedes cars by tapping into their systems via canbus.
 
+# This project is now no longer my primary project for the car
+If you want to fix things, feel free to submit pull requests to this repository
+
+If you have an android head unit in your car, feel free to checkout a much more feature rich version of this that runs on the headunit [here](https://github.com/rnd-ash/MBUX-Port)
+
 # DEMO VIDEOS
 Can be accessed via [this link](https://www.youtube.com/playlist?list=PLxrw-4Vt7xtt3VkDx_Z35n4SdYG9C3N7i)
 
